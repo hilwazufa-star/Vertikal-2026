@@ -1,0 +1,2875 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VERTIKAL 2026 · SMAMIO Intelligence Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — Enterprise Intelligence Platform
+       Inspired by: Linear, Vercel, Palantir Foundry
+       Palette: Electric Blue (#2563EB) + Luminous Yellow (#FACC15)
+       Zero emojis. Zero purple gradients. Zero drop shadows.
+       ============================================================ */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      /* Canvas */
+      --bg:         #F0F4FA;
+      --surface:    #FFFFFF;
+      --surface-2:  #F8FAFC;
+      --surface-3:  #EEF2F8;
+
+      /* Borders */
+      --border:     #E2E8F0;
+      --border-2:   #CBD5E1;
+      --border-focus: #2563EB;
+
+      /* Text */
+      --text-1:     #0F172A;
+      --text-2:     #334155;
+      --text-3:     #64748B;
+      --text-4:     #94A3B8;
+
+      /* Brand — Electric Blue */
+      --blue-900:   #1E3A8A;
+      --blue-700:   #1D4ED8;
+      --blue-600:   #2563EB;
+      --blue-500:   #3B82F6;
+      --blue-400:   #60A5FA;
+      --blue-100:   #DBEAFE;
+      --blue-50:    #EFF6FF;
+
+      /* Brand — Luminous Yellow */
+      --yellow-600: #CA8A04;
+      --yellow-500: #EAB308;
+      --yellow-400: #FACC15;
+      --yellow-300: #FDE047;
+      --yellow-100: #FEF9C3;
+      --yellow-50:  #FEFCE8;
+      --amber:      #F59E0B;
+      --amber-dark: #D97706;
+
+      /* Semantic */
+      --green-600:  #059669;
+      --green-50:   #ECFDF5;
+      --green-100:  #D1FAE5;
+      --red-600:    #DC2626;
+      --red-50:     #FEF2F2;
+      --red-100:    #FEE2E2;
+      --orange-600: #EA580C;
+
+      /* Radius */
+      --r-xs:  3px;
+      --r-sm:  6px;
+      --r-md:  10px;
+      --r-lg:  16px;
+      --r-xl:  20px;
+
+      /* Sidebar */
+      --sidebar-w: 220px;
+
+      /* Header */
+      --header-h:  58px;
+    }
+
+    [data-theme="dark"] {
+      --bg:         #080C18;
+      --surface:    #111827;
+      --surface-2:  #1A2234;
+      --surface-3:  #1E2D4A;
+
+      --border:     #1E2D4A;
+      --border-2:   #2D3F5E;
+      --border-focus: #3B82F6;
+
+      --text-1:     #F8FAFC;
+      --text-2:     #E2E8F0;
+      --text-3:     #94A3B8;
+      --text-4:     #475569;
+
+      --blue-900:   #172554;
+      --blue-700:   #1D4ED8;
+      --blue-600:   #3B82F6;
+      --blue-500:   #60A5FA;
+      --blue-400:   #93C5FD;
+      --blue-100:   rgba(59,130,246,0.15);
+      --blue-50:    rgba(59,130,246,0.08);
+
+      --yellow-400: #FACC15;
+      --yellow-300: #FDE047;
+      --yellow-100: rgba(250,204,21,0.15);
+      --yellow-50:  rgba(250,204,21,0.07);
+      --amber:      #FBB F24;
+      --amber-dark: #F59E0B;
+
+      --green-600:  #10B981;
+      --green-50:   rgba(16,185,129,0.1);
+      --green-100:  rgba(16,185,129,0.15);
+      --red-600:    #F87171;
+      --red-50:     rgba(248,113,113,0.1);
+      --red-100:    rgba(248,113,113,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { height: 100%; }
+
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'cv05' 1, 'cv11' 1;
+    }
+
+    /* ============================================================
+       SHELL LAYOUT: Sidebar + Main
+       ============================================================ */
+    .shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       SIDEBAR NAV
+       ============================================================ */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 50;
+    }
+
+    .sidebar-top {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .school-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-sm);
+      object-fit: contain;
+      border: 1px solid var(--border);
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    .brand-sub {
+      font-size: 0.65rem;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 6px;
+      border-radius: var(--r-xs);
+      background: var(--blue-50);
+      color: var(--blue-600);
+      border: 1px solid var(--blue-100);
+      width: fit-content;
+    }
+
+    /* Sidebar nav items */
+    .sidebar-nav {
+      flex: 1;
+      padding: 10px 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .nav-section-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-4);
+      padding: 8px 8px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      font-size: 0.8rem;
+      font-weight: 500;
+      width: 100%;
+      text-align: left;
+      transition: background 0.1s, color 0.1s;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background: var(--surface-2);
+      color: var(--text-2);
+    }
+
+    .nav-item.active {
+      background: var(--blue-50);
+      color: var(--blue-600);
+      font-weight: 600;
+    }
+
+    .nav-item.active .nav-icon { stroke: var(--blue-600); }
+
+    .nav-icon {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* Status dot */
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-4);
+      flex-shrink: 0;
+    }
+    .live-dot.on {
+      background: var(--green-600);
+      box-shadow: 0 0 0 2.5px rgba(5,150,105,0.2);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+
+    /* Sidebar footer */
+    .sidebar-footer {
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sync-status {
+      font-size: 0.68rem;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-2);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+    .btn-sm:hover { background: var(--surface-2); border-color: var(--border-2); }
+
+    .btn-primary {
+      background: var(--blue-600);
+      color: #fff;
+      border-color: var(--blue-600);
+    }
+    .btn-primary:hover { background: var(--blue-700); border-color: var(--blue-700); }
+
+    .btn-accent {
+      background: var(--yellow-400);
+      color: var(--text-1);
+      border-color: var(--yellow-500);
+      font-weight: 700;
+    }
+    .btn-accent:hover { background: var(--yellow-300); }
+
+    /* ============================================================
+       MAIN AREA
+       ============================================================ */
+    .main {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top bar */
+    .topbar {
+      height: var(--header-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.01em;
+    }
+
+    .page-breadcrumb {
+      font-size: 0.75rem;
+      color: var(--text-3);
+    }
+
+    .topbar-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ============================================================
+       CONTENT PANELS
+       ============================================================ */
+    .content {
+      flex: 1;
+      padding: 20px 24px 40px;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .panel-animate.active {
+      animation: fadeSlide 0.18s ease-out;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       CONNECTION BAR (DATA SOURCE)
+       ============================================================ */
+    .conn-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .conn-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      white-space: nowrap;
+    }
+
+    .conn-input {
+      flex: 1;
+      min-width: 260px;
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface-2);
+      color: var(--text-1);
+      font-size: 0.8rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .conn-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .conn-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: var(--text-3);
+    }
+
+    #alertBox {
+      display: none;
+      padding: 9px 14px;
+      border-radius: var(--r-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+      border: 1px solid;
+    }
+
+    /* ============================================================
+       SECTION HEADER
+       ============================================================ */
+    .section-hd {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.015em;
+    }
+
+    .section-sub {
+      font-size: 0.75rem;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    /* ============================================================
+       FILTER STRIP
+       ============================================================ */
+    .filter-strip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .filter-item { display: flex; flex-direction: column; gap: 3px; min-width: 130px; flex: 1; }
+
+    .filter-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-4);
+    }
+
+    select.fsel {
+      padding: 6px 9px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface-2);
+      color: var(--text-1);
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+    select.fsel:focus { border-color: var(--border-focus); }
+
+    /* ============================================================
+       KPI CARDS ROW — Figma Sales Analytics Style
+       ============================================================ */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Accent bar on top */
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2.5px;
+      background: var(--border);
+      border-radius: var(--r-md) var(--r-md) 0 0;
+    }
+    .kpi.kpi-blue::before   { background: var(--blue-600); }
+    .kpi.kpi-yellow::before { background: var(--yellow-400); }
+    .kpi.kpi-green::before  { background: var(--green-600); }
+    .kpi.kpi-red::before    { background: var(--red-600); }
+
+    .kpi-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .kpi-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+    }
+
+    .kpi-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .kpi-icon.c-blue   { background: var(--blue-50);   color: var(--blue-600);  border: 1px solid var(--blue-100); }
+    .kpi-icon.c-yellow { background: var(--yellow-50); color: var(--amber-dark); border: 1px solid var(--yellow-100); }
+    .kpi-icon.c-green  { background: var(--green-50);  color: var(--green-600); border: 1px solid var(--green-100); }
+    .kpi-icon.c-red    { background: var(--red-50);    color: var(--red-600);   border: 1px solid var(--red-100); }
+
+    .kpi-icon svg {
+      width: 15px; height: 15px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .kpi-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .kpi-value.text-blue   { color: var(--blue-600); }
+    .kpi-value.text-yellow { color: var(--amber-dark); }
+    .kpi-value.text-green  { color: var(--green-600); }
+    .kpi-value.text-red    { color: var(--red-600); }
+
+    .kpi-value.medium-val { font-size: 1.1rem; }
+
+    .kpi-foot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--text-3);
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       PILLS / BADGES
+       ============================================================ */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1.5px 6px;
+      border-radius: var(--r-xs);
+      border: 1px solid;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .pill-blue   { background: var(--blue-50);   color: var(--blue-600);   border-color: var(--blue-100); }
+    .pill-yellow { background: var(--yellow-50); color: var(--amber-dark); border-color: var(--yellow-100); }
+    .pill-green  { background: var(--green-50);  color: var(--green-600);  border-color: var(--green-100); }
+    .pill-red    { background: var(--red-50);    color: var(--red-600);    border-color: var(--red-100); }
+    .pill-gray   { background: var(--surface-2); color: var(--text-3);     border-color: var(--border); }
+
+    /* ============================================================
+       AI DIAGNOSTIC CARD
+       ============================================================ */
+    .insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--yellow-400);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .insight-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .insight-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .insight-body {
+      font-size: 0.8rem;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+    .insight-body strong { color: var(--text-1); }
+
+    .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface-2);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .chip:hover { background: var(--surface-3); border-color: var(--border-2); }
+    .chip svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ============================================================
+       WHAT-IF SIMULATOR
+       ============================================================ */
+    .sim-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .sim-title { font-size: 0.82rem; font-weight: 700; color: var(--text-1); display: flex; align-items: center; gap: 7px; }
+    .sim-desc  { font-size: 0.72rem; color: var(--text-3); margin-top: 2px; }
+
+    .sim-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .sim-slider-row input[type="range"] {
+      flex: 1;
+      cursor: pointer;
+      accent-color: var(--blue-600);
+      height: 4px;
+    }
+    .sim-delta { font-size: 0.82rem; font-weight: 700; color: var(--amber-dark); min-width: 72px; }
+
+    .sim-metric-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 12px 18px;
+    }
+    .sim-stat { text-align: center; }
+    .sim-stat-val { font-size: 1.5rem; font-weight: 800; color: var(--text-1); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .sim-stat-lbl { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); }
+    .sim-arrow { color: var(--text-4); font-size: 1.1rem; }
+
+    /* ============================================================
+       CHARTS GRID — 12-col system
+       ============================================================ */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .col-4  { grid-column: span 4; }
+    .col-6  { grid-column: span 6; }
+    .col-8  { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    @media (max-width: 1100px) {
+      .col-6 { grid-column: span 12; }
+      .col-4 { grid-column: span 12; }
+      .col-8 { grid-column: span 12; }
+    }
+
+    /* Chart section header divider */
+    .chart-section-divider {
+      grid-column: span 12;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0 2px;
+    }
+    .chart-section-divider-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-4);
+      white-space: nowrap;
+    }
+    .chart-section-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Bullet chart (SVG-based) */
+    .bullet-wrap { display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+    .bullet-row  { display: flex; flex-direction: column; gap: 4px; }
+    .bullet-label { font-size: 0.72rem; font-weight: 600; color: var(--text-2); display: flex; justify-content: space-between; }
+    .bullet-label span { font-size: 0.7rem; color: var(--text-3); font-weight: 500; }
+    .bullet-track {
+      position: relative;
+      height: 20px;
+      background: var(--surface-3);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bullet-zone-crit  { position: absolute; top:0; bottom:0; background: rgba(220,38,38,0.12); }
+    .bullet-zone-std   { position: absolute; top:0; bottom:0; background: rgba(234,179,8,0.12); }
+    .bullet-zone-gold  { position: absolute; top:0; bottom:0; background: rgba(5,150,105,0.1); }
+    .bullet-fill {
+      position: absolute; top: 4px; bottom: 4px; left: 0;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+    .bullet-marker {
+      position: absolute; top: 0; bottom: 0;
+      width: 2px;
+    }
+    .bullet-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .bullet-legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-3); }
+    .bullet-legend-dot { width: 10px; height: 6px; border-radius: 2px; }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .chart-title { font-size: 0.82rem; font-weight: 700; color: var(--text-1); letter-spacing: -0.01em; }
+    .chart-sub   { font-size: 0.7rem; color: var(--text-3); margin-top: 2px; }
+
+    .chart-vp {
+      position: relative;
+      height: 280px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* ============================================================
+       TABLE — Figma high-density
+       ============================================================ */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .table-toolbar {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-search {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 5px 10px;
+      background: var(--surface-2);
+      min-width: 200px;
+    }
+    .table-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.78rem;
+      color: var(--text-1);
+      font-family: inherit;
+      width: 100%;
+    }
+    .table-search svg { width: 13px; height: 13px; stroke: var(--text-4); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+    .tbl-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-variant-numeric: tabular-nums; }
+
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+
+    th {
+      background: var(--surface-2);
+      color: var(--text-3);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    th:hover { color: var(--text-1); }
+    tbody tr:hover { background: var(--surface-2); }
+
+    .rank-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--surface-2);
+      color: var(--text-3);
+      border: 1px solid var(--border);
+    }
+    .rank-num.gold { background: var(--yellow-100); color: var(--amber-dark); border-color: var(--yellow-400); }
+    .rank-num.silver { background: var(--surface-3); color: var(--text-2); border-color: var(--border-2); }
+
+    .mini-bar {
+      display: inline-block;
+      width: 48px;
+      height: 4px;
+      background: var(--surface-3);
+      border-radius: 99px;
+      vertical-align: middle;
+      margin-right: 6px;
+      overflow: hidden;
+    }
+    .mini-bar-fill { height: 100%; background: var(--blue-500); border-radius: 99px; }
+
+    .val-high { color: var(--green-600); font-weight: 600; }
+    .val-med  { color: var(--amber-dark); font-weight: 600; }
+    .val-low  { color: var(--red-600); font-weight: 600; }
+
+    /* ============================================================
+       TAB 1: LATAR BELAKANG — Manifesto
+       ============================================================ */
+    .manifesto-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 32px 36px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Geometric accent */
+    .manifesto-hero::after {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .manifesto-hero h2 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.025em;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .manifesto-lead {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      line-height: 1.65;
+      max-width: 820px;
+    }
+
+    .manifesto-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .manifesto-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px;
+    }
+
+    .manifesto-box-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 8px;
+    }
+
+    .manifesto-box-head svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    .manifesto-box p {
+      font-size: 0.78rem;
+      color: var(--text-3);
+      line-height: 1.6;
+    }
+
+    /* Flow Steps */
+    .flow-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 20px 24px;
+    }
+
+    .flow-title { font-size: 0.9rem; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
+    .flow-desc  { font-size: 0.75rem; color: var(--text-3); margin-bottom: 18px; }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      position: relative;
+    }
+
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      position: relative;
+    }
+
+    .flow-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--blue-600);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flow-step-title { font-size: 0.8rem; font-weight: 700; color: var(--text-1); }
+    .flow-step-body  { font-size: 0.74rem; color: var(--text-3); line-height: 1.55; }
+
+    /* ============================================================
+       TAB 3: HABITS DEEP DIVE
+       ============================================================ */
+    .habits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+    }
+
+    .habit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .habit-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .habit-num { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); margin-bottom: 2px; }
+    .habit-name { font-size: 0.9rem; font-weight: 700; color: var(--text-1); letter-spacing: -0.01em; }
+    .habit-tagline { font-size: 0.72rem; color: var(--text-3); margin-top: 1px; }
+
+    .habit-score {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--blue-600);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .habit-progress-wrap { display: flex; flex-direction: column; gap: 4px; }
+    .habit-progress-row { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-3); }
+    .habit-bar { height: 6px; background: var(--surface-3); border-radius: 99px; overflow: hidden; }
+    .habit-bar-fill { height: 100%; border-radius: 99px; background: var(--blue-500); transition: width 0.3s ease; }
+
+    .habit-detail-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .habit-detail-box strong { color: var(--text-1); }
+
+    .habit-action-box {
+      background: var(--blue-50);
+      border: 1px solid var(--blue-100);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      font-size: 0.75rem;
+      color: var(--blue-700);
+      line-height: 1.55;
+    }
+    [data-theme="dark"] .habit-action-box { background: var(--blue-50); border-color: var(--blue-100); color: var(--blue-400); }
+
+    /* ============================================================
+       TAB 4: SMAMIO PROFILE
+       ============================================================ */
+    .profile-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 24px 28px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .profile-id {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .profile-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--r-md);
+      object-fit: contain;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .profile-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-1);
+      letter-spacing: -0.02em;
+    }
+
+    .profile-desc { font-size: 0.78rem; color: var(--text-3); margin-top: 3px; }
+
+    .profile-stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .p-stat {
+      text-align: center;
+      padding: 10px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+    }
+
+    .p-stat-val { font-size: 1.3rem; font-weight: 800; color: var(--blue-600); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+    .p-stat-lbl { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-top: 2px; }
+
+    .jenjang-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .jenjang-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 16px;
+    }
+
+    .jenjang-label { font-size: 0.63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); margin-bottom: 4px; }
+    .jenjang-count { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+    .jenjang-score { font-size: 0.75rem; color: var(--text-3); margin-top: 3px; }
+
+    /* Heatmap */
+    .matrix-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .heatmap-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-sm); }
+
+    .heat-cell { font-weight: 600; border-radius: 3px; text-align: center; }
+    .heat-high { background: rgba(5,150,105,0.14); color: var(--green-600); }
+    .heat-med  { background: rgba(234,179,8,0.14); color: var(--amber-dark); }
+    .heat-low  { background: rgba(220,38,38,0.14); color: var(--red-600); }
+
+    /* ============================================================
+       ICON UTILITY
+       ============================================================ */
+    .ico {
+      width: 15px; height: 15px;
+      stroke: currentColor; fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round; stroke-linejoin: round;
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+      .sim-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand-row">
+        <img src="assets/Logo%20Smam10.jpeg" alt="SMAMIO" class="school-logo" />
+        <div>
+          <div class="brand-name">SMAMIO<br>Intelligence</div>
+        </div>
+      </div>
+      <div class="version-badge">
+        <svg width="8" height="8" viewBox="0 0 8 8" style="fill:var(--blue-600);"><circle cx="4" cy="4" r="3"/></svg>
+        Program VERTIKAL 2026
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Platform</div>
+
+      <button class="nav-item" data-tab="manifesto">
+        <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        Latar Belakang
+      </button>
+
+      <button class="nav-item active" data-tab="analytics">
+        <svg class="nav-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Live Analytics Hub
+      </button>
+
+      <button class="nav-item" data-tab="habits">
+        <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        7 Kebiasaan Hebat
+      </button>
+
+      <button class="nav-item" data-tab="smamio">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Ekosistem SMAMIO
+      </button>
+
+      <div class="nav-section-label" style="margin-top: 8px;">Data</div>
+
+      <label for="excelFile" class="nav-item" style="cursor:pointer;">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Import Excel / CSV
+      </label>
+      <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" style="display:none;" />
+
+      <button class="nav-item" id="btnExportCsv">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Ekspor CSV Analitik
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sync-status">
+        <span class="live-dot" id="liveDot"></span>
+        <span id="lastSyncTime">Standar Bawaan SMAMIO</span>
+      </div>
+      <div style="font-size:0.65rem;color:var(--text-4);" id="sourceInfo">1.429 Siswa · 18 Rombel</div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <div class="main">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="page-title" id="pageTitleText">Live Analytics Hub</div>
+          <div class="page-breadcrumb">SMA Muhammadiyah 10 GKB Gresik · 7 Kebiasaan Anak Indonesia Hebat</div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="btn-sm" id="themeToggleBtn">
+          <span id="themeIconContainer">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </span>
+          <span id="themeText">Mode Gelap</span>
+        </button>
+
+        <div style="width:1px;height:20px;background:var(--border);"></div>
+
+        <button class="btn-sm btn-primary" id="btnSync">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          Sinkronkan Live
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <div id="alertBox"></div>
+
+      <!-- GOOGLE SHEETS INPUT BAR -->
+      <div class="conn-bar">
+        <span class="conn-label">Sumber Data</span>
+        <input type="text" id="sheetCsvUrl" class="conn-input" placeholder="Tempel URL Google Sheets (Publish to Web · format CSV)…" />
+        <label class="conn-meta" style="cursor:pointer;">
+          <input type="checkbox" id="autoRefreshCheck" style="cursor:pointer;" />
+          <span>Auto-Refresh 30 dtk</span>
+        </label>
+      </div>
+
+      <!-- ========================================================
+           PANEL 1: LATAR BELAKANG
+           ======================================================== -->
+      <div class="panel panel-animate" id="panel-manifesto">
+        <div class="manifesto-hero">
+          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+            <span class="pill pill-blue">DIREKTORAT SMA KEMENDIKBUDRISTEK</span>
+            <span class="pill pill-yellow">PROGRAM VERTIKAL 2026</span>
+          </div>
+          <h2>Kenapa Platform Inovasi Ini Diciptakan?</h2>
+          <p class="manifesto-lead" style="margin-top:10px;">
+            Dalam rangka mendukung penguatan karakter murid melalui penerapan <strong>Gerakan Tujuh Kebiasaan Anak Indonesia Hebat (7KAIH)</strong>, serta mendorong pemanfaatan teknologi informasi dan kecerdasan artifisial, Direktorat SMA melaksanakan <strong>Program VERTIKAL (Inovasi Berbasis TI dan KA) SMA Tahun 2026</strong>. Platform ini mengubah paradigma rekap karakter manual yang lambat menjadi <em>Evidence-Based Decision Support System</em> yang real-time dan berdampak nyata.
+          </p>
+        </div>
+
+        <div class="manifesto-cards">
+          <div class="manifesto-box">
+            <div class="manifesto-box-head" style="color:var(--blue-600);">
+              <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              Tantangan Konvensional
+            </div>
+            <p>Kuesioner karakter siswa kerap berhenti sebagai tumpukan data tabular tanpa tindak lanjut. Rekap manual memakan waktu berminggu-minggu, sehingga guru BK terlambat mengidentifikasi degradasi kebiasaan murid.</p>
+          </div>
+          <div class="manifesto-box">
+            <div class="manifesto-box-head" style="color:var(--amber-dark);">
+              <svg viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              Solusi SMAMIO
+            </div>
+            <p>Platform terintegrasi langsung dengan Google Sheets formulir harian siswa, memproses 14 indikator sub-pertanyaan secara otomatis, dan menyajikan sintesis diagnostik 7 dimensi dalam hitungan detik.</p>
+          </div>
+          <div class="manifesto-box">
+            <div class="manifesto-box-head" style="color:var(--green-600);">
+              <svg viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+              Pemerataan &amp; Mitigasi
+            </div>
+            <p>Menghitung indeks variabilitas antar 18 rombel. Satuan pendidikan dapat mengetahui secara presisi kelas mana yang telah mandiri dan kelas mana yang membutuhkan pendampingan wali kelas intensif.</p>
+          </div>
+        </div>
+
+        <div class="flow-container">
+          <div class="flow-title">Arsitektur Alur Kerja Sistem</div>
+          <div class="flow-desc">Transformasi data dari pengisian form murid hingga intervensi pembimbingan terarah</div>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-step-title">Pengisian Form 7KAIH</div>
+              <div class="flow-step-body">1.429 murid mengisi 14 indikator harian terkait bangun pagi, ibadah, olahraga, makan sehat, belajar, sosialisasi, dan jam tidur.</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-step-title">Sinkronisasi Cloud Live</div>
+              <div class="flow-step-body">Data tersimpan di Google Sheets dan ditarik secara real-time via REST/CSV tanpa ketergantungan database berbayar.</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-step-title">Mesin Analisis AI</div>
+              <div class="flow-step-body">Algoritma normalisasi memetakan jawaban teks ke skala ordinal (1–4), mengagregasi 7 dimensi, dan menghitung deviasi baku.</div>
+            </div>
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-step-title">Diagnostik &amp; Rekomendasi Aksi</div>
+              <div class="flow-step-body">Dashboard visual eksekutif, simulator dampak kebijakan, dan rekomendasi konkret bagi pimpinan SMAMIO.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================
+           PANEL 2: LIVE ANALYTICS HUB
+           ======================================================== -->
+      <div class="panel panel-animate active" id="panel-analytics">
+
+        <!-- AI Diagnostic -->
+        <div class="insight-card">
+          <div class="insight-head">
+            <div class="insight-title">
+              <svg class="ico" style="color:var(--amber-dark);" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+              Sintesis Diagnostik Data AI
+            </div>
+            <span class="pill pill-yellow">Real-Time Evaluation · CI 95%</span>
+          </div>
+          <div class="insight-body" id="aiExecutiveSummary">Memproses matriks agregasi 7 pilar kebiasaan siswa SMAMIO Gresik…</div>
+          <div class="chip-row">
+            <span class="chip" id="chipFilterCritical">
+              <svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Rombel Butuh Intervensi (&lt;2.80)
+            </span>
+            <span class="chip" id="chipFilterTop">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Rombel Berprestasi (≥3.20)
+            </span>
+            <span class="chip" id="chipResetAiFilter">
+              <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              Pulihkan Semua
+            </span>
+          </div>
+        </div>
+
+        <!-- Filter Strip -->
+        <div class="filter-strip">
+          <div class="filter-item">
+            <span class="filter-label">Tingkat Jenjang</span>
+            <select id="filterTingkat" class="fsel">
+              <option value="ALL">Semua Jenjang</option>
+              <option value="X">Kelas X</option>
+              <option value="XI">Kelas XI</option>
+              <option value="XII">Kelas XII</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">Rombongan Belajar</span>
+            <select id="filterKelas" class="fsel"><option value="ALL">Semua Rombel</option></select>
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">Tanggal Pengisian</span>
+            <select id="filterDate" class="fsel"><option value="ALL">Semua Tanggal</option></select>
+          </div>
+          <div class="filter-item">
+            <span class="filter-label">Dimensi Fokus</span>
+            <select id="filterHabit" class="fsel">
+              <option value="0">1. Bangun Pagi</option>
+              <option value="1">2. Beribadah</option>
+              <option value="2">3. Berolahraga</option>
+              <option value="3">4. Makan Sehat &amp; Bergizi</option>
+              <option value="4">5. Gemar Belajar</option>
+              <option value="5">6. Bermasyarakat</option>
+              <option value="6">7. Tidur Cepat</option>
+            </select>
+          </div>
+          <button class="btn-sm" id="btnReset" style="align-self:flex-end;">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="kpi-grid">
+          <div class="kpi kpi-blue">
+            <div class="kpi-head">
+              <span class="kpi-label">Total Responden</span>
+              <div class="kpi-icon c-blue">
+                <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value text-blue" id="kpiCount">0</div>
+            <div class="kpi-foot">
+              <span class="pill pill-blue" id="kpiSampleBadge">Sampel Lengkap</span>
+              <span id="kpiPct">100% populasi</span>
+            </div>
+          </div>
+
+          <div class="kpi kpi-yellow">
+            <div class="kpi-head">
+              <span class="kpi-label">Indeks Karakter KAIH</span>
+              <div class="kpi-icon c-yellow">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value text-yellow" id="kpiIndex">0,0</div>
+            <div class="kpi-foot">
+              <span class="pill pill-yellow" id="kpiIndexGrade">Prima</span>
+              <span>Rerata: <strong id="kpiMean">0,00</strong> / 4,00</span>
+            </div>
+          </div>
+
+          <div class="kpi kpi-green">
+            <div class="kpi-head">
+              <span class="kpi-label">Pilar Terkuat</span>
+              <div class="kpi-icon c-green">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value medium-val text-green" id="kpiBest">—</div>
+            <div class="kpi-foot">
+              <span class="pill pill-green" id="kpiBestScore">Skor 0,00</span>
+              <span id="kpiBestDesc">Konsistensi tertinggi</span>
+            </div>
+          </div>
+
+          <div class="kpi kpi-red">
+            <div class="kpi-head">
+              <span class="kpi-label">Prioritas Intervensi</span>
+              <div class="kpi-icon c-red">
+                <svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value medium-val text-red" id="kpiWorst">—</div>
+            <div class="kpi-foot">
+              <span class="pill pill-red" id="kpiWorstScore">Skor 0,00</span>
+              <span id="kpiWorstGap">Gap: 0,00</span>
+            </div>
+          </div>
+
+          <div class="kpi">
+            <div class="kpi-head">
+              <span class="kpi-label">Disparitas Rombel</span>
+              <div class="kpi-icon c-blue">
+                <svg viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpiStdDev">0,00</div>
+            <div class="kpi-foot">
+              <span class="pill pill-gray" id="kpiStdBadge">Variasi Rendah</span>
+              <span>Indeks pemerataan</span>
+            </div>
+          </div>
+
+          <div class="kpi kpi-yellow">
+            <div class="kpi-head">
+              <span class="kpi-label">Rombel Terbaik</span>
+              <div class="kpi-icon c-yellow">
+                <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value medium-val" id="kpiTopClass">—</div>
+            <div class="kpi-foot">
+              <span class="pill pill-green" id="kpiTopClassScore">Indeks 0,0</span>
+              <span id="kpiTopClassMeta">Teladan konsistensi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- What-If Simulator -->
+        <div class="sim-card">
+          <div>
+            <div class="sim-title">
+              <svg class="ico" style="color:var(--blue-600);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Simulator Kebijakan: Proyeksi Kenaikan Indeks
+            </div>
+            <div class="sim-desc" id="simTargetLabel">Fokus Intervensi: Dimensi Prioritas</div>
+            <div class="sim-slider-row">
+              <span style="font-size:0.72rem;color:var(--text-3);">Skor Asli</span>
+              <input type="range" id="simSlider" min="0" max="1" step="0.05" value="0" />
+              <span class="sim-delta" id="simDeltaLabel">+0,00 Poin</span>
+            </div>
+          </div>
+          <div class="sim-metric-box">
+            <div class="sim-stat">
+              <div class="sim-stat-lbl">Riil</div>
+              <div class="sim-stat-val" id="simCurrentIndex">0,0</div>
+            </div>
+            <div class="sim-arrow">&rarr;</div>
+            <div class="sim-stat">
+              <div class="sim-stat-lbl">Proyeksi</div>
+              <div class="sim-stat-val" style="color:var(--green-600);" id="simProjectedIndex">0,0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Profil Poligon 7 Kebiasaan (Spider Radar)</div>
+                <div class="chart-sub">Capaian riil vs Target Mutu (3.00) vs Standar Emas (3.50)</div>
+              </div>
+            </div>
+            <div class="chart-vp"><canvas id="radarChart"></canvas></div>
+          </div>
+
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Neraca Karakter: Surplus &amp; Defisit</div>
+                <div class="chart-sub">Deviasi dimensi terhadap standar kelulusan 3.00</div>
+              </div>
+            </div>
+            <div class="chart-vp"><canvas id="balanceChart"></canvas></div>
+          </div>
+
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Evolusi Kronologis Skor Harian</div>
+                <div class="chart-sub">Tren pergerakan rata-rata indeks pembiasaan per tanggal</div>
+              </div>
+            </div>
+            <div class="chart-vp"><canvas id="trendChart"></canvas></div>
+          </div>
+
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Komparasi Antar Jenjang (X · XI · XII)</div>
+                <div class="chart-sub">Perbandingan capaian karakter antar tingkatan kelas</div>
+              </div>
+            </div>
+            <div class="chart-vp"><canvas id="gradeCompareChart"></canvas></div>
+          </div>
+
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Distribusi Kategori Skor Tiap Dimensi</div>
+                <div class="chart-sub">Proporsi Sangat Baik · Baik · Cukup · Kurang</div>
+              </div>
+            </div>
+            <div class="chart-vp"><canvas id="stackedChart"></canvas></div>
+          </div>
+
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Matriks Kesenjangan Target Ideal (3.50)</div>
+                <div class="chart-sub">Selisih capaian tiap dimensi terhadap standar kemandirian prima</div>
+              </div>
+            </div>
+            <div class="chart-vp"><canvas id="gapChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- ======================================================
+             CHARTS GRID 2: ADVANCED ANALYTICS
+             ====================================================== -->
+        <div class="charts-grid">
+          <div class="chart-section-divider">
+            <span class="chart-section-divider-label">Analisis Lanjutan</span>
+            <span class="chart-section-divider-line"></span>
+          </div>
+
+          <!-- Chart 7: Bubble Chart — Rombel Mapping -->
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Pemetaan Rombel: Rerata vs Variabilitas</div>
+                <div class="chart-sub">Bubble = jumlah siswa · X = skor rerata · Y = standar deviasi internal</div>
+              </div>
+              <span class="pill pill-blue">Scatter Intelligence</span>
+            </div>
+            <div class="chart-vp"><canvas id="bubbleChart"></canvas></div>
+          </div>
+
+          <!-- Chart 8: Donut Ring — Distribusi Keseluruhan -->
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Komposisi Kategori Karakter Keseluruhan</div>
+                <div class="chart-sub">Proporsi 1.429 siswa dalam 4 kategori capaian 7KAIH</div>
+              </div>
+              <span class="pill pill-yellow">Donut Ring</span>
+            </div>
+            <div class="chart-vp"><canvas id="donutChart"></canvas></div>
+          </div>
+
+          <!-- Chart 9: Polar Area — Bobot Dimensi -->
+          <div class="chart-card col-4">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Bobot Relatif Dimensi</div>
+                <div class="chart-sub">Polar area: kontribusi tiap pilar terhadap total indeks</div>
+              </div>
+            </div>
+            <div class="chart-vp" style="height:260px;"><canvas id="polarChart"></canvas></div>
+          </div>
+
+          <!-- Chart 10: Multi-line Area — X vs XI vs XII over time -->
+          <div class="chart-card col-8">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Tren Indeks Harian: X · XI · XII Terpisah</div>
+                <div class="chart-sub">Pergerakan rata-rata skor tiap jenjang per tanggal pengisian</div>
+              </div>
+              <span class="pill pill-green">Time Series</span>
+            </div>
+            <div class="chart-vp"><canvas id="multiTrendChart"></canvas></div>
+          </div>
+
+          <!-- Chart 11: Scatter Korelasi Dua Dimensi -->
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Korelasi: Bangun Pagi &times; Gemar Belajar</div>
+                <div class="chart-sub">Setiap titik = satu rombel · ukuran = jumlah siswa dalam rombel</div>
+              </div>
+              <span class="pill pill-blue">Correlation Plot</span>
+            </div>
+            <div class="chart-vp"><canvas id="scatterChart"></canvas></div>
+          </div>
+
+          <!-- Chart 12: Bullet Chart — Realisasi vs Target per Dimensi -->
+          <div class="chart-card col-6">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Bullet Chart: Realisasi vs Ambang Bertingkat</div>
+                <div class="chart-sub">Merah &lt;2.80 · Kuning 2.80–3.00 · Hijau &ge;3.00 · Emas 3.50</div>
+              </div>
+              <span class="pill pill-yellow">Bullet KPI</span>
+            </div>
+            <div class="bullet-wrap" id="bulletChartWrap" style="max-height:300px;overflow-y:auto;"></div>
+            <div class="bullet-legend" style="margin-top:10px;">
+              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(220,38,38,0.25);"></span>Butuh Intervensi &lt;2.80</div>
+              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(234,179,8,0.25);"></span>Stabil 2.80–3.00</div>
+              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(5,150,105,0.18);"></span>Mandiri &ge;3.00</div>
+              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:var(--blue-600);border-radius:99px;"></span>Capaian Riil</div>
+            </div>
+          </div>
+
+          <!-- Chart 13: Horizontal Rank Bar — Top 6 vs Bottom 6 Rombel -->
+          <div class="chart-card col-12">
+            <div class="chart-head">
+              <div>
+                <div class="chart-title">Top 6 Rombel Teladan vs Bottom 6 Rombel Prioritas Intervensi</div>
+                <div class="chart-sub">Perbandingan langsung rombel capaian tertinggi dan terendah berdasarkan Indeks Karakter</div>
+              </div>
+              <span class="pill pill-blue">Top/Bottom Analysis</span>
+            </div>
+            <div class="chart-vp" style="height:320px;"><canvas id="topBottomChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Rombel Table -->
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);">Peringkat Capaian Rombongan Belajar SMAMIO</div>
+              <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">18 rombel diurutkan berdasarkan Indeks Karakter — dari teladan hingga butuh pendampingan</div>
+            </div>
+            <div class="table-search">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="tableSearchInput" placeholder="Cari rombel (misal: XII-3)…" />
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th onclick="sortTable(0)">#</th>
+                  <th onclick="sortTable(1)">Rombel</th>
+                  <th onclick="sortTable(2)">Tingkat</th>
+                  <th onclick="sortTable(3)">Siswa</th>
+                  <th onclick="sortTable(4)">Indeks</th>
+                  <th onclick="sortTable(5)">Status</th>
+                  <th onclick="sortTable(6)">Bangun Pagi</th>
+                  <th onclick="sortTable(7)">Beribadah</th>
+                  <th onclick="sortTable(8)">Olahraga</th>
+                  <th onclick="sortTable(9)">Makan Sehat</th>
+                  <th onclick="sortTable(10)">Belajar</th>
+                  <th onclick="sortTable(11)">Bermasyarakat</th>
+                  <th onclick="sortTable(12)">Tidur Cepat</th>
+                </tr>
+              </thead>
+              <tbody id="classTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================
+           PANEL 3: 7 KEBIASAAN HEBAT
+           ======================================================== -->
+      <div class="panel panel-animate" id="panel-habits">
+        <div class="section-hd" style="margin-bottom:16px;">
+          <div>
+            <div class="section-title">Eksplorasi Mendalam 7 Pilar Karakter</div>
+            <div class="section-sub">Analisis spesifik per pilar berdasarkan data 1.429 siswa SMAMIO Gresik, dilengkapi indikator dan strategi tindak lanjut</div>
+          </div>
+        </div>
+        <div class="habits-grid" id="habitsContainer"></div>
+      </div>
+
+      <!-- ========================================================
+           PANEL 4: EKOSISTEM SMAMIO
+           ======================================================== -->
+      <div class="panel panel-animate" id="panel-smamio">
+        <div class="profile-hero">
+          <div class="profile-id">
+            <img src="assets/Logo%20Smam10.jpeg" alt="SMAMIO" class="profile-logo" />
+            <div>
+              <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+                <span class="pill pill-yellow">SEKOLAH BERKEMAJUAN</span>
+                <span class="pill pill-blue">GKB GRESIK</span>
+              </div>
+              <div class="profile-name">SMA Muhammadiyah 10 GKB Gresik</div>
+              <div class="profile-desc">Kampus Keberbakatan · Visi Berakhlak Mulia, Berprestasi Tinggi, Berwawasan Global</div>
+            </div>
+          </div>
+          <div class="profile-stats">
+            <div class="p-stat">
+              <div class="p-stat-val" style="color:var(--blue-600);">18</div>
+              <div class="p-stat-lbl">Rombel Aktif</div>
+            </div>
+            <div class="p-stat">
+              <div class="p-stat-val" style="color:var(--amber-dark);">1.429</div>
+              <div class="p-stat-lbl">Murid Terdata</div>
+            </div>
+            <div class="p-stat">
+              <div class="p-stat-val" style="color:var(--green-600);">100%</div>
+              <div class="p-stat-lbl">Integrasi KA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="jenjang-row">
+          <div class="jenjang-card">
+            <div class="jenjang-label">Kelas X · Fase E</div>
+            <div class="jenjang-count" style="color:var(--blue-600);" id="statCountX">476 Siswa</div>
+            <div class="jenjang-score" id="statScoreX">Rata-Rata: 0,00</div>
+          </div>
+          <div class="jenjang-card">
+            <div class="jenjang-label">Kelas XI · Fase F</div>
+            <div class="jenjang-count" style="color:var(--amber-dark);" id="statCountXI">474 Siswa</div>
+            <div class="jenjang-score" id="statScoreXI">Rata-Rata: 0,00</div>
+          </div>
+          <div class="jenjang-card">
+            <div class="jenjang-label">Kelas XII · Fase F Lanjut</div>
+            <div class="jenjang-count" style="color:var(--green-600);" id="statCountXII">479 Siswa</div>
+            <div class="jenjang-score" id="statScoreXII">Rata-Rata: 0,00</div>
+          </div>
+          <div class="jenjang-card">
+            <div class="jenjang-label">Rombel Teladan #1</div>
+            <div class="jenjang-count" id="statTopClass">XII-3</div>
+            <div><span class="pill pill-green" id="statTopScore">Indeks 85,2</span></div>
+          </div>
+        </div>
+
+        <div class="matrix-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <div>
+              <div style="font-size:0.9rem;font-weight:700;color:var(--text-1);">Heatmap Intensitas Karakter · 18 Rombel &times; 7 Kebiasaan</div>
+              <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">Peta sebaran skor tiap kelas untuk pendampingan terarah pimpinan SMAMIO</div>
+            </div>
+            <div style="display:flex;gap:10px;font-size:0.7rem;">
+              <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(5,150,105,0.25);border-radius:2px;"></span> &ge;3.20 Mandiri</span>
+              <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(234,179,8,0.25);border-radius:2px;"></span> 2.80–3.19 Stabil</span>
+              <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(220,38,38,0.2);border-radius:2px;"></span> &lt;2.80 Prioritas</span>
+            </div>
+          </div>
+          <div class="heatmap-scroll">
+            <table id="heatmapTable">
+              <thead>
+                <tr>
+                  <th>Rombel</th><th>Tingkat</th><th>Siswa</th><th>Indeks</th>
+                  <th>Bangun Pagi</th><th>Beribadah</th><th>Olahraga</th>
+                  <th>Makan Sehat</th><th>Gemar Belajar</th><th>Bermasyarakat</th><th>Tidur Cepat</th>
+                </tr>
+              </thead>
+              <tbody id="heatmapBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+/* ================================================================
+   KONSTANTA
+   ================================================================ */
+const HABIT_NAMES = ["Bangun Pagi","Beribadah","Berolahraga","Makan Sehat & Bergizi","Gemar Belajar","Bermasyarakat","Tidur Cepat"];
+
+const HABIT_DETAILS = [
+  { name:"Bangun Pagi", sub:"Integritas Fajar & Ritme Sirkadian", indikator:"Bangun sebelum 04.30 WIB dengan kesadaran mandiri tanpa alarm berulang.", dampak:"Meningkatkan kesiapan kognitif pagi hari dan kestabilan fokus belajar.", strategi:"Edukasi sleep hygiene & integrasi pelaporan salam fajar di grup kelas." },
+  { name:"Beribadah", sub:"Kedalaman Spiritual & Ketaatan Personal", indikator:"Ketertiban sholat fardhu berjamaah, tadarus Al-Qur'an, dan ibadah sunnah.", dampak:"Membentuk fondasi moral, etika, dan integritas kepribadian murid berkemajuan.", strategi:"Penguatan peran mentor Ismuba dan monitoring presensi sholat berjamaah." },
+  { name:"Berolahraga", sub:"Kebugaran Fisik & Ketahanan Mental", indikator:"Aktivitas fisik berintensitas sedang minimal 30 menit 2–3 kali seminggu.", dampak:"Mereduksi kortisol stres akademik dan meningkatkan ketahanan tubuh.", strategi:"Program senam pagi kreasi SMAMIO dan tantangan langkah harian antar-kelas." },
+  { name:"Makan Sehat & Bergizi", sub:"Nutrisi Seimbang & Anti-Junk Food", indikator:"Konsumsi sayur, buah, protein seimbang, serta membatasi makanan olahan.", dampak:"Memaksimalkan metabolisme energi otak untuk konsentrasi belajar optimal.", strategi:"Gerakan bekal sehat berstandar halal-thoyyib dan penyuluhan gizi remaja." },
+  { name:"Gemar Belajar", sub:"Literasi Mandiri & Riset Siswa", indikator:"Membaca referensi di luar modul wajib dan manajemen waktu belajar mandiri >60 menit.", dampak:"Membangun nalar kritis, kemampuan problem solving, dan kecintaan ilmu.", strategi:"Pemanfaatan perpustakaan digital SMAMIO dan reward literasi riset murid." },
+  { name:"Bermasyarakat", sub:"Kepedulian Sosial & Gotong Royong", indikator:"Aktif dalam kegiatan sosial, kolaboratif dalam tim, dan menolak perundungan.", dampak:"Meningkatkan kecerdasan emosional (EQ) dan kepemimpinan sosial siswa.", strategi:"Program aksi sosial ikatan pelajar dan duta anti-bullying perwakilan rombel." },
+  { name:"Tidur Cepat", sub:"Istirahat Berkualitas & Detoks Gawai", indikator:"Tidur tepat sebelum pukul 22.00 dan mematikan gawai saat beristirahat.", dampak:"Proses neuro-konsolidasi memori otak serta pencegahan insomnia kronis remaja.", strategi:"Kesepakatan digital sunset: menonaktifkan notifikasi penugasan setelah 20.30 WIB." }
+];
+
+/* ================================================================
+   STATE
+   ================================================================ */
+let activeRows = [], availableDates = [];
+let radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart;
+let bubbleChart, donutChart, polarChart, multiTrendChart, scatterChart, topBottomChart;
+let refreshInterval = null;
+let currentSortColumn = 4, sortAscending = false;
+
+/* ================================================================
+   NAVIGATION
+   ================================================================ */
+const PAGE_TITLES = {
+  manifesto: "Latar Belakang & Urgensi Program",
+  analytics:  "Live Analytics Hub",
+  habits:     "Profil & Hasil 7 Kebiasaan Hebat",
+  smamio:     "Ekosistem Sekolah SMAMIO"
+};
+
+function initTabs() {
+  document.querySelectorAll(".nav-item[data-tab]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".nav-item[data-tab]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.getAttribute("data-tab");
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      const panel = document.getElementById("panel-" + tab);
+      if (panel) panel.classList.add("active");
+      document.getElementById("pageTitleText").textContent = PAGE_TITLES[tab] || tab;
+      if (tab === "analytics") setTimeout(updateChartThemeColors, 50);
+    });
+  });
+}
+
+/* ================================================================
+   THEME
+   ================================================================ */
+function initTheme() {
+  applyTheme(localStorage.getItem("kaih_theme") || "light");
+  document.getElementById("themeToggleBtn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme") || "light";
+    applyTheme(cur === "light" ? "dark" : "light");
+  });
+}
+
+function applyTheme(theme) {
+  const ic = document.getElementById("themeIconContainer");
+  const tt = document.getElementById("themeText");
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    ic.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
+    tt.textContent = "Mode Terang";
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    ic.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
+    tt.textContent = "Mode Gelap";
+  }
+  localStorage.setItem("kaih_theme", theme);
+  updateChartThemeColors();
+}
+
+function updateChartThemeColors() {
+  if (!radarChart) return;
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  const tick = dark ? "#64748b" : "#94a3b8";
+  const grid = dark ? "rgba(30,45,74,0.8)" : "rgba(226,232,240,0.9)";
+  [radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart,
+   bubbleChart, donutChart, polarChart, multiTrendChart, scatterChart, topBottomChart].forEach(c => {
+    if (!c) return;
+    if (c.options.scales) {
+      Object.keys(c.options.scales).forEach(k => {
+        const s = c.options.scales[k];
+        if (s.ticks) s.ticks.color = tick;
+        if (s.grid) s.grid.color = grid;
+        if (s.pointLabels) s.pointLabels.color = tick;
+      });
+    }
+    c.resize(); c.update();
+  });
+}
+
+/* ================================================================
+   ALERT
+   ================================================================ */
+function showMessage(msg, isError = true) {
+  const b = document.getElementById("alertBox");
+  b.style.display = "block";
+  b.style.backgroundColor = isError ? "var(--red-50)" : "var(--green-50)";
+  b.style.color = isError ? "var(--red-600)" : "var(--green-600)";
+  b.style.borderColor = isError ? "var(--red-100)" : "var(--green-100)";
+  b.innerHTML = msg.replace(/\n/g,"<br/>");
+  if (!isError) setTimeout(() => { b.style.display = "none"; }, 7000);
+}
+
+/* ================================================================
+   SCORE MAPPER
+   ================================================================ */
+function scoreMapper(val) {
+  if (val === undefined || val === null || val === "") return null;
+  if (!isNaN(val)) { const n = parseFloat(val); if (n >= 1 && n <= 4) return n; }
+  const s = String(val).trim().toLowerCase();
+  if (s.includes("sebelum pukul 04.00")||s.includes("bangun sendiri tepat waktu")||s.includes("selalu tepat waktu")||s.includes("tidak pernah tertinggal")||s.includes("kesadaran pribadi penuh")||s.includes("rutin setiap hari")||s.includes("sedang–berat")||s.includes("selalu terpenuhi")||s.includes("bebas junk food")||s.includes("lebih dari 90 menit")||s.includes("aktif mencari referensi")||s.includes("aktif berkomunikasi")||s.includes("mencegah bullying")||s.includes("sebelum atau tepat pukul 21.00")||s.includes("mematikan/menjauhkan gawai")) return 4;
+  if (s.includes("04.00 – 05.00")||s.includes("sekali panggil")||s.includes("alarm berbunyi 1-2")||s.includes("sesekali tertunda")||s.includes("rutinitas/ingatan")||s.includes("2-3 kali")||s.includes("ringan/peregangan")||s.includes("sebagian besar")||s.includes("membatasi junk food")||s.includes("45 – 90 menit")||s.includes("tepat waktu dan membaca")||s.includes("bersosialisasi dengan baik")||s.includes("ramah dan tidak pernah")||s.includes("21.00 – 22.00")||s.includes("sebentar untuk hal penting")) return 3;
+  if (s.includes("05.00 – 06.00")||s.includes("beberapa kali alarm")||s.includes("sebagian ibadah")||s.includes("diingatkan")||s.includes("1 kali dalam seminggu")||s.includes("jalan kaki")||s.includes("jarang mengonsumsi sayur")||s.includes("sering mengonsumsi junk food")||s.includes("15 – 44 menit")||s.includes("mendekati batas waktu")||s.includes("pasif")||s.includes("kata-kata kasar")||s.includes("22.00 – 23.00")||s.includes("di atas tempat tidur")) return 2;
+  return 1;
+}
+
+function normalizeKelasAndTingkat(k) {
+  if (!k) return { tingkat:"Lainnya", kelas:"Lainnya" };
+  let raw = String(k).toUpperCase().trim();
+  let s = raw.replace(/[^A-Z0-9]/g, '');
+  let tingkat = "Lainnya", rest = "";
+  if (s.startsWith('XII')||s.startsWith('12')) { tingkat="XII"; rest=s.replace(/^(KELAS)?(XII|12|CII)/,''); }
+  else if (s.startsWith('XI')||s.startsWith('11')) { tingkat="XI"; rest=s.replace(/^(XI|11|CI)/,''); if(s==='SEBELASTIGA') rest='3'; }
+  else if (s.startsWith('X')||s.startsWith('10')) { tingkat="X"; rest=s.replace(/^(X|10)/,''); }
+  else return { tingkat:"Lainnya", kelas:raw||"Lainnya" };
+  const m = rest.match(/(\d+)/);
+  if (m && parseInt(m[1],10)>=1 && parseInt(m[1],10)<=6) return { tingkat, kelas:`${tingkat}-${parseInt(m[1],10)}` };
+  return { tingkat, kelas:`${tingkat}-Umum` };
+}
+
+function parseSheetMatrix(matrix) {
+  if (!matrix || matrix.length < 2) throw new Error("Belum ada data responden.");
+  const headers = matrix[0].map(h => String(h||"").trim());
+  const colKelas = headers.findIndex(h => h.toLowerCase().includes('kelas')||h.toLowerCase().includes('rombel'));
+  const colTime  = headers.findIndex(h => h.toLowerCase().includes('timestamp')||h.toLowerCase().includes('waktu'));
+  let startQ = colKelas !== -1 ? colKelas + 1 : 3;
+  if (headers.length >= 15 && (startQ + 14) > headers.length) startQ = headers.length - 14;
+  const newRows = [], datesSet = new Set();
+  for (let i = 1; i < matrix.length; i++) {
+    const row = matrix[i];
+    if (!row || row.length === 0) continue;
+    let filled = 0;
+    for (let q = 0; q < 14; q++) if (row[startQ+q]!==undefined && String(row[startQ+q]).trim()!=="") filled++;
+    if (filled < 4) continue;
+    const { tingkat, kelas } = normalizeKelasAndTingkat(colKelas!==-1 ? row[colKelas] : "");
+    let dateStr = "2026-11-04";
+    if (colTime !== -1 && row[colTime]) {
+      let t = String(row[colTime]).trim();
+      if (t.match(/^\d{4}-\d{2}-\d{2}/)) dateStr = t.slice(0,10);
+      else if (t.includes('/')) { const p=t.split(' ')[0].split('/'); if(p.length===3){const y=p[2].length===4?p[2]:'20'+p[2]; dateStr=`${y}-${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}`;} }
+    }
+    datesSet.add(dateStr);
+    const scores = [];
+    for (let q = 0; q < 7; q++) {
+      const s1 = scoreMapper(row[startQ+q*2]) || 2;
+      const s2 = scoreMapper(row[startQ+q*2+1]) || 2;
+      scores.push(+((s1+s2)/2).toFixed(2));
+    }
+    newRows.push({ tingkat, kelas, date: dateStr, scores });
+  }
+  if (newRows.length === 0) throw new Error("Data tidak valid atau kosong.");
+  activeRows = newRows;
+  availableDates = [...datesSet].sort();
+  updateDateDropdown(); populateKelasDropdown(); updateDashboard();
+  return true;
+}
+
+/* ================================================================
+   GOOGLE SHEETS SYNC
+   ================================================================ */
+async function syncFromGoogleSheets() {
+  document.getElementById("alertBox").style.display = "none";
+  let url = document.getElementById("sheetCsvUrl").value.trim();
+  if (!url) { showMessage("Silakan tempel URL Google Sheets terlebih dahulu."); return; }
+  if (url.includes("docs.google.com/spreadsheets")) {
+    if (url.includes("/pub")||url.includes("/d/e/")) { if (!url.includes("output=csv")) url += (url.includes("?")?"&":"?")+"output=csv"; }
+    else if (url.includes("/d/")) { const m=url.match(/\/d\/([a-zA-Z0-9-_]+)/); if(m&&m[1]!=='e') url=`https://docs.google.com/spreadsheets/d/${m[1]}/export?format=csv`; }
+    document.getElementById("sheetCsvUrl").value = url;
+  }
+  localStorage.setItem("kaih_sheet_url", url);
+  const btn = document.getElementById("btnSync");
+  const orig = btn.innerHTML;
+  btn.innerHTML = `<span>Menghubungkan…</span>`;
+  try {
+    const res = await fetch(url, { method:'GET', cache:'no-store', headers:{'Accept':'text/csv'} });
+    if (!res.ok) throw new Error(`Status HTTP: ${res.status}`);
+    const csv = await res.text();
+    if (csv.trim().toLowerCase().startsWith("<!doctype html")||csv.trim().toLowerCase().startsWith("<html")) throw new Error("Link terproteksi. Aktifkan 'Siapa saja yang memiliki link' di Google Sheets.");
+    const wb = XLSX.read(csv, { type:"string" });
+    const matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1 });
+    parseSheetMatrix(matrix);
+    const now = new Date().toLocaleTimeString("id-ID");
+    document.getElementById("liveDot").classList.add("on");
+    document.getElementById("lastSyncTime").textContent = `Update: ${now}`;
+    document.getElementById("sourceInfo").textContent = `Google Sheets Live (${activeRows.length} Siswa)`;
+    showMessage("Data Google Sheets berhasil disinkronkan.", false);
+  } catch(err) {
+    let msg = err.message;
+    if (msg.toLowerCase().includes('failed to fetch')) msg = "Diblokir browser (CORS). Gunakan Publish to Web CSV di Google Sheets.";
+    showMessage(`<strong>Gagal sinkronisasi:</strong> ${msg}`);
+    document.getElementById("liveDot").classList.remove("on");
+  } finally {
+    btn.innerHTML = orig;
+  }
+}
+
+document.getElementById("excelFile").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById("alertBox").style.display = "none";
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const wb = XLSX.read(new Uint8Array(ev.target.result), { type:"array" });
+      const matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1 });
+      if (parseSheetMatrix(matrix)) {
+        document.getElementById("liveDot").classList.remove("on");
+        document.getElementById("sourceInfo").textContent = `${file.name} (${activeRows.length} Siswa)`;
+        document.getElementById("lastSyncTime").textContent = "File lokal";
+        showMessage("Dataset berhasil dimuat ke dashboard.", false);
+      }
+    } catch(err) { showMessage("Gagal membaca file: " + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+/* ================================================================
+   DEFAULT DATA
+   ================================================================ */
+function loadDefaultData() {
+  availableDates = ["2026-11-04","2026-11-06","2026-11-11","2026-11-13"];
+  const baseClasses = [
+    {k:"X-1",  t:"X",   n:52,  sc:[2.93,3.45,2.91,3.03,2.71,3.38,2.80]},
+    {k:"X-2",  t:"X",   n:57,  sc:[3.21,3.63,3.18,3.31,3.04,3.56,3.08]},
+    {k:"X-3",  t:"X",   n:80,  sc:[2.92,3.44,2.90,3.02,2.70,3.37,2.79]},
+    {k:"X-4",  t:"X",   n:85,  sc:[2.75,3.27,2.73,2.84,2.52,3.20,2.61]},
+    {k:"X-5",  t:"X",   n:101, sc:[2.94,3.46,2.92,3.04,2.72,3.39,2.81]},
+    {k:"X-6",  t:"X",   n:101, sc:[2.84,3.36,2.82,2.93,2.61,3.29,2.70]},
+    {k:"XI-1", t:"XI",  n:73,  sc:[2.80,3.34,2.61,2.96,2.68,3.31,2.66]},
+    {k:"XI-2", t:"XI",  n:72,  sc:[2.87,3.41,2.69,3.04,2.76,3.39,2.74]},
+    {k:"XI-3", t:"XI",  n:75,  sc:[2.88,3.42,2.70,3.05,2.77,3.40,2.75]},
+    {k:"XI-4", t:"XI",  n:84,  sc:[2.98,3.51,2.81,3.12,2.89,3.46,2.85]},
+    {k:"XI-5", t:"XI",  n:85,  sc:[2.85,3.39,2.67,3.02,2.74,3.37,2.72]},
+    {k:"XI-6", t:"XI",  n:85,  sc:[2.85,3.38,2.66,3.01,2.73,3.36,2.71]},
+    {k:"XII-1",t:"XII", n:72,  sc:[2.99,3.53,2.62,3.05,2.96,3.41,2.72]},
+    {k:"XII-2",t:"XII", n:83,  sc:[3.04,3.56,2.69,3.09,3.03,3.47,2.79]},
+    {k:"XII-3",t:"XII", n:90,  sc:[3.15,3.64,2.79,3.19,3.16,3.54,2.86]},
+    {k:"XII-4",t:"XII", n:59,  sc:[3.11,3.59,2.74,3.14,3.10,3.52,2.85]},
+    {k:"XII-5",t:"XII", n:58,  sc:[3.09,3.61,2.76,3.16,3.12,3.51,2.83]},
+    {k:"XII-6",t:"XII", n:60,  sc:[2.74,3.31,2.41,2.82,2.73,3.18,2.49]}
+  ];
+  activeRows = [];
+  baseClasses.forEach(bc => {
+    for (let i = 0; i < bc.n; i++) {
+      activeRows.push({ tingkat:bc.t, kelas:bc.k, date:availableDates[i%availableDates.length], scores:bc.sc.map(s=>Math.min(4,Math.max(1,s))) });
+    }
+  });
+  updateDateDropdown(); populateKelasDropdown(); updateDashboard();
+}
+
+function updateDateDropdown() {
+  const sel = document.getElementById("filterDate");
+  sel.innerHTML = '<option value="ALL">Semua Tanggal</option>';
+  availableDates.forEach(d => { const o=document.createElement("option"); o.value=d; o.textContent=d; sel.appendChild(o); });
+}
+
+function populateKelasDropdown() {
+  const tingkat = document.getElementById("filterTingkat").value;
+  const sel = document.getElementById("filterKelas");
+  const prev = sel.value;
+  sel.innerHTML = '<option value="ALL">Semua Rombel</option>';
+  const uniq = [...new Set(activeRows.filter(r=>tingkat==="ALL"||r.tingkat===tingkat).map(r=>r.kelas))].sort();
+  uniq.forEach(k => {
+    const cnt = activeRows.filter(r=>r.kelas===k).length;
+    const o = document.createElement("option"); o.value=k; o.textContent=`${k} (${cnt})`; sel.appendChild(o);
+  });
+  if ([...sel.options].some(o=>o.value===prev)) sel.value = prev;
+}
+
+/* ================================================================
+   DASHBOARD ENGINE
+   ================================================================ */
+function updateDashboard() {
+  const tingkat = document.getElementById("filterTingkat").value;
+  const kelas   = document.getElementById("filterKelas").value;
+  const date    = document.getElementById("filterDate").value;
+  const filtered = activeRows.filter(r => {
+    if (tingkat!=="ALL" && r.tingkat!==tingkat) return false;
+    if (kelas!=="ALL" && r.kelas!==kelas) return false;
+    if (date!=="ALL" && r.date!==date) return false;
+    return true;
+  });
+  const totalN = filtered.length;
+  if (totalN === 0) { document.getElementById("kpiCount").textContent="0"; return; }
+
+  const habitAvg = [0,0,0,0,0,0,0];
+  filtered.forEach(r => r.scores.forEach((s,i) => habitAvg[i] += s));
+  for (let i=0;i<7;i++) habitAvg[i] = +(habitAvg[i]/totalN).toFixed(2);
+  const overallMean = habitAvg.reduce((a,b)=>a+b,0)/7;
+  const overallIdx  = (((overallMean-1)/3)*100);
+
+  let bestIdx=0, worstIdx=0;
+  habitAvg.forEach((v,i) => { if(v>habitAvg[bestIdx]) bestIdx=i; if(v<habitAvg[worstIdx]) worstIdx=i; });
+
+  const classMap = {};
+  filtered.forEach(r => {
+    if (!classMap[r.kelas]) classMap[r.kelas]={kelas:r.kelas,tingkat:r.tingkat,n:0,scores:[0,0,0,0,0,0,0]};
+    classMap[r.kelas].n++;
+    r.scores.forEach((s,i) => classMap[r.kelas].scores[i]+=s);
+  });
+  const classRows = Object.values(classMap).map(c => {
+    const scores = c.scores.map(v=>+(v/c.n).toFixed(2));
+    const mean = scores.reduce((a,b)=>a+b,0)/7;
+    const idx  = +(((mean-1)/3)*100).toFixed(1);
+    return {...c, scores, idx, mean};
+  });
+
+  let stdDev = 0;
+  if (classRows.length > 1) {
+    const mi = classRows.reduce((a,c)=>a+c.idx,0)/classRows.length;
+    stdDev = Math.sqrt(classRows.reduce((a,c)=>a+Math.pow(c.idx-mi,2),0)/(classRows.length-1));
+  }
+
+  // KPI
+  document.getElementById("kpiCount").textContent = totalN.toLocaleString("id-ID");
+  document.getElementById("kpiPct").textContent = `${((totalN/activeRows.length)*100).toFixed(1)}% populasi`;
+  document.getElementById("kpiIndex").textContent = overallIdx.toFixed(1).replace(".",",");
+  document.getElementById("kpiMean").textContent  = overallMean.toFixed(2).replace(".",",");
+  const gl = overallIdx>=75?"Prima":(overallIdx>=60?"Baik":"Butuh Perhatian");
+  const ge = document.getElementById("kpiIndexGrade");
+  ge.textContent = gl; ge.className = `pill ${overallIdx>=75?"pill-green":(overallIdx>=60?"pill-yellow":"pill-red")}`;
+  document.getElementById("kpiBest").textContent      = HABIT_NAMES[bestIdx];
+  document.getElementById("kpiBestScore").textContent = `Skor ${habitAvg[bestIdx].toFixed(2).replace(".",",")}`;
+  document.getElementById("kpiWorst").textContent      = HABIT_NAMES[worstIdx];
+  document.getElementById("kpiWorstScore").textContent = `Skor ${habitAvg[worstIdx].toFixed(2).replace(".",",")}`;
+  document.getElementById("kpiWorstGap").textContent   = `Gap: −${Math.max(0,3.0-habitAvg[worstIdx]).toFixed(2)} poin`;
+  document.getElementById("kpiStdDev").textContent = `± ${stdDev.toFixed(2)}`;
+  const sb = document.getElementById("kpiStdBadge");
+  if (stdDev<4) { sb.textContent="Pemerataan Tinggi"; sb.className="pill pill-green"; }
+  else if (stdDev<8) { sb.textContent="Variasi Moderat"; sb.className="pill pill-yellow"; }
+  else { sb.textContent="Disparitas Lebar"; sb.className="pill pill-red"; }
+  const sortedByRank = [...classRows].sort((a,b)=>b.idx-a.idx);
+  if (sortedByRank.length > 0) {
+    document.getElementById("kpiTopClass").textContent     = sortedByRank[0].kelas;
+    document.getElementById("kpiTopClassScore").textContent = `Indeks ${sortedByRank[0].idx}`;
+    document.getElementById("kpiTopClassMeta").textContent  = `${sortedByRank[0].n} siswa`;
+  }
+
+  renderAiExecutiveSummary(overallIdx, overallMean, HABIT_NAMES[bestIdx], habitAvg[bestIdx], HABIT_NAMES[worstIdx], habitAvg[worstIdx], stdDev, sortedByRank);
+  updateRadarChart(habitAvg);
+  updateBalanceChart(habitAvg);
+  updateTrendChart();
+  updateGradeCompareChart(filtered);
+  updateStackedChart(filtered, totalN);
+  updateGapMatrix(habitAvg);
+  updateBubbleChart(classRows);
+  updateDonutChart(filtered);
+  updatePolarChart(habitAvg);
+  updateMultiTrendChart();
+  updateScatterChart(classRows);
+  renderBulletChart(habitAvg);
+  updateTopBottomChart(classRows);
+  updateSimulatorBaseline(overallIdx, worstIdx, habitAvg[worstIdx]);
+  renderTable(classRows);
+  renderHabitsDeepDive(habitAvg, filtered);
+  renderSmamioStats(filtered, classRows);
+}
+
+/* ================================================================
+   AI DIAGNOSTIC TEXT
+   ================================================================ */
+function renderAiExecutiveSummary(idx, mean, bestN, bestS, worstN, worstS, std, sorted) {
+  const el = document.getElementById("aiExecutiveSummary");
+  const lowCount = sorted.filter(c=>c.mean<2.80).length;
+  const topCount  = sorted.filter(c=>c.mean>=3.20).length;
+  let txt = `Berdasarkan analisis terhadap <strong>${activeRows.length} entri data siswa SMAMIO Gresik</strong>, Indeks Karakter berada pada skor <strong>${idx.toFixed(1)}/100</strong> (Rerata: ${mean.toFixed(2)}/4.00). `;
+  txt += `Dimensi <strong>${bestN}</strong> menjadi capaian tertinggi dengan skor <strong>${bestS.toFixed(2)}</strong>. Kebiasaan <strong>${worstN}</strong> (${worstS.toFixed(2)}) merupakan prioritas pembinaan utama. `;
+  if (lowCount > 0) txt += `Terdapat <strong>${lowCount} rombel</strong> di bawah ambang 2.80, prioritas pendampingan: <strong>${sorted[sorted.length-1].kelas}</strong>. `;
+  else txt += `Seluruh rombel di atas ambang 2.80; ${topCount} rombel mencapai kategori berprestasi. `;
+  txt += `<br><strong style="color:var(--text-1);">Rekomendasi:</strong> Fokuskan intervensi pada dimensi <em>${worstN}</em>, replikasi pola pembiasaan rombel <em>${sorted[0].kelas}</em> ke kuartil bawah.`;
+  el.innerHTML = txt;
+}
+
+/* ================================================================
+   CHARTS INIT
+   ================================================================ */
+function initCharts() {
+  const dark = document.documentElement.getAttribute("data-theme")==="dark";
+  const tick = dark?"#64748b":"#94a3b8";
+  const grid = dark?"rgba(30,45,74,0.8)":"rgba(226,232,240,0.9)";
+
+  // 1. Radar
+  radarChart = new Chart(document.getElementById("radarChart"), {
+    type:"radar",
+    data:{
+      labels: HABIT_NAMES,
+      datasets:[
+        { label:"Capaian SMAMIO", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.18)", borderColor:"#2563eb", pointBackgroundColor:"#FACC15", pointBorderColor:"#fff", pointBorderWidth:1.5, pointRadius:4.5, borderWidth:2.2 },
+        { label:"Target Mutu (3.00)", data:[3,3,3,3,3,3,3], borderColor:"rgba(234,179,8,0.85)", borderDash:[4,4], borderWidth:1.8, fill:false, pointRadius:0 },
+        { label:"Standar Emas (3.50)", data:[3.5,3.5,3.5,3.5,3.5,3.5,3.5], borderColor:"rgba(5,150,105,0.65)", borderDash:[2,2], borderWidth:1.5, fill:false, pointRadius:0 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } } }, scales:{ r:{ min:1, max:4, ticks:{ stepSize:1, color:tick, font:{size:10} }, grid:{ color:grid }, pointLabels:{ color:tick, font:{size:11} }, angleLines:{ color:grid } } } }
+  });
+
+  // 2. Balance (Neraca)
+  balanceChart = new Chart(document.getElementById("balanceChart"), {
+    type:"bar",
+    data:{ labels:HABIT_NAMES, datasets:[{ label:"Deviasi vs 3.00", data:[0,0,0,0,0,0,0], backgroundColor:"#059669", borderRadius:4, borderSkipped:false }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`Deviasi: ${c.raw>0?'+':''}${c.raw}`}} },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:tick, font:{size:10}} },
+        y:{ min:-1, max:1, grid:{color:grid}, ticks:{color:tick, stepSize:0.25,
+          callback:v=>`${v>0?'+':''}${v.toFixed(2)}`
+        },
+        border:{ display:true, color:grid }
+        }
+      }
+    }
+  });
+
+  // 3. Trend
+  trendChart = new Chart(document.getElementById("trendChart"), {
+    type:"line",
+    data:{ labels:[], datasets:[{ label:"Rata-Rata Harian", data:[], borderColor:"#2563eb", backgroundColor:"rgba(37,99,235,0.08)", borderWidth:2, pointRadius:4, pointBackgroundColor:"#2563eb", tension:0.4, fill:true }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{grid:{display:false},ticks:{color:tick}}, y:{min:1,max:4,grid:{color:grid},ticks:{color:tick}} } }
+  });
+
+  // 4. Grade Compare
+  gradeCompareChart = new Chart(document.getElementById("gradeCompareChart"), {
+    type:"bar",
+    data:{
+      labels: HABIT_NAMES,
+      datasets:[
+        { label:"Kelas X",   data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.75)", borderRadius:3 },
+        { label:"Kelas XI",  data:[0,0,0,0,0,0,0], backgroundColor:"rgba(234,179,8,0.75)",  borderRadius:3 },
+        { label:"Kelas XII", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(5,150,105,0.75)",  borderRadius:3 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'top',labels:{boxWidth:11,font:{size:10.5}}} }, scales:{ x:{grid:{display:false},ticks:{color:tick,font:{size:10}}}, y:{min:1,max:4,grid:{color:grid},ticks:{color:tick}} } }
+  });
+
+  // 5. Stacked
+  stackedChart = new Chart(document.getElementById("stackedChart"), {
+    type:"bar",
+    data:{
+      labels: HABIT_NAMES,
+      datasets:[
+        { label:"Sangat Baik (≥3.5)", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(5,150,105,0.8)",   borderRadius:0 },
+        { label:"Baik (2.5–3.49)",    data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.75)",  borderRadius:0 },
+        { label:"Cukup (1.5–2.49)",   data:[0,0,0,0,0,0,0], backgroundColor:"rgba(234,179,8,0.75)",  borderRadius:0 },
+        { label:"Kurang (<1.5)",       data:[0,0,0,0,0,0,0], backgroundColor:"rgba(220,38,38,0.75)",  borderRadius:0 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'top',labels:{boxWidth:11,font:{size:10.5}}} }, scales:{ x:{stacked:true,grid:{display:false},ticks:{color:tick,font:{size:10}}}, y:{stacked:true,max:100,grid:{color:grid},ticks:{color:tick,callback:v=>v+"%"}} } }
+  });
+
+  // 6. Gap
+  gapChart = new Chart(document.getElementById("gapChart"), {
+    type:"bar",
+    data:{
+      labels: HABIT_NAMES,
+      datasets:[
+        { label:"Capaian Riil", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.75)", borderRadius:4 },
+        { label:"Standar Emas (3.50)", data:[3.5,3.5,3.5,3.5,3.5,3.5,3.5], backgroundColor:"rgba(234,179,8,0.25)", borderRadius:4, borderWidth:1.5, borderColor:"rgba(234,179,8,0.8)" }
+      ]
+    },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'top',labels:{boxWidth:11,font:{size:10.5}}} }, scales:{ x:{min:0,max:4,grid:{color:grid},ticks:{color:tick}}, y:{grid:{display:false},ticks:{color:tick,font:{size:10}}} } }
+  });
+
+  // 7. Bubble Chart — Rombel Mapping (x=mean, y=score stddev, r=sqrt(n))
+  bubbleChart = new Chart(document.getElementById("bubbleChart"), {
+    type:"bubble",
+    data:{
+      datasets:[
+        { label:"Kelas X",   data:[], backgroundColor:"rgba(37,99,235,0.6)",  borderColor:"rgba(37,99,235,0.9)",  borderWidth:1 },
+        { label:"Kelas XI",  data:[], backgroundColor:"rgba(234,179,8,0.65)", borderColor:"rgba(234,179,8,0.9)",  borderWidth:1 },
+        { label:"Kelas XII", data:[], backgroundColor:"rgba(5,150,105,0.6)",  borderColor:"rgba(5,150,105,0.9)",  borderWidth:1 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } },
+        tooltip:{ callbacks:{
+          label: ctx => {
+            const d = ctx.raw;
+            return [`${d.label}`, `Rerata: ${d.x.toFixed(2)}`, `Variabilitas: ${d.y.toFixed(2)}`, `Siswa: ${d.siswa}`];
+          }
+        }}
+      },
+      scales:{
+        x:{ min:1, max:4, title:{ display:true, text:"Skor Rata-Rata", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} },
+        y:{ min:0, max:1, title:{ display:true, text:"Variabilitas (Std Dev)", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.2} }
+      }
+    }
+  });
+
+  // 8. Donut Ring — Distribusi Kategori Keseluruhan
+  donutChart = new Chart(document.getElementById("donutChart"), {
+    type:"doughnut",
+    data:{
+      labels:["Sangat Baik (≥3.5)","Baik (2.5–3.49)","Cukup (1.5–2.49)","Kurang (<1.5)"],
+      datasets:[{
+        data:[0,0,0,0],
+        backgroundColor:["rgba(5,150,105,0.82)","rgba(37,99,235,0.78)","rgba(234,179,8,0.78)","rgba(220,38,38,0.78)"],
+        borderColor:["#059669","#2563eb","#eab308","#dc2626"],
+        borderWidth:2,
+        hoverOffset:6
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      cutout:"62%",
+      plugins:{
+        legend:{ position:'right', labels:{ boxWidth:12, font:{size:10.5}, padding:12 } },
+        tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${ctx.raw.toFixed(1)}%` } }
+      }
+    }
+  });
+
+  // 9. Polar Area — Bobot Relatif Dimensi
+  polarChart = new Chart(document.getElementById("polarChart"), {
+    type:"polarArea",
+    data:{
+      labels: HABIT_NAMES,
+      datasets:[{
+        data:[0,0,0,0,0,0,0],
+        backgroundColor:[
+          "rgba(37,99,235,0.72)","rgba(5,150,105,0.72)","rgba(234,179,8,0.72)",
+          "rgba(220,38,38,0.65)","rgba(37,99,235,0.5)","rgba(5,150,105,0.5)","rgba(234,179,8,0.5)"
+        ],
+        borderColor:["#2563eb","#059669","#eab308","#dc2626","#60a5fa","#34d399","#fde047"],
+        borderWidth:1.5
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right', labels:{ boxWidth:11, font:{size:9.5}, padding:8 } } },
+      scales:{ r:{ ticks:{ display:false }, grid:{ color:grid }, pointLabels:{ display:false } } }
+    }
+  });
+
+  // 10. Multi-line Area Trend — X, XI, XII terpisah
+  multiTrendChart = new Chart(document.getElementById("multiTrendChart"), {
+    type:"line",
+    data:{
+      labels:[],
+      datasets:[
+        { label:"Kelas X",   data:[], borderColor:"#2563eb", backgroundColor:"rgba(37,99,235,0.07)", borderWidth:2, pointRadius:3.5, pointBackgroundColor:"#2563eb", tension:0.4, fill:true },
+        { label:"Kelas XI",  data:[], borderColor:"#eab308", backgroundColor:"rgba(234,179,8,0.07)", borderWidth:2, pointRadius:3.5, pointBackgroundColor:"#eab308", tension:0.4, fill:true },
+        { label:"Kelas XII", data:[], borderColor:"#059669", backgroundColor:"rgba(5,150,105,0.07)", borderWidth:2, pointRadius:3.5, pointBackgroundColor:"#059669", tension:0.4, fill:true }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } } },
+      scales:{
+        x:{ grid:{display:false}, ticks:{color:tick} },
+        y:{ min:1, max:4, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} }
+      }
+    }
+  });
+
+  // 11. Scatter Korelasi — Bangun Pagi vs Gemar Belajar per rombel
+  scatterChart = new Chart(document.getElementById("scatterChart"), {
+    type:"scatter",
+    data:{
+      datasets:[
+        { label:"Kelas X",   data:[], backgroundColor:"rgba(37,99,235,0.7)",  pointRadius:8, pointHoverRadius:10 },
+        { label:"Kelas XI",  data:[], backgroundColor:"rgba(234,179,8,0.75)", pointRadius:8, pointHoverRadius:10 },
+        { label:"Kelas XII", data:[], backgroundColor:"rgba(5,150,105,0.7)",  pointRadius:8, pointHoverRadius:10 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } },
+        tooltip:{ callbacks:{
+          label: ctx => {
+            const d = ctx.raw;
+            return [`${d.label}`, `Bangun Pagi: ${d.x.toFixed(2)}`, `Gemar Belajar: ${d.y.toFixed(2)}`];
+          }
+        }}
+      },
+      scales:{
+        x:{ min:1, max:4, title:{ display:true, text:"Bangun Pagi", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} },
+        y:{ min:1, max:4, title:{ display:true, text:"Gemar Belajar", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} }
+      }
+    }
+  });
+
+  // 13. Top/Bottom Horizontal Bar — Top 6 vs Bottom 6
+  topBottomChart = new Chart(document.getElementById("topBottomChart"), {
+    type:"bar",
+    data:{
+      labels:[],
+      datasets:[
+        { label:"Indeks Karakter (0–100)", data:[], backgroundColor:[], borderRadius:5, borderSkipped:false }
+      ]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{ callbacks:{ label: ctx => `Indeks: ${ctx.raw.toFixed(1)}` } }
+      },
+      scales:{
+        x:{ min:0, max:100, grid:{color:grid}, ticks:{color:tick, callback:v=>v+""} },
+        y:{ grid:{display:false}, ticks:{color:tick, font:{size:10.5}} }
+      }
+    }
+  });
+}
+
+function updateRadarChart(d)    { radarChart.data.datasets[0].data=d; radarChart.update(); }
+function updateBalanceChart(d)  {
+  const devs = d.map(s=>+(s-3.0).toFixed(2));
+  balanceChart.data.datasets[0].data = devs;
+  balanceChart.data.datasets[0].backgroundColor = devs.map(v=>v>=0?"rgba(5,150,105,0.8)":"rgba(220,38,38,0.8)");
+  balanceChart.update();
+}
+function updateStackedChart(filtered, totalN) {
+  const s4=[0,0,0,0,0,0,0],s3=[0,0,0,0,0,0,0],s2=[0,0,0,0,0,0,0],s1=[0,0,0,0,0,0,0];
+  filtered.forEach(r=>r.scores.forEach((s,i)=>{if(s>=3.5)s4[i]++;else if(s>=2.5)s3[i]++;else if(s>=1.5)s2[i]++;else s1[i]++;}));
+  stackedChart.data.datasets[0].data=s4.map(v=>+((v/totalN)*100).toFixed(1));
+  stackedChart.data.datasets[1].data=s3.map(v=>+((v/totalN)*100).toFixed(1));
+  stackedChart.data.datasets[2].data=s2.map(v=>+((v/totalN)*100).toFixed(1));
+  stackedChart.data.datasets[3].data=s1.map(v=>+((v/totalN)*100).toFixed(1));
+  stackedChart.update();
+}
+function updateTrendChart() {
+  const dm={};
+  activeRows.forEach(r=>{ if(!dm[r.date]) dm[r.date]={sum:0,c:0}; dm[r.date].sum+=r.scores.reduce((a,b)=>a+b,0)/7; dm[r.date].c++; });
+  const dates = Object.keys(dm).sort();
+  trendChart.data.labels = dates;
+  trendChart.data.datasets[0].data = dates.map(d=>+(dm[d].sum/dm[d].c).toFixed(2));
+  trendChart.update();
+}
+function updateGradeCompareChart(filtered) {
+  ["X","XI","XII"].forEach((g,idx)=>{
+    const gr=filtered.filter(r=>r.tingkat===g);
+    const avg=[0,0,0,0,0,0,0];
+    if(gr.length>0){gr.forEach(r=>r.scores.forEach((s,i)=>avg[i]+=s));avg.forEach((v,i)=>avg[i]=+(v/gr.length).toFixed(2));}
+    gradeCompareChart.data.datasets[idx].data=avg;
+  });
+  gradeCompareChart.update();
+}
+function updateGapMatrix(d) { gapChart.data.datasets[0].data=d; gapChart.update(); }
+
+/* ================================================================
+   CHARTS UPDATE — 7 through 13
+   ================================================================ */
+function updateBubbleChart(classRows) {
+  if (!bubbleChart) return;
+  ["X","XI","XII"].forEach((g,gi) => {
+    bubbleChart.data.datasets[gi].data = classRows
+      .filter(c => c.tingkat === g)
+      .map(c => {
+        const mean = c.scores.reduce((a,b)=>a+b,0)/7;
+        const variance = c.scores.reduce((a,s)=>a+Math.pow(s-mean,2),0)/7;
+        const sd = Math.sqrt(variance);
+        return { x:+mean.toFixed(2), y:+sd.toFixed(2), r:Math.max(5,Math.sqrt(c.n)*1.4), label:c.kelas, siswa:c.n };
+      });
+  });
+  bubbleChart.update();
+}
+
+function updateDonutChart(filtered) {
+  if (!donutChart) return;
+  let s4=0,s3=0,s2=0,s1=0;
+  filtered.forEach(r => r.scores.forEach(s => { if(s>=3.5)s4++; else if(s>=2.5)s3++; else if(s>=1.5)s2++; else s1++; }));
+  const total = filtered.length*7 || 1;
+  donutChart.data.datasets[0].data = [
+    +((s4/total)*100).toFixed(1),
+    +((s3/total)*100).toFixed(1),
+    +((s2/total)*100).toFixed(1),
+    +((s1/total)*100).toFixed(1)
+  ];
+  donutChart.update();
+}
+
+function updatePolarChart(habitAvg) {
+  if (!polarChart) return;
+  polarChart.data.datasets[0].data = habitAvg;
+  polarChart.update();
+}
+
+function updateMultiTrendChart() {
+  if (!multiTrendChart) return;
+  const dm = { X:{}, XI:{}, XII:{} };
+  activeRows.forEach(r => {
+    if (!dm[r.tingkat]) return;
+    if (!dm[r.tingkat][r.date]) dm[r.tingkat][r.date] = {sum:0,c:0};
+    dm[r.tingkat][r.date].sum += r.scores.reduce((a,b)=>a+b,0)/7;
+    dm[r.tingkat][r.date].c++;
+  });
+  const dates = [...new Set(activeRows.map(r=>r.date))].sort();
+  multiTrendChart.data.labels = dates;
+  ["X","XI","XII"].forEach((g,i) => {
+    multiTrendChart.data.datasets[i].data = dates.map(d => dm[g][d] ? +(dm[g][d].sum/dm[g][d].c).toFixed(2) : null);
+  });
+  multiTrendChart.update();
+}
+
+function updateScatterChart(classRows) {
+  if (!scatterChart) return;
+  ["X","XI","XII"].forEach((g,gi) => {
+    scatterChart.data.datasets[gi].data = classRows
+      .filter(c => c.tingkat === g)
+      .map(c => ({ x:c.scores[0], y:c.scores[4], label:c.kelas }));
+  });
+  scatterChart.update();
+}
+
+function renderBulletChart(habitAvg) {
+  const wrap = document.getElementById("bulletChartWrap");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  HABIT_NAMES.forEach((name, i) => {
+    const sc = habitAvg[i];
+    const pct      = ((sc-1)/3)*100;
+    const zone_crit = ((2.80-1)/3)*100;
+    const zone_std  = ((3.00-1)/3)*100;
+    const zone_gold = ((3.50-1)/3)*100;
+    const fillColor = sc>=3.00 ? "#2563eb" : (sc>=2.80 ? "#eab308" : "#dc2626");
+    const statusText= sc>=3.00 ? "Mencapai Standar" : (sc>=2.80 ? "Hampir Mencapai" : "Di Bawah Standar");
+    const row = document.createElement("div");
+    row.className = "bullet-row";
+    row.innerHTML = `
+      <div class="bullet-label">${name}<span>${sc.toFixed(2)} / 4.00 &mdash; ${statusText}</span></div>
+      <div class="bullet-track">
+        <div class="bullet-zone-crit" style="left:0;width:${zone_crit}%;"></div>
+        <div class="bullet-zone-std"  style="left:${zone_crit}%;width:${zone_std-zone_crit}%;"></div>
+        <div class="bullet-zone-gold" style="left:${zone_std}%;width:${zone_gold-zone_std}%;"></div>
+        <div class="bullet-fill" style="width:${Math.min(100,pct)}%;background:${fillColor};position:absolute;left:0;top:50%;transform:translateY(-50%);height:8px;border-radius:2px;z-index:2;"></div>
+        <div class="bullet-marker" style="left:${zone_crit}%;background:rgba(220,38,38,0.6);"></div>
+        <div class="bullet-marker" style="left:${zone_std}%;background:rgba(234,179,8,0.8);"></div>
+        <div class="bullet-marker" style="left:${zone_gold}%;background:rgba(5,150,105,0.8);"></div>
+      </div>`;
+    wrap.appendChild(row);
+  });
+}
+
+function updateTopBottomChart(classRows) {
+  if (!topBottomChart) return;
+  const sorted = [...classRows].sort((a,b) => b.idx - a.idx);
+  const top6 = sorted.slice(0,6);
+  const bot6 = sorted.slice(-6).reverse();
+  const combined = [...top6, ...bot6];
+  topBottomChart.data.labels = combined.map(r => r.kelas);
+  topBottomChart.data.datasets[0].data = combined.map(r => r.idx);
+  topBottomChart.data.datasets[0].backgroundColor = combined.map((_,i) =>
+    i < 6 ? "rgba(5,150,105,0.82)" : "rgba(220,38,38,0.75)"
+  );
+  topBottomChart.update();
+}
+
+/* ================================================================
+   HABITS DEEP DIVE RENDER
+   ================================================================ */
+function renderHabitsDeepDive(habitAvg) {
+  const c = document.getElementById("habitsContainer");
+  if (!c) return;
+  c.innerHTML = "";
+  HABIT_DETAILS.forEach((hd, idx) => {
+    const sc  = habitAvg[idx];
+    const pct = (((sc-1)/3)*100).toFixed(1);
+    const statusPill = sc>=3.20 ? '<span class="pill pill-green">Sangat Baik</span>' : (sc>=2.80 ? '<span class="pill pill-yellow">Stabil</span>' : '<span class="pill pill-red">Prioritas</span>');
+    const card = document.createElement("div");
+    card.className = "habit-card";
+    card.innerHTML = `
+      <div class="habit-card-head">
+        <div>
+          <div class="habit-num">Dimensi #${idx+1}</div>
+          <div class="habit-name">${hd.name}</div>
+          <div class="habit-tagline">${hd.sub}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="habit-score">${sc.toFixed(2)}</div>
+          ${statusPill}
+        </div>
+      </div>
+      <div class="habit-progress-wrap">
+        <div class="habit-progress-row"><span>Tingkat Ketercapaian</span><strong>${pct}%</strong></div>
+        <div class="habit-bar"><div class="habit-bar-fill" style="width:${pct}%;background:${sc>=3.20?'var(--green-600)':(sc>=2.80?'var(--blue-500)':'var(--red-600)')};"></div></div>
+      </div>
+      <div class="habit-detail-box"><strong>Indikator:</strong> ${hd.indikator}</div>
+      <div class="habit-action-box"><strong>Strategi SMAMIO:</strong> ${hd.strategi}</div>
+    `;
+    c.appendChild(card);
+  });
+}
+
+/* ================================================================
+   SMAMIO STATS & HEATMAP
+   ================================================================ */
+function renderSmamioStats(filtered, classRows) {
+  const avg = t => {
+    const rows = activeRows.filter(r=>r.tingkat===t);
+    if (!rows.length) return "0.00";
+    return (rows.reduce((a,r)=>a+(r.scores.reduce((x,y)=>x+y,0)/7),0)/rows.length).toFixed(2);
+  };
+  document.getElementById("statCountX").textContent = `${activeRows.filter(r=>r.tingkat==="X").length} Siswa`;
+  document.getElementById("statScoreX").textContent = `Rata-Rata: ${avg("X")} / 4.00`;
+  document.getElementById("statCountXI").textContent = `${activeRows.filter(r=>r.tingkat==="XI").length} Siswa`;
+  document.getElementById("statScoreXI").textContent = `Rata-Rata: ${avg("XI")} / 4.00`;
+  document.getElementById("statCountXII").textContent = `${activeRows.filter(r=>r.tingkat==="XII").length} Siswa`;
+  document.getElementById("statScoreXII").textContent = `Rata-Rata: ${avg("XII")} / 4.00`;
+  const sorted = [...classRows].sort((a,b)=>b.idx-a.idx);
+  if (sorted.length > 0) {
+    document.getElementById("statTopClass").textContent = sorted[0].kelas;
+    document.getElementById("statTopScore").textContent = `Indeks ${sorted[0].idx}`;
+  }
+  const tbody = document.getElementById("heatmapBody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  sorted.forEach(r => {
+    const hc = v => v>=3.20?"heat-cell heat-high":(v>=2.80?"heat-cell heat-med":"heat-cell heat-low");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><strong>${r.kelas}</strong></td>
+      <td><span class="pill pill-gray">${r.tingkat}</span></td>
+      <td>${r.n}</td>
+      <td><strong>${r.idx.toFixed(1)}</strong></td>
+      ${r.scores.map(s=>`<td class="${hc(s)}">${s}</td>`).join('')}
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ================================================================
+   WHAT-IF SIMULATOR
+   ================================================================ */
+let simBase = 0, simWorstIdx = 0;
+function updateSimulatorBaseline(curIdx, wIdx, wScore) {
+  simBase = curIdx; simWorstIdx = wIdx;
+  document.getElementById("simTargetLabel").textContent = `Fokus: ${HABIT_NAMES[wIdx]} (Skor: ${wScore.toFixed(2)})`;
+  document.getElementById("simCurrentIndex").textContent = curIdx.toFixed(1);
+  recomputeSimulation();
+}
+function recomputeSimulation() {
+  const delta = parseFloat(document.getElementById("simSlider").value);
+  document.getElementById("simDeltaLabel").textContent = `+${delta.toFixed(2)} Poin`;
+  const proj = simBase + (delta*(100/21));
+  document.getElementById("simProjectedIndex").textContent = proj.toFixed(1);
+}
+document.getElementById("simSlider").addEventListener("input", recomputeSimulation);
+
+/* ================================================================
+   TABLE
+   ================================================================ */
+function renderTable(classRows) {
+  const tbody = document.getElementById("classTableBody");
+  const q = document.getElementById("tableSearchInput").value.trim().toLowerCase();
+  let rows = classRows.filter(r => !q || r.kelas.toLowerCase().includes(q) || r.tingkat.toLowerCase().includes(q));
+  rows.sort((a,b) => {
+    let vA, vB;
+    if ([0,4].includes(currentSortColumn)) { vA=a.idx; vB=b.idx; }
+    else if (currentSortColumn===1) { vA=a.kelas; vB=b.kelas; }
+    else if (currentSortColumn===2) { vA=a.tingkat; vB=b.tingkat; }
+    else if (currentSortColumn===3) { vA=a.n; vB=b.n; }
+    else if (currentSortColumn===5) { vA=a.mean; vB=b.mean; }
+    else { const hi=currentSortColumn-6; vA=a.scores[hi]; vB=b.scores[hi]; }
+    if (typeof vA==="string") return sortAscending?vA.localeCompare(vB):vB.localeCompare(vA);
+    return sortAscending?vA-vB:vB-vA;
+  });
+  tbody.innerHTML = "";
+  rows.forEach((r, i) => {
+    const vc = s => s>=3.20?"val-high":(s>=2.80?"val-med":"val-low");
+    const statusPill = r.mean>=3.15?'<span class="pill pill-green">Teladan</span>':(r.mean>=2.80?'<span class="pill pill-yellow">Stabil</span>':'<span class="pill pill-red">Perhatian</span>');
+    const rankHtml = i===0?`<span class="rank-num gold">1</span>`:(i<3?`<span class="rank-num silver">${i+1}</span>`:`<span style="font-size:0.75rem;color:var(--text-3);">#${i+1}</span>`);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${rankHtml}</td>
+      <td><strong>${r.kelas}</strong></td>
+      <td><span class="pill pill-gray">${r.tingkat}</span></td>
+      <td>${r.n}</td>
+      <td>
+        <span class="mini-bar"><span class="mini-bar-fill" style="width:${Math.min(100,r.idx)}%;"></span></span>
+        <strong>${r.idx.toFixed(1)}</strong>
+      </td>
+      <td>${statusPill}</td>
+      ${r.scores.map(s=>`<td class="${vc(s)}">${s}</td>`).join('')}
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function sortTable(col) {
+  if (currentSortColumn===col) sortAscending=!sortAscending;
+  else { currentSortColumn=col; sortAscending=false; }
+  updateDashboard();
+}
+document.getElementById("tableSearchInput").addEventListener("input", updateDashboard);
+
+/* ================================================================
+   AI ACTION CHIPS
+   ================================================================ */
+document.getElementById("chipFilterCritical").addEventListener("click", () => {
+  currentSortColumn=4; sortAscending=true; updateDashboard();
+  showMessage("Menyorot rombel dengan rata-rata skor di bawah 2.80.", false);
+});
+document.getElementById("chipFilterTop").addEventListener("click", () => {
+  currentSortColumn=4; sortAscending=false; updateDashboard();
+});
+document.getElementById("chipResetAiFilter").addEventListener("click", () => {
+  document.getElementById("filterTingkat").value="ALL"; populateKelasDropdown();
+  document.getElementById("filterKelas").value="ALL";
+  document.getElementById("filterDate").value="ALL";
+  document.getElementById("filterHabit").value="0";
+  document.getElementById("tableSearchInput").value="";
+  currentSortColumn=4; sortAscending=false; updateDashboard();
+});
+
+/* ================================================================
+   EXPORT CSV
+   ================================================================ */
+document.getElementById("btnExportCsv").addEventListener("click", () => {
+  if (!activeRows.length) { showMessage("Tidak ada data untuk diekspor."); return; }
+  let csv = "data:text/csv;charset=utf-8,Tingkat,Kelas,Tanggal," + HABIT_NAMES.join(",") + "\n";
+  activeRows.forEach(r => { csv += [r.tingkat,r.kelas,r.date,...r.scores].join(",") + "\n"; });
+  const link = document.createElement("a");
+  link.setAttribute("href", encodeURI(csv));
+  link.setAttribute("download", `Analisis_7KAIH_SMAMIO_Gresik_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+});
+
+/* ================================================================
+   EVENT BINDINGS
+   ================================================================ */
+document.getElementById("btnSync").addEventListener("click", syncFromGoogleSheets);
+document.getElementById("autoRefreshCheck").addEventListener("change", function(e) {
+  if (e.target.checked) { syncFromGoogleSheets(); refreshInterval=setInterval(syncFromGoogleSheets,30000); }
+  else clearInterval(refreshInterval);
+});
+document.getElementById("filterTingkat").addEventListener("change", () => { populateKelasDropdown(); updateDashboard(); });
+document.getElementById("filterKelas").addEventListener("change", updateDashboard);
+document.getElementById("filterDate").addEventListener("change", updateDashboard);
+document.getElementById("filterHabit").addEventListener("change", updateDashboard);
+document.getElementById("btnReset").addEventListener("click", () => {
+  document.getElementById("filterTingkat").value="ALL"; populateKelasDropdown();
+  document.getElementById("filterKelas").value="ALL";
+  document.getElementById("filterDate").value="ALL";
+  document.getElementById("filterHabit").value="0";
+  document.getElementById("tableSearchInput").value="";
+  updateDashboard();
+});
+
+/* ================================================================
+   BOOT
+   ================================================================ */
+initTabs();
+initTheme();
+initCharts();
+const savedUrl = localStorage.getItem("kaih_sheet_url");
+if (savedUrl) { document.getElementById("sheetCsvUrl").value=savedUrl; syncFromGoogleSheets(); }
+else loadDefaultData();
+</script>
+</body>
+</html>
