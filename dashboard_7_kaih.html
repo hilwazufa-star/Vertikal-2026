@@ -1271,27 +1271,160 @@
       flex-shrink: 0;
     }
 
+    /* DEFAULT TOGGLE STATE */
+    .mobile-nav-toggle { display:none; width:36px; height:36px; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--surface); color:var(--text-1); cursor:pointer; }
+    .mobile-nav-toggle svg { width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; }
+    .mobile-nav-backdrop { display:none; position:fixed; inset:0; z-index:98; background:rgba(15,23,42,.45); opacity:0; pointer-events:none; transition:opacity .2s ease; }
+
     /* ============================================================
-       RESPONSIVE
+       RESPONSIVE & MOBILE HAMBURGER
        ============================================================ */
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); transition: transform .2s ease; }
-      .sidebar.mobile-open { transform: translateX(0); }
-      .mobile-nav-toggle { display:inline-flex; flex-shrink:0; }
-      .mobile-nav-backdrop { display:block; position:fixed; inset:0; z-index:49; background:rgba(15,23,42,.38); opacity:0; pointer-events:none; transition:opacity .2s ease; }
-      .mobile-nav-backdrop.active { opacity:1; pointer-events:auto; }
-      .main { margin-left: 0; }
+      .sidebar {
+        position: fixed !important;
+        top: 0; bottom: 0; left: 0;
+        z-index: 100 !important;
+        width: 260px !important;
+        transform: translateX(-100%) !important;
+        transition: transform .25s ease-in-out !important;
+        box-shadow: 0 0 25px rgba(0,0,0,0.25) !important;
+      }
+      .sidebar.mobile-open {
+        transform: translateX(0) !important;
+      }
+      .mobile-nav-toggle {
+        display: inline-flex !important;
+        flex-shrink: 0;
+      }
+      .mobile-nav-backdrop {
+        display: block !important;
+      }
+      .mobile-nav-backdrop.active {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      .main { margin-left: 0 !important; width: 100% !important; }
       .sim-card { grid-template-columns: 1fr; }
     }
 
+    /* ============================================================
+       TAB REKOMENDASI AKSI & PRINT STYLES
+       ============================================================ */
+    .action-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px 22px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .action-header-left h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin: 0 0 4px;
+    }
+    .action-header-left p {
+      font-size: 0.78rem;
+      color: var(--text-3);
+      margin: 0;
+    }
+    .action-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1024px) {
+      .action-cards-grid { grid-template-columns: 1fr; }
+    }
+    .action-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+    .action-card.card-red { border-top: 4px solid var(--red-600); }
+    .action-card.card-yellow { border-top: 4px solid #F59E0B; }
+    .action-card.card-blue { border-top: 4px solid var(--blue-600); }
+    
+    .action-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .action-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-p1 { background: rgba(220, 38, 38, 0.12); color: var(--red-600); }
+    .badge-p2 { background: rgba(245, 158, 11, 0.15); color: #B45309; }
+    .badge-p3 { background: rgba(37, 99, 235, 0.12); color: var(--blue-600); }
+
+    .action-card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-1);
+      margin: 2px 0 0;
+    }
+    .action-block {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .action-block-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .action-block-val {
+      font-size: 0.77rem;
+      line-height: 1.5;
+      color: var(--text-2);
+    }
+    .action-block-val strong { color: var(--text-1); }
+
+    /* PRINT LAYOUT */
+    @media print {
+      body { background: #fff !important; color: #000 !important; font-size: 10pt; }
+      .sidebar, .topbar, .conn-bar, .mobile-nav-backdrop, .btn-sm, .table-search, .filter-strip { display: none !important; }
+      .main { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      .content { max-width: 100% !important; padding: 0 !important; }
+      .panel { display: none !important; }
+      #panel-actions { display: block !important; }
+      .action-header { border: none; border-bottom: 2px solid #000; padding: 0 0 10px; margin-bottom: 15px; }
+      .action-cards-grid { grid-template-columns: 1fr; page-break-inside: avoid; gap: 10px; }
+      .action-card { border: 1px solid #999; box-shadow: none; break-inside: avoid; margin-bottom: 10px; }
+      .action-block { background: #f8fafc !important; border: 1px solid #ccc; }
+      .table-card { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; }
+      table th { background: #eee !important; color: #000 !important; }
+    }
 
     /* ============================================================
        UX REFINEMENT — clearer hierarchy, calmer density, responsive
        ============================================================ */
     .content { max-width: 1680px; width: 100%; margin: 0 auto; }
-    .mobile-nav-toggle { display:none; width:34px; height:34px; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--surface); color:var(--text-2); cursor:pointer; }
-    .mobile-nav-toggle svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; }
-    .mobile-nav-backdrop { display:none; }
     .filter-strip { padding: 14px 16px; gap: 12px; }
     .filter-item { min-width: 150px; }
     .kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
@@ -1916,6 +2049,10 @@
 <button class="nav-item" data-tab="methodology">
 <svg class="nav-icon" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
         Metodologi &amp; Kualitas
+      </button>
+<button class="nav-item" data-tab="actions">
+<svg class="nav-icon" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Rekomendasi Aksi
       </button>
 <div class="nav-section-label" style="margin-top: 8px;">Data</div>
 <label class="nav-item" for="excelFile" style="cursor:pointer;">
@@ -2796,6 +2933,219 @@
     </p>
   </div>
 </div>
+
+<!-- ============================================================
+     TAB 5: REKOMENDASI AKSI & INTERVENSI KEBIJAKAN
+     Format Borang Lomba: Temuan Data -> Ide Aksi -> Dampak
+     ============================================================ -->
+<div class="panel panel-animate" id="panel-actions">
+  <div class="action-header">
+    <div class="action-header-left">
+      <h2>Rekomendasi Aksi &amp; Rencana Intervensi Sekolah</h2>
+      <p>Borang Tindak Lanjut Program Pembiasaan 7KAIH SMAMIO (Temuan Data &rarr; Ide Aksi Inovatif &rarr; Dampak yang Diharapkan)</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn-sm btn-primary" onclick="window.print()" type="button" title="Cetak atau ekspor ke format PDF">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><path d="M6 14h12v8H6z"></path></svg>
+        Cetak / Simpan PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- 3 KARTU AKSI UTAMA BERFORMAT LOMBA -->
+  <div class="action-cards-grid">
+    <!-- KARTU 1: INTERVENSI DIMENSI PRIORITAS TERENDAH -->
+    <div class="action-card card-red" id="actionCard1">
+      <div class="action-card-head">
+        <span class="action-badge badge-p1">Prioritas 1: Dimensi Kritis</span>
+        <span class="pill pill-red" id="actCard1Pill">Fokus Intervensi</span>
+      </div>
+      <div class="action-card-title" id="actCard1Title">Akselerasi Dimensi Terendah Sekolah</div>
+      
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+          1. Temuan Data
+        </div>
+        <div class="action-block-val" id="actCard1Finding">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          2. Ide Aksi Inovatif
+        </div>
+        <div class="action-block-val" id="actCard1Idea">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          3. Dampak yang Diharapkan &amp; Target Terukur
+        </div>
+        <div class="action-block-val" id="actCard1Impact">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+    </div>
+
+    <!-- KARTU 2: PENDAMPINGAN ROMBEL KRITIS -->
+    <div class="action-card card-yellow" id="actionCard2">
+      <div class="action-card-head">
+        <span class="action-badge badge-p2">Prioritas 2: Rombel Butuh Bimbingan</span>
+        <span class="pill pill-yellow" id="actCard2Pill">Supervisi Khusus</span>
+      </div>
+      <div class="action-card-title" id="actCard2Title">Klinik Pembiasaan Terpadu Rombel Prioritas</div>
+      
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+          1. Temuan Data
+        </div>
+        <div class="action-block-val" id="actCard2Finding">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          2. Ide Aksi Inovatif
+        </div>
+        <div class="action-block-val" id="actCard2Idea">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          3. Dampak yang Diharapkan &amp; Target Terukur
+        </div>
+        <div class="action-block-val" id="actCard2Impact">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+    </div>
+
+    <!-- KARTU 3: PENGIMBASAN ROMBEL TELADAN -->
+    <div class="action-card card-blue" id="actionCard3">
+      <div class="action-card-head">
+        <span class="action-badge badge-p3">Prioritas 3: Diseminasi Teladan</span>
+        <span class="pill pill-green" id="actCard3Pill">Praktik Baik</span>
+      </div>
+      <div class="action-card-title" id="actCard3Title">Peer Coaching &amp; Diseminasi Praktik Baik</div>
+      
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
+          1. Temuan Data
+        </div>
+        <div class="action-block-val" id="actCard3Finding">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          2. Ide Aksi Inovatif
+        </div>
+        <div class="action-block-val" id="actCard3Idea">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+
+      <div class="action-block">
+        <div class="action-block-label">
+          <svg class="ico" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          3. Dampak yang Diharapkan &amp; Target Terukur
+        </div>
+        <div class="action-block-val" id="actCard3Impact">
+          Menunggu pemuatan data aktif...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUSTAKA RENCANA PROGRAM AKSI & TARGET TERUKUR -->
+  <div class="table-card" style="margin-top:20px;">
+    <div class="table-toolbar">
+      <div>
+        <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);">Pustaka Program Aksi &amp; Matriks Target Terukur Satuan Pendidikan</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">Rencana tindak lanjut intervensi kebijakan holistik SMAMIO 2026</div>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Pilar Kebiasaan</th>
+            <th>Program Intervensi Sekolah</th>
+            <th>Penanggung Jawab</th>
+            <th>Alokasi Waktu</th>
+            <th>Indikator Kuantitatif Keberhasilan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Bangun Pagi</strong></td>
+            <td>Salam Fajar Digital &amp; Tantangan Fajar Berjamaah</td>
+            <td>Tim Ismuba &amp; Wali Kelas</td>
+            <td>Harian (04.00–05.00 WIB)</td>
+            <td>Rerata skor &ge; 3.20; Keterlambatan pagi berkurang hingga 50%</td>
+          </tr>
+          <tr>
+            <td><strong>2. Beribadah</strong></td>
+            <td>Gerakan Sholat Berjamaah Tepat Waktu &amp; Mentoring Tahfidz</td>
+            <td>Guru PAI &amp; IPM</td>
+            <td>Rutinitas Harian</td>
+            <td>Persentase kategori Sangat Baik mencapai &ge; 70%</td>
+          </tr>
+          <tr>
+            <td><strong>3. Berolahraga</strong></td>
+            <td>SMAMIO Fit Morning &amp; Tantangan Langkah Antar-Rombel</td>
+            <td>Guru PJOK &amp; Pembina Ekstra</td>
+            <td>2x Seminggu (Jumat &amp; Selasa)</td>
+            <td>Rerata skor meningkat &ge; 3.00 di seluruh jenjang</td>
+          </tr>
+          <tr>
+            <td><strong>4. Makan Sehat</strong></td>
+            <td>Bawa Bekal Halal-Thoyyib &amp; Kantin Sehat Bebas Ultra-Processed</td>
+            <td>Kesiswaan &amp; Komite Sekolah</td>
+            <td>Setiap Hari Sekolah</td>
+            <td>85% siswa membawa bekal gizi seimbang tanpa junk food</td>
+          </tr>
+          <tr>
+            <td><strong>5. Gemar Belajar</strong></td>
+            <td>Pojok Literasi Digital &amp; Reward Siswa Riset Mandiri</td>
+            <td>Perpustakaan &amp; Tim Akademik</td>
+            <td>Mingguan</td>
+            <td>Waktu belajar mandiri aktif rata-rata &gt; 60 menit/hari</td>
+          </tr>
+          <tr>
+            <td><strong>6. Bermasyarakat</strong></td>
+            <td>Duta Anti-Bullying Rombel &amp; Aksi Bakti Lingkungan Pelajar</td>
+            <td>Guru BK &amp; Pembina IPM</td>
+            <td>Bulanan</td>
+            <td>Zero kasus perundungan; Skor kepedulian sosial &ge; 3.25</td>
+          </tr>
+          <tr>
+            <td><strong>7. Tidur Cepat</strong></td>
+            <td>Digital Sunset 20.30 WIB &amp; No Homework Overdue</td>
+            <td>Kurikulum &amp; Paguyuban Ortu</td>
+            <td>Malam Hari (21.00 WIB)</td>
+            <td>Skor naik &ge; 3.00; Proporsi begadang turun di bawah 10%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /shell -->
@@ -2924,6 +3274,16 @@ const HABIT_DETAILS = [
   { name:"Tidur Cepat", sub:"Istirahat Berkualitas & Detoks Gawai", indikator:"Tidur tepat sebelum pukul 22.00 dan mematikan gawai saat beristirahat.", dampak:"Proses neuro-konsolidasi memori otak serta pencegahan insomnia kronis remaja.", strategi:"Kesepakatan digital sunset: menonaktifkan notifikasi penugasan setelah 20.30 WIB." }
 ];
 
+const ACTION_IDEAS = [
+  "Salam Fajar Digital & Tantangan Bangun Pagi: Program presensi salam fajar mandiri via grup rombel sebelum 04.30 WIB dengan penghargaan bintang fajar mingguan bagi siswa yang konsisten.",
+  "Klinik Spiritual & Gerakan Sholat Berjamaah Tepat Waktu: Penguatan monitoring sholat fardhu berjamaah dan tadarus harian terbimbing bersama tim Ismuba serta pendampingan wali kelas.",
+  "SMAMIO Fit Challenge & Senam Kreasi Berkelanjutan: Pembiasaan aktivitas fisik terstruktur 30 menit 2–3 kali sepekan dan kompetisi kebugaran jasmani antarkelas berbasis pelacak aktivitas.",
+  "Gerakan Bekal Nutrisi Seimbang (Halal-Thoyyib): Sosialisasi gizi remaja bebas junk-food, penetapan 'Rabu Bawa Buah & Sayur', serta inspeksi kualitas jajanan kantin sekolah berkala.",
+  "Klub Literasi Riset Siswa & Pojok Baca Digital: Alokasi 15 menit hening membaca buku non-pelajaran, penguatan pemanfaatan perpustakaan digital, serta pemberian reward duta literasi kelas.",
+  "Proyek Harmoni Sosial & Duta Inklusi SMAMIO: Aksi nyata bakti sosial terpadu, kampanye stop-bullying sebaya, dan pembinaan karakter gotong royong melalui Ikatan Pelajar Muhammadiyah.",
+  "Digital Sunset Campaign (Detoks Gawai Malam Hari): Kesepakatan moratorium tugas digital sekolah di atas pukul 20.30 WIB guna memastikan jam tidur ideal siswa sebelum pukul 22.00 WIB."
+];
+
 /* ================================================================
    STATE UTAMA
    ================================================================ */
@@ -2944,6 +3304,7 @@ const PAGE_TITLES = {
   manifesto: "Latar Belakang & Urgensi Program",
   analytics:  "Live Analytics Hub",
   habits:     "Profil & Hasil 7 Kebiasaan Hebat",
+  actions:    "Rekomendasi Aksi & Intervensi Kebijakan",
   smamio:     "Ekosistem Sekolah SMAMIO",
   methodology: "Metodologi, Kualitas Data & Batasan"
 };
@@ -3597,6 +3958,7 @@ function updateDashboard() {
     document.getElementById("simTargetLabel").textContent = "Belum ada data untuk simulasi";
     document.getElementById("simCurrentIndex").textContent = "—";
     document.getElementById("simProjectedIndex").textContent = "—";
+    renderActionCards([], 0, 0, [0, 0, 0, 0, 0, 0, 0], 0, 0, [], 0, []);
     renderMethodologyAudit([]);
     return;
   }
@@ -3734,6 +4096,7 @@ function updateDashboard() {
   updateSimulatorBaseline(overallIdx, worstIdx, habitAvg[worstIdx], habitAvg);
   renderTable(classRows, habitFocus);
   renderHabitsDeepDive(habitAvg, filtered);
+  renderActionCards(filtered, overallIdx, overallMean, habitAvg, worstIdx, bestIdx, sortedByRank, totalN, classRows);
   renderSmamioStats(filtered, classRows);
   renderMethodologyAudit(filtered);
 }
@@ -4553,6 +4916,124 @@ function renderHabitsDeepDive(habitAvg, filtered) {
   });
 }
 
+/* ================================================================
+   REKOMENDASI AKSI & INTERVENSI KEBIJAKAN SEKOLAH
+   ================================================================ */
+function renderActionCards(filtered, overallIdx, overallMean, habitAvg, worstIdx, bestIdx, sortedByRank, totalN, classRows) {
+  const p1Pill   = document.getElementById("actCard1Pill");
+  const p1Title  = document.getElementById("actCard1Title");
+  const p1Find   = document.getElementById("actCard1Finding");
+  const p1Idea   = document.getElementById("actCard1Idea");
+  const p1Impact = document.getElementById("actCard1Impact");
+
+  const p2Pill   = document.getElementById("actCard2Pill");
+  const p2Title  = document.getElementById("actCard2Title");
+  const p2Find   = document.getElementById("actCard2Finding");
+  const p2Idea   = document.getElementById("actCard2Idea");
+  const p2Impact = document.getElementById("actCard2Impact");
+
+  const p3Pill   = document.getElementById("actCard3Pill");
+  const p3Title  = document.getElementById("actCard3Title");
+  const p3Find   = document.getElementById("actCard3Finding");
+  const p3Idea   = document.getElementById("actCard3Idea");
+  const p3Impact = document.getElementById("actCard3Impact");
+
+  if (!p1Find) return;
+
+  if (!filtered || filtered.length === 0 || totalN === 0) {
+    if (p1Pill)   { p1Pill.textContent = "Belum Ada Data"; p1Pill.className = "pill pill-gray"; }
+    if (p1Title)  p1Title.textContent = "Akselerasi Dimensi Terendah Sekolah";
+    if (p1Find)   p1Find.innerHTML = "Belum ada data aktif. Hubungkan Google Sheets atau klik <em>'Muat Data Contoh'</em> untuk memetakan dimensi yang memerlukan prioritas akselerasi.";
+    if (p1Idea)   p1Idea.innerHTML = "Rekomendasi program intervensi spesifik akan dihasilkan otomatis berdasarkan pilar kebiasaan dengan skor terendah.";
+    if (p1Impact) p1Impact.innerHTML = "Target kuantitatif terukur akan disinkronkan langsung dengan baseline capaian sekolah.";
+
+    if (p2Pill)   { p2Pill.textContent = "Belum Ada Data"; p2Pill.className = "pill pill-gray"; }
+    if (p2Title)  p2Title.textContent = "Klinik Pembiasaan Terpadu Rombel Prioritas";
+    if (p2Find)   p2Find.innerHTML = "Belum ada data rombel aktif yang dimuat untuk dianalisis.";
+    if (p2Idea)   p2Idea.innerHTML = "Rencana pendampingan khusus wali kelas dan klinik pembiasaan akan dipetakan setelah data rombel tersedia.";
+    if (p2Impact) p2Impact.innerHTML = "Target peningkatan indeks karakter rombel akan dihitung secara otomatis.";
+
+    if (p3Pill)   { p3Pill.textContent = "Belum Ada Data"; p3Pill.className = "pill pill-gray"; }
+    if (p3Title)  p3Title.textContent = "Peer Coaching & Diseminasi Praktik Baik";
+    if (p3Find)   p3Find.innerHTML = "Belum ada data rombel teladan yang dimuat untuk dianalisis.";
+    if (p3Idea)   p3Idea.innerHTML = "Skema pengimbasan praktik baik antarkelas akan dirancang berdasarkan rombel berkinerja tertinggi.";
+    if (p3Impact) p3Impact.innerHTML = "Target diseminasi akan diselaraskan dengan capaian terbaik sekolah.";
+    return;
+  }
+
+  // 1. KARTU PRIORITAS 1: DIMENSI KRITIS
+  const worstScore = (habitAvg && typeof habitAvg[worstIdx] === "number") ? habitAvg[worstIdx] : 0;
+  const worstName = HABIT_NAMES[worstIdx] || `Kebiasaan #${worstIdx + 1}`;
+  const belowTargetCount = filtered.filter(r => r.scores && r.scores[worstIdx] < 3.00).length;
+  const pctBelow = ((belowTargetCount / totalN) * 100).toFixed(1);
+  const gap = Math.max(0, 3.00 - worstScore);
+
+  if (p1Pill) {
+    p1Pill.textContent = `Skor ${worstScore.toFixed(2).replace(".", ",")} / 4,00`;
+    p1Pill.className = worstScore < 3.00 ? "pill pill-red" : "pill pill-yellow";
+  }
+  if (p1Title) p1Title.textContent = `Akselerasi Dimensi: ${worstName}`;
+  if (p1Find) {
+    p1Find.innerHTML = `Berdasarkan analisis <strong>${totalN.toLocaleString("id-ID")} entri data aktif</strong>, pilar <strong>${worstName}</strong> mencatat skor rerata <strong>${worstScore.toFixed(2).replace(".", ",")} / 4,00</strong> — skor terendah dari seluruh 7 kebiasaan. Sebanyak <strong>${pctBelow}% siswa (${belowTargetCount.toLocaleString("id-ID")} responden)</strong> masih berada di bawah target mutu minimal sekolah (skor &lt; 3,00), dengan defisit <strong>−${gap.toFixed(2).replace(".", ",")} poin</strong> menuju batas standar pembiasaan.`;
+  }
+  if (p1Idea) {
+    const strat = HABIT_DETAILS[worstIdx]?.strategi || "Pendampingan intensif oleh wali kelas dan tim kesiswaan.";
+    p1Idea.innerHTML = `<strong>Inovasi Aksi:</strong> ${ACTION_IDEAS[worstIdx] || strat}<br><div style="margin-top:6px;font-size:0.75rem;color:var(--text-3);line-height:1.4;"><strong>Pendekatan Operasional:</strong> ${strat}</div>`;
+  }
+  if (p1Impact) {
+    const nextTarget = Math.min(4.00, +(worstScore + 0.25).toFixed(2));
+    p1Impact.innerHTML = `<strong>Target 1 Semester:</strong> Skor rata-rata <em>${worstName}</em> meningkat minimal <strong>+0,25 poin</strong> (dari ${worstScore.toFixed(2).replace(".", ",")} menjadi &ge; <strong>${nextTarget.toFixed(2).replace(".", ",")}</strong>). Menurunkan proporsi siswa di bawah target (&lt; 3,00) hingga di bawah <strong>15%</strong> dalam siklus monitoring terpadu 8 pekan ke depan.`;
+  }
+
+  // 2. KARTU PRIORITAS 2: ROMBEL KRITIS
+  if (sortedByRank && sortedByRank.length > 0) {
+    const bottomClass = sortedByRank[sortedByRank.length - 1];
+    const bKelas = bottomClass.kelas;
+    const bIdx = bottomClass.idx;
+    const bMean = bottomClass.mean;
+    const bGap = (overallIdx - bIdx).toFixed(1).replace(".", ",");
+    const targetBIdx = Math.min(100, Math.round(bIdx + 8));
+
+    if (p2Pill) {
+      p2Pill.textContent = `Indeks ${bIdx.toFixed(1).replace(".", ",")} (${bKelas})`;
+      p2Pill.className = bIdx < 60 ? "pill pill-red" : "pill pill-yellow";
+    }
+    if (p2Title) p2Title.textContent = `Klinik Pembiasaan Terpadu: Rombel ${bKelas}`;
+    if (p2Find) {
+      p2Find.innerHTML = `Rombel <strong>${bKelas} (${bottomClass.tingkat})</strong> mencatat indeks karakter <strong>${bIdx.toFixed(1).replace(".", ",")} / 100</strong> (skor rerata ${bMean.toFixed(2).replace(".", ",")} dari ${bottomClass.n} responden), menempati urutan terendah di antara <strong>${sortedByRank.length} rombel aktif</strong>. Indeks rombel ini berada <strong>−${bGap} poin</strong> di bawah rata-rata indeks sekolah (${overallIdx.toFixed(1).replace(".", ",")}).`;
+    }
+    if (p2Idea) {
+      p2Idea.innerHTML = `<strong>Intervensi Rombel:</strong> Pelaksanaan <em>Klinik Pembiasaan Terpadu SMAMIO</em> bersama wali kelas dan guru BK. Melakukan pemetaan faktor kendala spesifik siswa di kelas ${bKelas}, pendampingan personal mingguan, serta rotasi dinamika kelompok belajar untuk menumbuhkan saling dukung antarsiswa.`;
+    }
+    if (p2Impact) {
+      p2Impact.innerHTML = `<strong>Target Terukur:</strong> Peningkatan indeks karakter kelas <strong>${bKelas}</strong> minimal <strong>+8,0 poin</strong> (mencapai &ge; <strong>${targetBIdx}</strong>) pada evaluasi bulan berikutnya, serta merapatkan deviasi internal antarsiswa di kelas tersebut agar variabilitas berkurang.`;
+    }
+  }
+
+  // 3. KARTU PRIORITAS 3: PENGIMBASAN ROMBEL TELADAN
+  if (sortedByRank && sortedByRank.length > 0) {
+    const topClass = sortedByRank[0];
+    const tKelas = topClass.kelas;
+    const tIdx = topClass.idx;
+    const tMean = topClass.mean;
+    const tSurplus = (tIdx - overallIdx).toFixed(1).replace(".", ",");
+
+    if (p3Pill) {
+      p3Pill.textContent = `Indeks ${tIdx.toFixed(1).replace(".", ",")} (${tKelas})`;
+      p3Pill.className = "pill pill-green";
+    }
+    if (p3Title) p3Title.textContent = `Diseminasi Praktik Baik: Rombel ${tKelas}`;
+    if (p3Find) {
+      p3Find.innerHTML = `Rombel <strong>${tKelas} (${topClass.tingkat})</strong> meraih peringkat tertinggi dengan indeks karakter <strong>${tIdx.toFixed(1).replace(".", ",")} / 100</strong> (skor rerata ${tMean.toFixed(2).replace(".", ",")} dari ${topClass.n} responden), unggul <strong>+${tSurplus} poin</strong> di atas rata-rata sekolah dengan konsistensi pembiasaan prima di seluruh dimensi 7KAIH.`;
+    }
+    if (p3Idea) {
+      p3Idea.innerHTML = `<strong>Pengimbasan Sebaya (Peer Mentoring):</strong> Menunjuk siswa perwakilan kelas <strong>${tKelas}</strong> sebagai <em>Duta Karakter 7KAIH SMAMIO</em> untuk berbagi kiat kedisiplinan dan manajemen waktu dalam apel gabungan, serta memfasilitasi program mentoring lintas rombel (tandem sebaya antar-kelas).`;
+    }
+    if (p3Impact) {
+      p3Impact.innerHTML = `<strong>Dampak Institusional:</strong> Menstimulasi rombel di klaster bimbingan agar terakselerasi menuju kategori 'Terbiasa Baik' (indeks &ge; 60), sekaligus mempertahankan stabilitas performa kelas <strong>${tKelas}</strong> agar tetap menjadi tolok ukur pembiasaan karakter sekolah.`;
+    }
+  }
+}
 
 /* ================================================================
    AUDIT METODOLOGI & KUALITAS DATA
