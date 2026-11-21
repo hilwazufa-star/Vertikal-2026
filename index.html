@@ -1,19 +1,20 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VERTIKAL 2026 · SMAMIO Intelligence Platform</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VERTIKAL 2026 · SMAMIO Intelligence Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
     /* ============================================================
        DESIGN TOKENS — Enterprise Intelligence Platform
        Inspired by: Linear, Vercel, Palantir Foundry
        Palette: Electric Blue (#2563EB) + Luminous Yellow (#FACC15)
        Zero emojis. Zero purple gradients. Zero drop shadows.
        ============================================================ */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap');
 
     :root {
       /* Canvas */
@@ -102,7 +103,7 @@
       --yellow-300: #FDE047;
       --yellow-100: rgba(250,204,21,0.15);
       --yellow-50:  rgba(250,204,21,0.07);
-      --amber:      #FBB F24;
+      --amber:      #FBBF24;
       --amber-dark: #F59E0B;
 
       --green-600:  #10B981;
@@ -179,11 +180,12 @@
     }
 
     .brand-name {
-      font-size: 0.78rem;
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: 0.95rem;
       font-weight: 700;
       color: var(--text-1);
-      letter-spacing: -0.01em;
-      line-height: 1.25;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .brand-sub {
@@ -369,10 +371,25 @@
     }
 
     .page-title {
-      font-size: 0.9rem;
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-size: clamp(1.25rem, 2.2vw, 1.75rem);
       font-weight: 700;
       color: var(--text-1);
-      letter-spacing: -0.01em;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-title::after {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: var(--yellow-400);
+      border: 1px solid var(--blue-600);
+      flex-shrink: 0;
     }
 
     .page-breadcrumb {
@@ -1236,672 +1253,861 @@
        RESPONSIVE
        ============================================================ */
     @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
+      .sidebar { transform: translateX(-100%); transition: transform .2s ease; }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .mobile-nav-toggle { display:inline-flex; flex-shrink:0; }
+      .mobile-nav-backdrop { display:block; position:fixed; inset:0; z-index:49; background:rgba(15,23,42,.38); opacity:0; pointer-events:none; transition:opacity .2s ease; }
+      .mobile-nav-backdrop.active { opacity:1; pointer-events:auto; }
       .main { margin-left: 0; }
       .sim-card { grid-template-columns: 1fr; }
     }
-  </style>
+
+
+    /* ============================================================
+       UX REFINEMENT — clearer hierarchy, calmer density, responsive
+       ============================================================ */
+    .content { max-width: 1680px; width: 100%; margin: 0 auto; }
+    .mobile-nav-toggle { display:none; width:34px; height:34px; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--surface); color:var(--text-2); cursor:pointer; }
+    .mobile-nav-toggle svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; }
+    .mobile-nav-backdrop { display:none; }
+    .filter-strip { padding: 14px 16px; gap: 12px; }
+    .filter-item { min-width: 150px; }
+    .kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .kpi { min-height: 124px; padding: 16px 18px; }
+    .kpi-label { letter-spacing: .055em; }
+    .insight-card { padding: 16px 20px; }
+    .charts-grid { gap: 14px; margin-bottom: 20px; }
+    .chart-card { padding: 18px; min-width: 0; }
+    .chart-title { font-size: .86rem; line-height: 1.4; }
+    .chart-sub { font-size: .73rem; line-height: 1.45; }
+    .chart-vp { height: 292px; }
+    .chart-card.chart-primary .chart-vp { height: 340px; }
+    .col-7 { grid-column: span 7; }
+    .col-5 { grid-column: span 5; }
+    .dashboard-empty {
+      display: none; padding: 28px 20px; margin: 0 0 16px;
+      text-align: center; background: var(--surface); border: 1px dashed var(--border-2);
+      border-radius: var(--r-md); color: var(--text-2);
+    }
+    .dashboard-empty strong { display:block; color:var(--text-1); margin-bottom:4px; }
+    .panel.has-no-data .kpi-grid,
+    .panel.has-no-data .sim-card,
+    .panel.has-no-data .charts-grid,
+    .panel.has-no-data .table-card { display:none; }
+    .panel.has-no-data .dashboard-empty { display:block; }
+    .chart-card canvas { max-width: 100%; }
+    .habit-card-focused { border-color: var(--blue-500); box-shadow: inset 3px 0 0 var(--blue-500); }
+    button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 3px solid rgba(37,99,235,.28); outline-offset: 2px;
+    }
+    @media (max-width: 1280px) {
+      .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 1100px) {
+      .col-5, .col-7 { grid-column: span 12; }
+      .chart-card.chart-primary .chart-vp { height: 310px; }
+    }
+    @media (max-width: 768px) {
+      .content { padding: 14px 12px 28px; }
+      .topbar { padding: 0 14px; height: auto; min-height: var(--header-h); }
+      .topbar-right { gap: 6px; }
+      .topbar-right #themeText { display:none; }
+      .page-breadcrumb { max-width: 55vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .conn-bar { align-items: stretch; }
+      .conn-input { min-width: 100%; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .kpi { padding: 13px; min-height: 116px; }
+      .kpi-value { font-size: 1.5rem; }
+      .chart-card { padding: 14px; }
+      .chart-vp, .chart-card.chart-primary .chart-vp { height: 260px; }
+      .chart-head { flex-direction: column; }
+      .sim-card { grid-template-columns: 1fr; }
+      .sim-metric-box { justify-content: center; }
+    }
+    @media (max-width: 420px) {
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .kpi-foot { font-size: .66rem; }
+      .filter-item { min-width: 100%; }
+    }
+
+  
+
+    /* ============================================================
+       CALM UX — progressive disclosure and reduced visual density
+       ============================================================ */
+    .visual-intro { display:flex; flex-direction:column; gap:3px; margin:2px 0 12px; }
+    .visual-intro strong { font-size:.88rem; color:var(--text-1); font-weight:700; }
+    .visual-intro span { font-size:.74rem; color:var(--text-3); }
+    .kpi-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:8px; }
+    .kpi { min-height:106px; padding:13px 15px; box-shadow:none; }
+    .kpi::before { height:2px; }
+    .kpi-icon { display:none; }
+    .kpi-label { font-size:.63rem; letter-spacing:.045em; }
+    .kpi-value { font-size:1.62rem; }
+    .kpi-foot { font-size:.68rem; }
+    .kpi-more, .sim-more, .analytics-more { background:transparent; border:0; margin:0 0 14px; }
+    .kpi-more > summary, .sim-more > summary, .analytics-more > summary {
+      list-style:none; display:flex; align-items:center; gap:9px; cursor:pointer;
+      color:var(--text-2); font-size:.76rem; font-weight:600; padding:10px 2px;
+      border-bottom:1px solid var(--border); user-select:none;
+    }
+    .kpi-more > summary::-webkit-details-marker, .sim-more > summary::-webkit-details-marker, .analytics-more > summary::-webkit-details-marker { display:none; }
+    .kpi-more > summary::before, .sim-more > summary::before, .analytics-more > summary::before {
+      content:'+'; display:inline-grid; place-items:center; width:20px; height:20px;
+      border:1px solid var(--border); border-radius:6px; color:var(--text-3); font-size:1rem; line-height:1;
+    }
+    .kpi-more[open] > summary::before, .sim-more[open] > summary::before, .analytics-more[open] > summary::before { content:'−'; }
+    .kpi-extra-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding-top:10px; }
+    .kpi-extra-grid .kpi { min-height:92px; }
+    .sim-more { margin-top:2px; }
+    .sim-more .sim-card { margin:10px 0 14px; }
+    .analytics-more { margin-top:4px; }
+    .analytics-more > summary { flex-wrap:wrap; }
+    .disclosure-note { color:var(--text-3); font-size:.7rem; font-weight:400; margin-left:auto; }
+    .analytics-more .charts-grid { margin-top:12px; }
+    .analytics-more .chart-card { box-shadow:none; }
+    .charts-grid { gap:14px; margin-bottom:14px; }
+    .chart-card { border-radius:12px; padding:16px; box-shadow:none; }
+    .chart-card .chart-head { margin-bottom:10px; }
+    .chart-title { font-size:.82rem; }
+    .chart-sub { font-size:.7rem; }
+    .chart-vp { height:270px; }
+    .chart-card.chart-primary .chart-vp { height:300px; }
+    .secondary-chart-grid .chart-vp { height:250px; }
+    .filter-strip { border-radius:12px; box-shadow:none; padding:12px 14px; }
+    .insight-card { border-left-width:2px; padding:13px 16px; box-shadow:none; }
+    .table-card { box-shadow:none; }
+    @media (max-width:1100px) { .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .col-5,.col-7 { grid-column:span 12; } }
+    @media (max-width:600px) {
+      .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+      .kpi { min-height:94px; padding:11px; }
+      .kpi-value { font-size:1.4rem; }
+      .kpi-extra-grid { grid-template-columns:1fr 1fr; }
+      .disclosure-note { width:100%; margin-left:29px; }
+      .visual-intro { margin-top:4px; }
+    }
+    .panel.has-no-data .kpi-more, .panel.has-no-data .sim-more, .panel.has-no-data .analytics-more { display:none; }
+    
+    /* MOBILE FIX — natural document scrolling and compact phone layout */
+    html { height:auto; min-height:100%; overflow-x:hidden; }
+    body { height:auto; min-height:100%; overflow-x:hidden; }
+    .shell { min-height:100vh; min-height:100dvh; width:100%; }
+    .main { min-width:0; width:calc(100% - var(--sidebar-w)); }
+    .content { min-width:0; }
+    .topbar-left, .topbar-right { min-width:0; }
+    .conn-bar { min-width:0; flex-wrap:wrap; }
+    .conn-input { min-width:0; max-width:100%; }
+    .manifesto-hero, .manifesto-box, .flow-container { min-width:0; }
+    .manifesto-hero p, .manifesto-box p { overflow-wrap:anywhere; }
+    @media (max-width:768px) {
+      .main { width:100%; }
+      .topbar { position:sticky; top:0; min-height:58px; height:auto; padding:10px 12px; flex-wrap:wrap; align-items:center; }
+      .topbar-left { flex:1 1 190px; }
+      .topbar-left > div { min-width:0; }
+      .page-title { font-size:.9rem; }
+      .page-breadcrumb { max-width:100%; font-size:.65rem; }
+      .topbar-right { flex:0 1 auto; margin-left:auto; }
+      .topbar-right .btn-sm { min-height:34px; padding:7px 9px; font-size:.7rem; white-space:nowrap; }
+      .content { padding:12px 10px 28px; }
+      .conn-bar { display:flex; flex-direction:column; align-items:stretch; gap:8px; padding:12px; }
+      .conn-label { display:block; }
+      .conn-input { width:100%; min-width:0; }
+      .conn-meta { align-self:flex-start; }
+      .manifesto-hero { padding:22px 18px; border-radius:14px; }
+      .manifesto-hero h2 { font-size:1.28rem; line-height:1.25; }
+      .manifesto-lead { font-size:.82rem; line-height:1.65; }
+      .manifesto-cards { grid-template-columns:minmax(0,1fr); gap:9px; }
+      .manifesto-box { padding:15px; }
+      .flow-container { padding:16px; }
+    }
+    @media (max-width:420px) {
+      .topbar { gap:8px; }
+      .topbar-left { flex-basis:100%; }
+      .topbar-right { width:100%; justify-content:flex-end; }
+      .topbar-right .btn-sm { flex:1 1 auto; justify-content:center; }
+      .manifesto-hero { padding:19px 15px; }
+      .manifesto-hero h2 { font-size:1.18rem; }
+      .pill { font-size:.58rem; }
+    }
+
+
+    /* ============================================================
+       MOBILE & WEB VIEWPORT POLISH (Mobile-Fix v2)
+       ============================================================ */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 1.28rem;
+        line-height: 1.15;
+      }
+      .page-breadcrumb {
+        font-size: 0.72rem;
+        line-height: 1.3;
+        max-width: 100%;
+        margin-top: 2px;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .kpi {
+        min-height: auto;
+        padding: 14px 15px;
+      }
+      .kpi-value {
+        font-size: 1.65rem;
+      }
+      .kpi-foot {
+        font-size: 0.76rem;
+      }
+      .chart-card .chart-vp,
+      .chart-card.chart-primary .chart-vp {
+        height: 260px;
+      }
+      .conn-input {
+        font-size: 0.85rem;
+        padding: 9px 11px;
+      }
+      .filter-item select,
+      .filter-item input {
+        font-size: 0.85rem;
+        min-height: 38px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      table {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.18rem;
+      }
+      .topbar-right .btn-sm {
+        font-size: 0.75rem;
+        padding: 7px 10px;
+      }
+    }
+</style>
 </head>
 <body>
-
 <div class="shell">
-
-  <!-- ============================================================
+<!-- ============================================================
        SIDEBAR
        ============================================================ -->
-  <aside class="sidebar">
-    <div class="sidebar-top">
-      <div class="brand-row">
-        <img src="assets/Logo%20Smam10.jpeg" alt="SMAMIO" class="school-logo" />
-        <div>
-          <div class="brand-name">SMAMIO<br>Intelligence</div>
-        </div>
-      </div>
-      <div class="version-badge">
-        <svg width="8" height="8" viewBox="0 0 8 8" style="fill:var(--blue-600);"><circle cx="4" cy="4" r="3"/></svg>
+<aside class="sidebar">
+<div class="sidebar-top">
+<div class="brand-row">
+<img alt="SMAMIO" class="school-logo" src="assets/Logo%20Smam10.jpeg"/>
+<div>
+<div class="brand-name">SMAMIO<br/>Intelligence</div>
+</div>
+</div>
+<div class="version-badge">
+<svg height="8" style="fill:var(--blue-600);" viewbox="0 0 8 8" width="8"><circle cx="4" cy="4" r="3"></circle></svg>
         Program VERTIKAL 2026
       </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <div class="nav-section-label">Platform</div>
-
-      <button class="nav-item" data-tab="manifesto">
-        <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+</div>
+<nav class="sidebar-nav">
+<div class="nav-section-label">Platform</div>
+<button class="nav-item" data-tab="manifesto">
+<svg class="nav-icon" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
         Latar Belakang
       </button>
-
-      <button class="nav-item active" data-tab="analytics">
-        <svg class="nav-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+<button class="nav-item active" data-tab="analytics">
+<svg class="nav-icon" viewbox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
         Live Analytics Hub
       </button>
-
-      <button class="nav-item" data-tab="habits">
-        <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+<button class="nav-item" data-tab="habits">
+<svg class="nav-icon" viewbox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         7 Kebiasaan Hebat
       </button>
-
-      <button class="nav-item" data-tab="smamio">
-        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+<button class="nav-item" data-tab="smamio">
+<svg class="nav-icon" viewbox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         Ekosistem SMAMIO
       </button>
-
-      <div class="nav-section-label" style="margin-top: 8px;">Data</div>
-
-      <label for="excelFile" class="nav-item" style="cursor:pointer;">
-        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+<div class="nav-section-label" style="margin-top: 8px;">Data</div>
+<label class="nav-item" for="excelFile" style="cursor:pointer;">
+<svg class="nav-icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" x2="12" y1="3" y2="15"></line></svg>
         Import Excel / CSV
       </label>
-      <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" style="display:none;" />
-
-      <button class="nav-item" id="btnExportCsv">
-        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+<input accept=".xlsx,.xls,.csv" id="excelFile" style="display:none;" type="file"/>
+<button class="nav-item" id="btnExportCsv">
+<svg class="nav-icon" viewbox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
         Ekspor CSV Analitik
       </button>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="sync-status">
-        <span class="live-dot" id="liveDot"></span>
-        <span id="lastSyncTime">Standar Bawaan SMAMIO</span>
-      </div>
-      <div style="font-size:0.65rem;color:var(--text-4);" id="sourceInfo">1.429 Siswa · 18 Rombel</div>
-    </div>
-  </aside>
-
-  <!-- ============================================================
+</nav>
+<div class="sidebar-footer">
+<div class="sync-status">
+<span class="live-dot" id="liveDot"></span>
+<span id="lastSyncTime">Standar Bawaan SMAMIO</span>
+</div>
+<div id="sourceInfo" style="font-size:0.65rem;color:var(--text-4);">Memuat data aktif…</div>
+</div>
+</aside>
+<div aria-hidden="true" class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+<!-- ============================================================
        MAIN
        ============================================================ -->
-  <div class="main">
-
-    <!-- TOP BAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div class="page-title" id="pageTitleText">Live Analytics Hub</div>
-          <div class="page-breadcrumb">SMA Muhammadiyah 10 GKB Gresik · 7 Kebiasaan Anak Indonesia Hebat</div>
-        </div>
-      </div>
-
-      <div class="topbar-right">
-        <button class="btn-sm" id="themeToggleBtn">
-          <span id="themeIconContainer">
-            <svg class="ico" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          </span>
-          <span id="themeText">Mode Gelap</span>
-        </button>
-
-        <div style="width:1px;height:20px;background:var(--border);"></div>
-
-        <button class="btn-sm btn-primary" id="btnSync">
-          <svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+<div class="main">
+<!-- TOP BAR -->
+<header class="topbar">
+<div class="topbar-left">
+<button aria-expanded="false" aria-label="Buka navigasi" class="mobile-nav-toggle" id="mobileNavToggle" type="button">
+<svg viewbox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+</button>
+<div>
+<div class="page-title" id="pageTitleText">Live Analytics Hub</div>
+<div class="page-breadcrumb">SMA Muhammadiyah 10 GKB Gresik · 7 Kebiasaan Anak Indonesia Hebat</div>
+</div>
+</div>
+<div class="topbar-right">
+<button class="btn-sm" id="themeToggleBtn">
+<span id="themeIconContainer">
+<svg class="ico" viewbox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+</span>
+<span id="themeText">Mode Gelap</span>
+</button>
+<div style="width:1px;height:20px;background:var(--border);"></div>
+<button class="btn-sm btn-primary" id="btnSync">
+<svg class="ico" viewbox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 21h5v-5"></path></svg>
           Sinkronkan Live
         </button>
-      </div>
-    </header>
-
-    <!-- CONTENT -->
-    <div class="content">
-      <div id="alertBox"></div>
-
-      <!-- GOOGLE SHEETS INPUT BAR -->
-      <div class="conn-bar">
-        <span class="conn-label">Sumber Data</span>
-        <input type="text" id="sheetCsvUrl" class="conn-input" placeholder="Tempel URL Google Sheets (Publish to Web · format CSV)…" />
-        <label class="conn-meta" style="cursor:pointer;">
-          <input type="checkbox" id="autoRefreshCheck" style="cursor:pointer;" />
-          <span>Auto-Refresh 30 dtk</span>
-        </label>
-      </div>
-
-      <!-- ========================================================
+</div>
+</header>
+<!-- CONTENT -->
+<div class="content">
+<div id="alertBox"></div>
+<!-- GOOGLE SHEETS INPUT BAR -->
+<div class="conn-bar">
+<span class="conn-label">Sumber Data</span>
+<input class="conn-input" id="sheetCsvUrl" placeholder="Tempel URL Google Sheets (Publish to Web · format CSV)…" type="text"/>
+<label class="conn-meta" style="cursor:pointer;">
+<input id="autoRefreshCheck" style="cursor:pointer;" type="checkbox"/>
+<span>Auto-Refresh 30 dtk</span>
+</label>
+</div>
+<!-- ========================================================
            PANEL 1: LATAR BELAKANG
            ======================================================== -->
-      <div class="panel panel-animate" id="panel-manifesto">
-        <div class="manifesto-hero">
-          <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-            <span class="pill pill-blue">DIREKTORAT SMA KEMENDIKBUDRISTEK</span>
-            <span class="pill pill-yellow">PROGRAM VERTIKAL 2026</span>
-          </div>
-          <h2>Kenapa Platform Inovasi Ini Diciptakan?</h2>
-          <p class="manifesto-lead" style="margin-top:10px;">
+<div class="panel panel-animate" id="panel-manifesto">
+<div class="manifesto-hero">
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+<span class="pill pill-blue">DIREKTORAT SMA KEMENDIKBUDRISTEK</span>
+<span class="pill pill-yellow">PROGRAM VERTIKAL 2026</span>
+</div>
+<h2>Kenapa Platform Inovasi Ini Diciptakan?</h2>
+<p class="manifesto-lead" style="margin-top:10px;">
             Dalam rangka mendukung penguatan karakter murid melalui penerapan <strong>Gerakan Tujuh Kebiasaan Anak Indonesia Hebat (7KAIH)</strong>, serta mendorong pemanfaatan teknologi informasi dan kecerdasan artifisial, Direktorat SMA melaksanakan <strong>Program VERTIKAL (Inovasi Berbasis TI dan KA) SMA Tahun 2026</strong>. Platform ini mengubah paradigma rekap karakter manual yang lambat menjadi <em>Evidence-Based Decision Support System</em> yang real-time dan berdampak nyata.
           </p>
-        </div>
-
-        <div class="manifesto-cards">
-          <div class="manifesto-box">
-            <div class="manifesto-box-head" style="color:var(--blue-600);">
-              <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+</div>
+<div class="manifesto-cards">
+<div class="manifesto-box">
+<div class="manifesto-box-head" style="color:var(--blue-600);">
+<svg viewbox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
               Tantangan Konvensional
             </div>
-            <p>Kuesioner karakter siswa kerap berhenti sebagai tumpukan data tabular tanpa tindak lanjut. Rekap manual memakan waktu berminggu-minggu, sehingga guru BK terlambat mengidentifikasi degradasi kebiasaan murid.</p>
-          </div>
-          <div class="manifesto-box">
-            <div class="manifesto-box-head" style="color:var(--amber-dark);">
-              <svg viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+<p>Kuesioner karakter siswa kerap berhenti sebagai tumpukan data tabular tanpa tindak lanjut. Rekap manual memakan waktu berminggu-minggu, sehingga guru BK terlambat mengidentifikasi degradasi kebiasaan murid.</p>
+</div>
+<div class="manifesto-box">
+<div class="manifesto-box-head" style="color:var(--amber-dark);">
+<svg viewbox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
               Solusi SMAMIO
             </div>
-            <p>Platform terintegrasi langsung dengan Google Sheets formulir harian siswa, memproses 14 indikator sub-pertanyaan secara otomatis, dan menyajikan sintesis diagnostik 7 dimensi dalam hitungan detik.</p>
-          </div>
-          <div class="manifesto-box">
-            <div class="manifesto-box-head" style="color:var(--green-600);">
-              <svg viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+<p>Platform terintegrasi langsung dengan Google Sheets formulir harian siswa, memproses 14 indikator sub-pertanyaan secara otomatis, dan menyajikan sintesis diagnostik 7 dimensi dalam hitungan detik.</p>
+</div>
+<div class="manifesto-box">
+<div class="manifesto-box-head" style="color:var(--green-600);">
+<svg viewbox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>
               Pemerataan &amp; Mitigasi
             </div>
-            <p>Menghitung indeks variabilitas antar 18 rombel. Satuan pendidikan dapat mengetahui secara presisi kelas mana yang telah mandiri dan kelas mana yang membutuhkan pendampingan wali kelas intensif.</p>
-          </div>
-        </div>
-
-        <div class="flow-container">
-          <div class="flow-title">Arsitektur Alur Kerja Sistem</div>
-          <div class="flow-desc">Transformasi data dari pengisian form murid hingga intervensi pembimbingan terarah</div>
-          <div class="flow-steps">
-            <div class="flow-step">
-              <div class="flow-num">1</div>
-              <div class="flow-step-title">Pengisian Form 7KAIH</div>
-              <div class="flow-step-body">1.429 murid mengisi 14 indikator harian terkait bangun pagi, ibadah, olahraga, makan sehat, belajar, sosialisasi, dan jam tidur.</div>
-            </div>
-            <div class="flow-step">
-              <div class="flow-num">2</div>
-              <div class="flow-step-title">Sinkronisasi Cloud Live</div>
-              <div class="flow-step-body">Data tersimpan di Google Sheets dan ditarik secara real-time via REST/CSV tanpa ketergantungan database berbayar.</div>
-            </div>
-            <div class="flow-step">
-              <div class="flow-num">3</div>
-              <div class="flow-step-title">Mesin Analisis AI</div>
-              <div class="flow-step-body">Algoritma normalisasi memetakan jawaban teks ke skala ordinal (1–4), mengagregasi 7 dimensi, dan menghitung deviasi baku.</div>
-            </div>
-            <div class="flow-step">
-              <div class="flow-num">4</div>
-              <div class="flow-step-title">Diagnostik &amp; Rekomendasi Aksi</div>
-              <div class="flow-step-body">Dashboard visual eksekutif, simulator dampak kebijakan, dan rekomendasi konkret bagi pimpinan SMAMIO.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================================
+<p>Menghitung indeks variabilitas antar <span id="rombelDatasetCount">data rombel aktif</span>. Satuan pendidikan dapat mengetahui secara presisi kelas mana yang telah mandiri dan kelas mana yang membutuhkan pendampingan wali kelas intensif.</p>
+</div>
+</div>
+<div class="flow-container">
+<div class="flow-title">Arsitektur Alur Kerja Sistem</div>
+<div class="flow-desc">Transformasi data dari pengisian form murid hingga intervensi pembimbingan terarah</div>
+<div class="flow-steps">
+<div class="flow-step">
+<div class="flow-num">1</div>
+<div class="flow-step-title">Pengisian Form 7KAIH</div>
+<div class="flow-step-body"><span id="flowStudentCount">Memuat data responden</span> mengisi 14 indikator harian terkait bangun pagi, ibadah, olahraga, makan sehat, belajar, sosialisasi, dan jam tidur.</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">2</div>
+<div class="flow-step-title">Sinkronisasi Cloud Live</div>
+<div class="flow-step-body">Data tersimpan di Google Sheets dan ditarik secara real-time via REST/CSV tanpa ketergantungan database berbayar.</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">3</div>
+<div class="flow-step-title">Mesin Analisis AI</div>
+<div class="flow-step-body">Algoritma normalisasi memetakan jawaban teks ke skala ordinal (1–4), mengagregasi 7 dimensi, dan menghitung deviasi baku.</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">4</div>
+<div class="flow-step-title">Diagnostik &amp; Rekomendasi Aksi</div>
+<div class="flow-step-body">Dashboard visual eksekutif, simulator dampak kebijakan, dan rekomendasi konkret bagi pimpinan SMAMIO.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================
            PANEL 2: LIVE ANALYTICS HUB
            ======================================================== -->
-      <div class="panel panel-animate active" id="panel-analytics">
-
-        <!-- AI Diagnostic -->
-        <div class="insight-card">
-          <div class="insight-head">
-            <div class="insight-title">
-              <svg class="ico" style="color:var(--amber-dark);" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+<div class="panel panel-animate active" id="panel-analytics">
+<!-- AI Diagnostic -->
+<div class="insight-card">
+<div class="insight-head">
+<div class="insight-title">
+<svg class="ico" style="color:var(--amber-dark);" viewbox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
               Sintesis Diagnostik Data AI
             </div>
-            <span class="pill pill-yellow">Real-Time Evaluation · CI 95%</span>
-          </div>
-          <div class="insight-body" id="aiExecutiveSummary">Memproses matriks agregasi 7 pilar kebiasaan siswa SMAMIO Gresik…</div>
-          <div class="chip-row">
-            <span class="chip" id="chipFilterCritical">
-              <svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+<span class="pill pill-yellow">Real-Time Evaluation · CI 95%</span>
+</div>
+<div class="insight-body" id="aiExecutiveSummary">Memproses matriks agregasi 7 pilar kebiasaan siswa SMAMIO Gresik…</div>
+<div class="chip-row">
+<span class="chip" id="chipFilterCritical">
+<svg viewbox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
               Rombel Butuh Intervensi (&lt;2.80)
             </span>
-            <span class="chip" id="chipFilterTop">
-              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+<span class="chip" id="chipFilterTop">
+<svg viewbox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
               Rombel Berprestasi (≥3.20)
             </span>
-            <span class="chip" id="chipResetAiFilter">
-              <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+<span class="chip" id="chipResetAiFilter">
+<svg viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
               Pulihkan Semua
             </span>
-          </div>
-        </div>
-
-        <!-- Filter Strip -->
-        <div class="filter-strip">
-          <div class="filter-item">
-            <span class="filter-label">Tingkat Jenjang</span>
-            <select id="filterTingkat" class="fsel">
-              <option value="ALL">Semua Jenjang</option>
-              <option value="X">Kelas X</option>
-              <option value="XI">Kelas XI</option>
-              <option value="XII">Kelas XII</option>
-              <option value="Lainnya">Lainnya</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <span class="filter-label">Rombongan Belajar</span>
-            <select id="filterKelas" class="fsel"><option value="ALL">Semua Rombel</option></select>
-          </div>
-          <div class="filter-item">
-            <span class="filter-label">Tanggal Pengisian</span>
-            <select id="filterDate" class="fsel"><option value="ALL">Semua Tanggal</option></select>
-          </div>
-          <div class="filter-item">
-            <span class="filter-label">Dimensi Fokus</span>
-            <select id="filterHabit" class="fsel">
-              <option value="0">1. Bangun Pagi</option>
-              <option value="1">2. Beribadah</option>
-              <option value="2">3. Berolahraga</option>
-              <option value="3">4. Makan Sehat &amp; Bergizi</option>
-              <option value="4">5. Gemar Belajar</option>
-              <option value="5">6. Bermasyarakat</option>
-              <option value="6">7. Tidur Cepat</option>
-            </select>
-          </div>
-          <button class="btn-sm" id="btnReset" style="align-self:flex-end;">
-            <svg class="ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+</div>
+</div>
+<!-- Filter Strip -->
+<div class="filter-strip">
+<div class="filter-item">
+<span class="filter-label">Tingkat Jenjang</span>
+<select class="fsel" id="filterTingkat">
+<option value="ALL">Semua Jenjang</option>
+<option value="X">Kelas X</option>
+<option value="XI">Kelas XI</option>
+<option value="XII">Kelas XII</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+<div class="filter-item">
+<span class="filter-label">Rombongan Belajar</span>
+<select class="fsel" id="filterKelas"><option value="ALL">Semua Rombel</option></select>
+</div>
+<div class="filter-item">
+<span class="filter-label">Tanggal Pengisian</span>
+<select class="fsel" id="filterDate"><option value="ALL">Semua Tanggal</option></select>
+</div>
+<div class="filter-item">
+<span class="filter-label">Dimensi Fokus</span>
+<select class="fsel" id="filterHabit">
+<option value="0">1. Bangun Pagi</option>
+<option value="1">2. Beribadah</option>
+<option value="2">3. Berolahraga</option>
+<option value="3">4. Makan Sehat &amp; Bergizi</option>
+<option value="4">5. Gemar Belajar</option>
+<option value="5">6. Bermasyarakat</option>
+<option value="6">7. Tidur Cepat</option>
+</select>
+</div>
+<button class="btn-sm" id="btnReset" style="align-self:flex-end;">
+<svg class="ico" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
             Reset
           </button>
+</div>
+<div aria-live="polite" class="dashboard-empty" id="dashboardEmpty" role="status">
+<strong>Tidak ada data untuk kombinasi filter ini.</strong>
+          Ubah filter jenjang, rombel, atau tanggal untuk menampilkan analisis.
         </div>
+<!-- KPI Row -->
+<div class="kpi-grid">
+<div class="kpi kpi-blue">
+<div class="kpi-head">
+<span class="kpi-label">Total Responden</span>
+<div class="kpi-icon c-blue">
+<svg viewbox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+</div>
+</div>
+<div class="kpi-value text-blue" id="kpiCount">0</div>
+<div class="kpi-foot">
+<span class="pill pill-blue" id="kpiSampleBadge">Sampel Lengkap</span>
+<span id="kpiPct">100% populasi</span>
+</div>
+</div>
+<div class="kpi kpi-yellow">
+<div class="kpi-head">
+<span class="kpi-label">Indeks Karakter KAIH</span>
+<div class="kpi-icon c-yellow">
+<svg viewbox="0 0 24 24"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
+</div>
+</div>
+<div class="kpi-value text-yellow" id="kpiIndex">0,0</div>
+<div class="kpi-foot">
+<span class="pill pill-yellow" id="kpiIndexGrade">Prima</span>
+<span>Rerata: <strong id="kpiMean">0,00</strong> / 4,00</span>
+</div>
+</div>
+<div class="kpi kpi-green">
+<div class="kpi-head">
+<span class="kpi-label">Pilar Terkuat</span>
+<div class="kpi-icon c-green">
+<svg viewbox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+</div>
+</div>
+<div class="kpi-value medium-val text-green" id="kpiBest">—</div>
+<div class="kpi-foot">
+<span class="pill pill-green" id="kpiBestScore">Skor 0,00</span>
+<span id="kpiBestDesc">Konsistensi tertinggi</span>
+</div>
+</div>
+<div class="kpi kpi-red">
+<div class="kpi-head">
+<span class="kpi-label">Prioritas Intervensi</span>
+<div class="kpi-icon c-red">
+<svg viewbox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+</div>
+</div>
+<div class="kpi-value medium-val text-red" id="kpiWorst">—</div>
+<div class="kpi-foot">
+<span class="pill pill-red" id="kpiWorstScore">Skor 0,00</span>
+<span id="kpiWorstGap">Gap: 0,00</span>
+</div>
+</div>
 
-        <!-- KPI Row -->
-        <div class="kpi-grid">
-          <div class="kpi kpi-blue">
-            <div class="kpi-head">
-              <span class="kpi-label">Total Responden</span>
-              <div class="kpi-icon c-blue">
-                <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value text-blue" id="kpiCount">0</div>
-            <div class="kpi-foot">
-              <span class="pill pill-blue" id="kpiSampleBadge">Sampel Lengkap</span>
-              <span id="kpiPct">100% populasi</span>
-            </div>
-          </div>
 
-          <div class="kpi kpi-yellow">
-            <div class="kpi-head">
-              <span class="kpi-label">Indeks Karakter KAIH</span>
-              <div class="kpi-icon c-yellow">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value text-yellow" id="kpiIndex">0,0</div>
-            <div class="kpi-foot">
-              <span class="pill pill-yellow" id="kpiIndexGrade">Prima</span>
-              <span>Rerata: <strong id="kpiMean">0,00</strong> / 4,00</span>
-            </div>
-          </div>
+</div><details class="kpi-more"><summary>Statistik tambahan</summary><div class="kpi-extra-grid"><div class="kpi">
+<div class="kpi-head">
+<span class="kpi-label">Disparitas Rombel</span>
+<div class="kpi-icon c-blue">
+<svg viewbox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>
+</div>
+</div>
+<div class="kpi-value" id="kpiStdDev">0,00</div>
+<div class="kpi-foot">
+<span class="pill pill-gray" id="kpiStdBadge">Variasi Rendah</span>
+<span>Indeks pemerataan</span>
+</div>
+</div><div class="kpi kpi-yellow">
+<div class="kpi-head">
+<span class="kpi-label">Rombel Terbaik</span>
+<div class="kpi-icon c-yellow">
+<svg viewbox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+</div>
+</div>
+<div class="kpi-value medium-val" id="kpiTopClass">—</div>
+<div class="kpi-foot">
+<span class="pill pill-green" id="kpiTopClassScore">Indeks 0,0</span>
+<span id="kpiTopClassMeta">Teladan konsistensi</span>
+</div>
+</div></div></details>
+<!-- What-If Simulator -->
 
-          <div class="kpi kpi-green">
-            <div class="kpi-head">
-              <span class="kpi-label">Pilar Terkuat</span>
-              <div class="kpi-icon c-green">
-                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value medium-val text-green" id="kpiBest">—</div>
-            <div class="kpi-foot">
-              <span class="pill pill-green" id="kpiBestScore">Skor 0,00</span>
-              <span id="kpiBestDesc">Konsistensi tertinggi</span>
-            </div>
-          </div>
+<!-- Charts Grid -->
+<div class="visual-intro"><strong>Gambaran utama</strong><span>Mulai dari profil tujuh kebiasaan dan tren skor. Analisis lainnya tersedia saat dibutuhkan.</span></div><div class="charts-grid">
 
-          <div class="kpi kpi-red">
-            <div class="kpi-head">
-              <span class="kpi-label">Prioritas Intervensi</span>
-              <div class="kpi-icon c-red">
-                <svg viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value medium-val text-red" id="kpiWorst">—</div>
-            <div class="kpi-foot">
-              <span class="pill pill-red" id="kpiWorstScore">Skor 0,00</span>
-              <span id="kpiWorstGap">Gap: 0,00</span>
-            </div>
-          </div>
 
-          <div class="kpi">
-            <div class="kpi-head">
-              <span class="kpi-label">Disparitas Rombel</span>
-              <div class="kpi-icon c-blue">
-                <svg viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpiStdDev">0,00</div>
-            <div class="kpi-foot">
-              <span class="pill pill-gray" id="kpiStdBadge">Variasi Rendah</span>
-              <span>Indeks pemerataan</span>
-            </div>
-          </div>
 
-          <div class="kpi kpi-yellow">
-            <div class="kpi-head">
-              <span class="kpi-label">Rombel Terbaik</span>
-              <div class="kpi-icon c-yellow">
-                <svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value medium-val" id="kpiTopClass">—</div>
-            <div class="kpi-foot">
-              <span class="pill pill-green" id="kpiTopClassScore">Indeks 0,0</span>
-              <span id="kpiTopClassMeta">Teladan konsistensi</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- What-If Simulator -->
-        <div class="sim-card">
-          <div>
-            <div class="sim-title">
-              <svg class="ico" style="color:var(--blue-600);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+
+
+<div class="chart-card col-5">
+<div class="chart-head">
+<div>
+<div class="chart-title">Profil Poligon 7 Kebiasaan (Spider Radar)</div>
+<div class="chart-sub">Capaian riil vs Target Mutu (3.00) vs Standar Emas (3.50)</div>
+</div>
+</div>
+<div class="chart-vp"><canvas id="radarChart"></canvas></div>
+</div><div class="chart-card chart-primary col-7">
+<div class="chart-head">
+<div>
+<div class="chart-title">Evolusi Kronologis Skor Harian</div>
+<div class="chart-sub">Tren pergerakan rata-rata indeks pembiasaan per tanggal</div>
+</div>
+</div>
+<div class="chart-vp"><canvas id="trendChart"></canvas></div>
+</div></div><details class="sim-more"><summary>Buka simulator kebijakan</summary><div class="sim-card">
+<div>
+<div class="sim-title">
+<svg class="ico" style="color:var(--blue-600);" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
               Simulator Kebijakan: Proyeksi Kenaikan Indeks
             </div>
-            <div class="sim-desc" id="simTargetLabel">Fokus Intervensi: Dimensi Prioritas</div>
-            <div class="sim-slider-row">
-              <span style="font-size:0.72rem;color:var(--text-3);">Skor Asli</span>
-              <input type="range" id="simSlider" min="0" max="1" step="0.05" value="0" />
-              <span class="sim-delta" id="simDeltaLabel">+0,00 Poin</span>
-            </div>
-          </div>
-          <div class="sim-metric-box">
-            <div class="sim-stat">
-              <div class="sim-stat-lbl">Riil</div>
-              <div class="sim-stat-val" id="simCurrentIndex">0,0</div>
-            </div>
-            <div class="sim-arrow">&rarr;</div>
-            <div class="sim-stat">
-              <div class="sim-stat-lbl">Proyeksi</div>
-              <div class="sim-stat-val" style="color:var(--green-600);" id="simProjectedIndex">0,0</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charts Grid -->
-        <div class="charts-grid">
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Profil Poligon 7 Kebiasaan (Spider Radar)</div>
-                <div class="chart-sub">Capaian riil vs Target Mutu (3.00) vs Standar Emas (3.50)</div>
-              </div>
-            </div>
-            <div class="chart-vp"><canvas id="radarChart"></canvas></div>
-          </div>
-
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Neraca Karakter: Surplus &amp; Defisit</div>
-                <div class="chart-sub">Deviasi dimensi terhadap standar kelulusan 3.00</div>
-              </div>
-            </div>
-            <div class="chart-vp"><canvas id="balanceChart"></canvas></div>
-          </div>
-
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Evolusi Kronologis Skor Harian</div>
-                <div class="chart-sub">Tren pergerakan rata-rata indeks pembiasaan per tanggal</div>
-              </div>
-            </div>
-            <div class="chart-vp"><canvas id="trendChart"></canvas></div>
-          </div>
-
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Komparasi Antar Jenjang (X · XI · XII)</div>
-                <div class="chart-sub">Perbandingan capaian karakter antar tingkatan kelas</div>
-              </div>
-            </div>
-            <div class="chart-vp"><canvas id="gradeCompareChart"></canvas></div>
-          </div>
-
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Distribusi Kategori Skor Tiap Dimensi</div>
-                <div class="chart-sub">Proporsi Sangat Baik · Baik · Cukup · Kurang</div>
-              </div>
-            </div>
-            <div class="chart-vp"><canvas id="stackedChart"></canvas></div>
-          </div>
-
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Matriks Kesenjangan Target Ideal (3.50)</div>
-                <div class="chart-sub">Selisih capaian tiap dimensi terhadap standar kemandirian prima</div>
-              </div>
-            </div>
-            <div class="chart-vp"><canvas id="gapChart"></canvas></div>
-          </div>
-        </div>
-
-        <!-- ======================================================
+<div class="sim-desc" id="simTargetLabel">Fokus Intervensi: Dimensi Prioritas</div>
+<div class="sim-slider-row">
+<span style="font-size:0.72rem;color:var(--text-3);">Skor Asli</span>
+<input id="simSlider" max="1" min="0" step="0.05" type="range" value="0"/>
+<span class="sim-delta" id="simDeltaLabel">+0,00 Poin</span>
+</div>
+</div>
+<div class="sim-metric-box">
+<div class="sim-stat">
+<div class="sim-stat-lbl">Riil</div>
+<div class="sim-stat-val" id="simCurrentIndex">0,0</div>
+</div>
+<div class="sim-arrow">→</div>
+<div class="sim-stat">
+<div class="sim-stat-lbl">Proyeksi</div>
+<div class="sim-stat-val" id="simProjectedIndex" style="color:var(--green-600);">0,0</div>
+</div>
+</div>
+</div></details><details class="analytics-more"><summary>Lihat analisis lengkap<span class="disclosure-note">Grafik perbandingan, distribusi, kesenjangan, dan analisis lanjutan</span></summary><div class="charts-grid secondary-chart-grid"><div class="chart-card col-5">
+<div class="chart-head">
+<div>
+<div class="chart-title">Neraca Karakter: Surplus &amp; Defisit</div>
+<div class="chart-sub">Deviasi dimensi terhadap standar kelulusan 3.00</div>
+</div>
+</div>
+<div class="chart-vp"><canvas id="balanceChart"></canvas></div>
+</div><div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Komparasi Antar Jenjang (X · XI · XII)</div>
+<div class="chart-sub">Perbandingan capaian karakter antar tingkatan kelas</div>
+</div>
+</div>
+<div class="chart-vp"><canvas id="gradeCompareChart"></canvas></div>
+</div><div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Distribusi Kategori Skor Tiap Dimensi</div>
+<div class="chart-sub">Proporsi Sangat Baik · Baik · Cukup · Kurang</div>
+</div>
+</div>
+<div class="chart-vp"><canvas id="stackedChart"></canvas></div>
+</div><div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Matriks Kesenjangan Target Ideal (3.50)</div>
+<div class="chart-sub">Selisih capaian tiap dimensi terhadap standar kemandirian prima</div>
+</div>
+</div>
+<div class="chart-vp"><canvas id="gapChart"></canvas></div>
+</div></div><div class="charts-grid">
+<div class="chart-section-divider">
+<span class="chart-section-divider-label">Analisis Lanjutan</span>
+<span class="chart-section-divider-line"></span>
+</div>
+<!-- Chart 7: Bubble Chart — Rombel Mapping -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Pemetaan Rombel: Rerata vs Variabilitas</div>
+<div class="chart-sub">Bubble = jumlah siswa · X = skor rerata · Y = standar deviasi internal</div>
+</div>
+<span class="pill pill-blue">Scatter Intelligence</span>
+</div>
+<div class="chart-vp"><canvas id="bubbleChart"></canvas></div>
+</div>
+<!-- Chart 8: Donut Ring — Distribusi Keseluruhan -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Komposisi Kategori Karakter Keseluruhan</div>
+<div class="chart-sub"><span id="donutDatasetSubtitle">Proporsi data aktif dalam 4 kategori capaian 7KAIH</span></div>
+</div>
+<span class="pill pill-yellow">Donut Ring</span>
+</div>
+<div class="chart-vp"><canvas id="donutChart"></canvas></div>
+</div>
+<!-- Chart 9: Polar Area — Bobot Dimensi -->
+<div class="chart-card col-4">
+<div class="chart-head">
+<div>
+<div class="chart-title">Bobot Relatif Dimensi</div>
+<div class="chart-sub">Polar area: kontribusi tiap pilar terhadap total indeks</div>
+</div>
+</div>
+<div class="chart-vp" style="height:260px;"><canvas id="polarChart"></canvas></div>
+</div>
+<!-- Chart 10: Multi-line Area — X vs XI vs XII over time -->
+<div class="chart-card col-8">
+<div class="chart-head">
+<div>
+<div class="chart-title">Tren Indeks Harian: X · XI · XII Terpisah</div>
+<div class="chart-sub">Pergerakan rata-rata skor tiap jenjang per tanggal pengisian</div>
+</div>
+<span class="pill pill-green">Time Series</span>
+</div>
+<div class="chart-vp"><canvas id="multiTrendChart"></canvas></div>
+</div>
+<!-- Chart 11: Scatter Korelasi Dua Dimensi -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Korelasi: Bangun Pagi × Gemar Belajar</div>
+<div class="chart-sub">Setiap titik = satu rombel · ukuran = jumlah siswa dalam rombel</div>
+</div>
+<span class="pill pill-blue">Correlation Plot</span>
+</div>
+<div class="chart-vp"><canvas id="scatterChart"></canvas></div>
+</div>
+<!-- Chart 12: Bullet Chart — Realisasi vs Target per Dimensi -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Bullet Chart: Realisasi vs Ambang Bertingkat</div>
+<div class="chart-sub">Merah &lt;2.80 · Kuning 2.80–3.00 · Hijau ≥3.00 · Emas 3.50</div>
+</div>
+<span class="pill pill-yellow">Bullet KPI</span>
+</div>
+<div class="bullet-wrap" id="bulletChartWrap" style="max-height:300px;overflow-y:auto;"></div>
+<div class="bullet-legend" style="margin-top:10px;">
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(220,38,38,0.25);"></span>Butuh Intervensi &lt;2.80</div>
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(234,179,8,0.25);"></span>Stabil 2.80–3.00</div>
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(5,150,105,0.18);"></span>Mandiri ≥3.00</div>
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:var(--blue-600);border-radius:99px;"></span>Capaian Riil</div>
+</div>
+</div>
+<!-- Chart 13: Horizontal Rank Bar — Top 6 vs Bottom 6 Rombel -->
+<div class="chart-card col-12">
+<div class="chart-head">
+<div>
+<div class="chart-title">Top 6 Rombel Teladan vs Bottom 6 Rombel Prioritas Intervensi</div>
+<div class="chart-sub">Perbandingan langsung rombel capaian tertinggi dan terendah berdasarkan Indeks Karakter</div>
+</div>
+<span class="pill pill-blue">Top/Bottom Analysis</span>
+</div>
+<div class="chart-vp" style="height:320px;"><canvas id="topBottomChart"></canvas></div>
+</div>
+</div></details>
+<!-- ======================================================
              CHARTS GRID 2: ADVANCED ANALYTICS
              ====================================================== -->
-        <div class="charts-grid">
-          <div class="chart-section-divider">
-            <span class="chart-section-divider-label">Analisis Lanjutan</span>
-            <span class="chart-section-divider-line"></span>
-          </div>
 
-          <!-- Chart 7: Bubble Chart — Rombel Mapping -->
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Pemetaan Rombel: Rerata vs Variabilitas</div>
-                <div class="chart-sub">Bubble = jumlah siswa · X = skor rerata · Y = standar deviasi internal</div>
-              </div>
-              <span class="pill pill-blue">Scatter Intelligence</span>
-            </div>
-            <div class="chart-vp"><canvas id="bubbleChart"></canvas></div>
-          </div>
-
-          <!-- Chart 8: Donut Ring — Distribusi Keseluruhan -->
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Komposisi Kategori Karakter Keseluruhan</div>
-                <div class="chart-sub">Proporsi 1.429 siswa dalam 4 kategori capaian 7KAIH</div>
-              </div>
-              <span class="pill pill-yellow">Donut Ring</span>
-            </div>
-            <div class="chart-vp"><canvas id="donutChart"></canvas></div>
-          </div>
-
-          <!-- Chart 9: Polar Area — Bobot Dimensi -->
-          <div class="chart-card col-4">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Bobot Relatif Dimensi</div>
-                <div class="chart-sub">Polar area: kontribusi tiap pilar terhadap total indeks</div>
-              </div>
-            </div>
-            <div class="chart-vp" style="height:260px;"><canvas id="polarChart"></canvas></div>
-          </div>
-
-          <!-- Chart 10: Multi-line Area — X vs XI vs XII over time -->
-          <div class="chart-card col-8">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Tren Indeks Harian: X · XI · XII Terpisah</div>
-                <div class="chart-sub">Pergerakan rata-rata skor tiap jenjang per tanggal pengisian</div>
-              </div>
-              <span class="pill pill-green">Time Series</span>
-            </div>
-            <div class="chart-vp"><canvas id="multiTrendChart"></canvas></div>
-          </div>
-
-          <!-- Chart 11: Scatter Korelasi Dua Dimensi -->
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Korelasi: Bangun Pagi &times; Gemar Belajar</div>
-                <div class="chart-sub">Setiap titik = satu rombel · ukuran = jumlah siswa dalam rombel</div>
-              </div>
-              <span class="pill pill-blue">Correlation Plot</span>
-            </div>
-            <div class="chart-vp"><canvas id="scatterChart"></canvas></div>
-          </div>
-
-          <!-- Chart 12: Bullet Chart — Realisasi vs Target per Dimensi -->
-          <div class="chart-card col-6">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Bullet Chart: Realisasi vs Ambang Bertingkat</div>
-                <div class="chart-sub">Merah &lt;2.80 · Kuning 2.80–3.00 · Hijau &ge;3.00 · Emas 3.50</div>
-              </div>
-              <span class="pill pill-yellow">Bullet KPI</span>
-            </div>
-            <div class="bullet-wrap" id="bulletChartWrap" style="max-height:300px;overflow-y:auto;"></div>
-            <div class="bullet-legend" style="margin-top:10px;">
-              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(220,38,38,0.25);"></span>Butuh Intervensi &lt;2.80</div>
-              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(234,179,8,0.25);"></span>Stabil 2.80–3.00</div>
-              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(5,150,105,0.18);"></span>Mandiri &ge;3.00</div>
-              <div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:var(--blue-600);border-radius:99px;"></span>Capaian Riil</div>
-            </div>
-          </div>
-
-          <!-- Chart 13: Horizontal Rank Bar — Top 6 vs Bottom 6 Rombel -->
-          <div class="chart-card col-12">
-            <div class="chart-head">
-              <div>
-                <div class="chart-title">Top 6 Rombel Teladan vs Bottom 6 Rombel Prioritas Intervensi</div>
-                <div class="chart-sub">Perbandingan langsung rombel capaian tertinggi dan terendah berdasarkan Indeks Karakter</div>
-              </div>
-              <span class="pill pill-blue">Top/Bottom Analysis</span>
-            </div>
-            <div class="chart-vp" style="height:320px;"><canvas id="topBottomChart"></canvas></div>
-          </div>
-        </div>
-
-        <!-- Rombel Table -->
-        <div class="table-card">
-          <div class="table-toolbar">
-            <div>
-              <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);">Peringkat Capaian Rombongan Belajar SMAMIO</div>
-              <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">18 rombel diurutkan berdasarkan Indeks Karakter — dari teladan hingga butuh pendampingan</div>
-            </div>
-            <div class="table-search">
-              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" id="tableSearchInput" placeholder="Cari rombel (misal: XII-3)…" />
-            </div>
-          </div>
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th onclick="sortTable(0)">#</th>
-                  <th onclick="sortTable(1)">Rombel</th>
-                  <th onclick="sortTable(2)">Tingkat</th>
-                  <th onclick="sortTable(3)">Siswa</th>
-                  <th onclick="sortTable(4)">Indeks</th>
-                  <th onclick="sortTable(5)">Status</th>
-                  <th onclick="sortTable(6)">Bangun Pagi</th>
-                  <th onclick="sortTable(7)">Beribadah</th>
-                  <th onclick="sortTable(8)">Olahraga</th>
-                  <th onclick="sortTable(9)">Makan Sehat</th>
-                  <th onclick="sortTable(10)">Belajar</th>
-                  <th onclick="sortTable(11)">Bermasyarakat</th>
-                  <th onclick="sortTable(12)">Tidur Cepat</th>
-                </tr>
-              </thead>
-              <tbody id="classTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================================
+<!-- Rombel Table -->
+<div class="table-card">
+<div class="table-toolbar">
+<div>
+<div style="font-size:0.88rem;font-weight:700;color:var(--text-1);">Peringkat Capaian Rombongan Belajar SMAMIO</div>
+<div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;"><span id="rombelRankCount">Rombel aktif</span> diurutkan berdasarkan Indeks Karakter — dari teladan hingga butuh pendampingan</div>
+</div>
+<div class="table-search">
+<svg viewbox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+<input id="tableSearchInput" placeholder="Cari rombel (misal: XII-3)…" type="text"/>
+</div>
+</div>
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr>
+<th onclick="sortTable(0)">#</th>
+<th onclick="sortTable(1)">Rombel</th>
+<th onclick="sortTable(2)">Tingkat</th>
+<th onclick="sortTable(3)">Siswa</th>
+<th onclick="sortTable(4)">Indeks</th>
+<th onclick="sortTable(5)">Status</th>
+<th onclick="sortTable(6)">Bangun Pagi</th>
+<th onclick="sortTable(7)">Beribadah</th>
+<th onclick="sortTable(8)">Olahraga</th>
+<th onclick="sortTable(9)">Makan Sehat</th>
+<th onclick="sortTable(10)">Belajar</th>
+<th onclick="sortTable(11)">Bermasyarakat</th>
+<th onclick="sortTable(12)">Tidur Cepat</th>
+</tr>
+</thead>
+<tbody id="classTableBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ========================================================
            PANEL 3: 7 KEBIASAAN HEBAT
            ======================================================== -->
-      <div class="panel panel-animate" id="panel-habits">
-        <div class="section-hd" style="margin-bottom:16px;">
-          <div>
-            <div class="section-title">Eksplorasi Mendalam 7 Pilar Karakter</div>
-            <div class="section-sub">Analisis spesifik per pilar berdasarkan data 1.429 siswa SMAMIO Gresik, dilengkapi indikator dan strategi tindak lanjut</div>
-          </div>
-        </div>
-        <div class="habits-grid" id="habitsContainer"></div>
-      </div>
-
-      <!-- ========================================================
+<div class="panel panel-animate" id="panel-habits">
+<div class="section-hd" style="margin-bottom:16px;">
+<div>
+<div class="section-title">Eksplorasi Mendalam 7 Pilar Karakter</div>
+<div class="section-sub">Analisis spesifik per pilar berdasarkan <span id="habitDatasetCount">data aktif</span> SMAMIO Gresik, dilengkapi indikator dan strategi tindak lanjut</div>
+</div>
+</div>
+<div class="habits-grid" id="habitsContainer"></div>
+</div>
+<!-- ========================================================
            PANEL 4: EKOSISTEM SMAMIO
            ======================================================== -->
-      <div class="panel panel-animate" id="panel-smamio">
-        <div class="profile-hero">
-          <div class="profile-id">
-            <img src="assets/Logo%20Smam10.jpeg" alt="SMAMIO" class="profile-logo" />
-            <div>
-              <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
-                <span class="pill pill-yellow">SEKOLAH BERKEMAJUAN</span>
-                <span class="pill pill-blue">GKB GRESIK</span>
-              </div>
-              <div class="profile-name">SMA Muhammadiyah 10 GKB Gresik</div>
-              <div class="profile-desc">Kampus Keberbakatan · Visi Berakhlak Mulia, Berprestasi Tinggi, Berwawasan Global</div>
-            </div>
-          </div>
-          <div class="profile-stats">
-            <div class="p-stat">
-              <div class="p-stat-val" style="color:var(--blue-600);">18</div>
-              <div class="p-stat-lbl">Rombel Aktif</div>
-            </div>
-            <div class="p-stat">
-              <div class="p-stat-val" style="color:var(--amber-dark);">1.429</div>
-              <div class="p-stat-lbl">Murid Terdata</div>
-            </div>
-            <div class="p-stat">
-              <div class="p-stat-val" style="color:var(--green-600);">100%</div>
-              <div class="p-stat-lbl">Integrasi KA</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="jenjang-row">
-          <div class="jenjang-card">
-            <div class="jenjang-label">Kelas X · Fase E</div>
-            <div class="jenjang-count" style="color:var(--blue-600);" id="statCountX">476 Siswa</div>
-            <div class="jenjang-score" id="statScoreX">Rata-Rata: 0,00</div>
-          </div>
-          <div class="jenjang-card">
-            <div class="jenjang-label">Kelas XI · Fase F</div>
-            <div class="jenjang-count" style="color:var(--amber-dark);" id="statCountXI">474 Siswa</div>
-            <div class="jenjang-score" id="statScoreXI">Rata-Rata: 0,00</div>
-          </div>
-          <div class="jenjang-card">
-            <div class="jenjang-label">Kelas XII · Fase F Lanjut</div>
-            <div class="jenjang-count" style="color:var(--green-600);" id="statCountXII">479 Siswa</div>
-            <div class="jenjang-score" id="statScoreXII">Rata-Rata: 0,00</div>
-          </div>
-          <div class="jenjang-card">
-            <div class="jenjang-label">Rombel Teladan #1</div>
-            <div class="jenjang-count" id="statTopClass">XII-3</div>
-            <div><span class="pill pill-green" id="statTopScore">Indeks 85,2</span></div>
-          </div>
-        </div>
-
-        <div class="matrix-card">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
-            <div>
-              <div style="font-size:0.9rem;font-weight:700;color:var(--text-1);">Heatmap Intensitas Karakter · 18 Rombel &times; 7 Kebiasaan</div>
-              <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">Peta sebaran skor tiap kelas untuk pendampingan terarah pimpinan SMAMIO</div>
-            </div>
-            <div style="display:flex;gap:10px;font-size:0.7rem;">
-              <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(5,150,105,0.25);border-radius:2px;"></span> &ge;3.20 Mandiri</span>
-              <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(234,179,8,0.25);border-radius:2px;"></span> 2.80–3.19 Stabil</span>
-              <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(220,38,38,0.2);border-radius:2px;"></span> &lt;2.80 Prioritas</span>
-            </div>
-          </div>
-          <div class="heatmap-scroll">
-            <table id="heatmapTable">
-              <thead>
-                <tr>
-                  <th>Rombel</th><th>Tingkat</th><th>Siswa</th><th>Indeks</th>
-                  <th>Bangun Pagi</th><th>Beribadah</th><th>Olahraga</th>
-                  <th>Makan Sehat</th><th>Gemar Belajar</th><th>Bermasyarakat</th><th>Tidur Cepat</th>
-                </tr>
-              </thead>
-              <tbody id="heatmapBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /content -->
-  </div><!-- /main -->
+<div class="panel panel-animate" id="panel-smamio">
+<div class="profile-hero">
+<div class="profile-id">
+<img alt="SMAMIO" class="profile-logo" src="assets/Logo%20Smam10.jpeg"/>
+<div>
+<div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+<span class="pill pill-yellow">SEKOLAH BERKEMAJUAN</span>
+<span class="pill pill-blue">GKB GRESIK</span>
+</div>
+<div class="profile-name">SMA Muhammadiyah 10 GKB Gresik</div>
+<div class="profile-desc">Kampus Keberbakatan · Visi Berakhlak Mulia, Berprestasi Tinggi, Berwawasan Global</div>
+</div>
+</div>
+<div class="profile-stats">
+<div class="p-stat">
+<div class="p-stat-val" id="statRombelCount" style="color:var(--blue-600);">—</div>
+<div class="p-stat-lbl">Rombel Aktif</div>
+</div>
+<div class="p-stat">
+<div class="p-stat-val" id="statTotalStudents" style="color:var(--amber-dark);">—</div>
+<div class="p-stat-lbl">Entri Responden</div>
+</div>
+<div class="p-stat">
+<div class="p-stat-val" style="color:var(--green-600);">100%</div>
+<div class="p-stat-lbl">Integrasi KA</div>
+</div>
+</div>
+</div>
+<div class="jenjang-row">
+<div class="jenjang-card">
+<div class="jenjang-label">Kelas X · Fase E</div>
+<div class="jenjang-count" id="statCountX" style="color:var(--blue-600);">476 Siswa</div>
+<div class="jenjang-score" id="statScoreX">Rata-Rata: 0,00</div>
+</div>
+<div class="jenjang-card">
+<div class="jenjang-label">Kelas XI · Fase F</div>
+<div class="jenjang-count" id="statCountXI" style="color:var(--amber-dark);">474 Siswa</div>
+<div class="jenjang-score" id="statScoreXI">Rata-Rata: 0,00</div>
+</div>
+<div class="jenjang-card">
+<div class="jenjang-label">Kelas XII · Fase F Lanjut</div>
+<div class="jenjang-count" id="statCountXII" style="color:var(--green-600);">479 Siswa</div>
+<div class="jenjang-score" id="statScoreXII">Rata-Rata: 0,00</div>
+</div>
+<div class="jenjang-card">
+<div class="jenjang-label">Rombel Teladan #1</div>
+<div class="jenjang-count" id="statTopClass">XII-3</div>
+<div><span class="pill pill-green" id="statTopScore">Indeks 85,2</span></div>
+</div>
+</div>
+<div class="matrix-card">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+<div>
+<div style="font-size:0.9rem;font-weight:700;color:var(--text-1);">Heatmap Intensitas Karakter · <span id="heatmapRombelCount">Rombel aktif</span> × 7 Kebiasaan</div>
+<div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">Peta sebaran skor tiap kelas untuk pendampingan terarah pimpinan SMAMIO</div>
+</div>
+<div style="display:flex;gap:10px;font-size:0.7rem;">
+<span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(5,150,105,0.25);border-radius:2px;"></span> ≥3.20 Mandiri</span>
+<span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(234,179,8,0.25);border-radius:2px;"></span> 2.80–3.19 Stabil</span>
+<span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;background:rgba(220,38,38,0.2);border-radius:2px;"></span> &lt;2.80 Prioritas</span>
+</div>
+</div>
+<div class="heatmap-scroll">
+<table id="heatmapTable">
+<thead>
+<tr>
+<th>Rombel</th><th>Tingkat</th><th>Siswa</th><th>Indeks</th>
+<th>Bangun Pagi</th><th>Beribadah</th><th>Olahraga</th>
+<th>Makan Sehat</th><th>Gemar Belajar</th><th>Bermasyarakat</th><th>Tidur Cepat</th>
+</tr>
+</thead>
+<tbody id="heatmapBody"></tbody>
+</table>
+</div>
+</div>
+</div>
+</div><!-- /content -->
+</div><!-- /main -->
 </div><!-- /shell -->
-
 <script>
 /* ================================================================
    KONSTANTA
@@ -1948,6 +2154,9 @@ function initTabs() {
       if (panel) panel.classList.add("active");
       document.getElementById("pageTitleText").textContent = PAGE_TITLES[tab] || tab;
       if (tab === "analytics") setTimeout(updateChartThemeColors, 50);
+      document.querySelector(".sidebar")?.classList.remove("mobile-open");
+      document.getElementById("mobileNavBackdrop")?.classList.remove("active");
+      document.getElementById("mobileNavToggle")?.setAttribute("aria-expanded", "false");
     });
   });
 }
@@ -1956,6 +2165,19 @@ function initTabs() {
    THEME
    ================================================================ */
 function initTheme() {
+  const navToggle = document.getElementById("mobileNavToggle");
+  const navBackdrop = document.getElementById("mobileNavBackdrop");
+  const sidebar = document.querySelector(".sidebar");
+  if (navToggle && navBackdrop && sidebar) {
+    const toggleNav = () => {
+      const open = !sidebar.classList.contains("mobile-open");
+      sidebar.classList.toggle("mobile-open", open);
+      navBackdrop.classList.toggle("active", open);
+      navToggle.setAttribute("aria-expanded", String(open));
+    };
+    navToggle.addEventListener("click", toggleNav);
+    navBackdrop.addEventListener("click", toggleNav);
+  }
   applyTheme(localStorage.getItem("kaih_theme") || "light");
   document.getElementById("themeToggleBtn").addEventListener("click", () => {
     const cur = document.documentElement.getAttribute("data-theme") || "light";
@@ -2039,8 +2261,33 @@ function normalizeKelasAndTingkat(k) {
   return { tingkat, kelas:`${tingkat}-Umum` };
 }
 
+function updateDatasetMeta(sourceLabel = "Dataset aktif") {
+  const total = activeRows.length;
+  const rombelCount = new Set(activeRows.map(r => r.kelas)).size;
+  const totalText = total.toLocaleString("id-ID");
+  const rombelText = rombelCount.toLocaleString("id-ID");
+  const source = document.getElementById("sourceInfo");
+  if (source) source.textContent = `${sourceLabel} · ${totalText} entri · ${rombelText} rombel`;
+  const flow = document.getElementById("flowStudentCount");
+  if (flow) flow.textContent = `${totalText} entri responden`;
+  const donut = document.getElementById("donutDatasetSubtitle");
+  if (donut) donut.textContent = `Proporsi ${totalText} entri responden dalam 4 kategori capaian 7KAIH`;
+  const habit = document.getElementById("habitDatasetCount");
+  if (habit) habit.textContent = `${totalText} entri responden`;
+  const rombelStat = document.getElementById("statRombelCount");
+  if (rombelStat) rombelStat.textContent = rombelText;
+  const totalStat = document.getElementById("statTotalStudents");
+  if (totalStat) totalStat.textContent = totalText;
+  ["rombelDatasetCount","rombelRankCount","heatmapRombelCount"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = `${rombelText} rombel`;
+  });
+}
+
+let skippedIncompleteRows = 0;
 function parseSheetMatrix(matrix) {
   if (!matrix || matrix.length < 2) throw new Error("Belum ada data responden.");
+  skippedIncompleteRows = 0;
   const headers = matrix[0].map(h => String(h||"").trim());
   const colKelas = headers.findIndex(h => h.toLowerCase().includes('kelas')||h.toLowerCase().includes('rombel'));
   const colTime  = headers.findIndex(h => h.toLowerCase().includes('timestamp')||h.toLowerCase().includes('waktu'));
@@ -2052,7 +2299,7 @@ function parseSheetMatrix(matrix) {
     if (!row || row.length === 0) continue;
     let filled = 0;
     for (let q = 0; q < 14; q++) if (row[startQ+q]!==undefined && String(row[startQ+q]).trim()!=="") filled++;
-    if (filled < 4) continue;
+    if (filled < 4) { skippedIncompleteRows++; continue; }
     const { tingkat, kelas } = normalizeKelasAndTingkat(colKelas!==-1 ? row[colKelas] : "");
     let dateStr = "2026-11-04";
     if (colTime !== -1 && row[colTime]) {
@@ -2060,17 +2307,20 @@ function parseSheetMatrix(matrix) {
       if (t.match(/^\d{4}-\d{2}-\d{2}/)) dateStr = t.slice(0,10);
       else if (t.includes('/')) { const p=t.split(' ')[0].split('/'); if(p.length===3){const y=p[2].length===4?p[2]:'20'+p[2]; dateStr=`${y}-${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}`;} }
     }
-    datesSet.add(dateStr);
     const scores = [];
+    let hasAllDimensions = true;
     for (let q = 0; q < 7; q++) {
-      const s1 = scoreMapper(row[startQ+q*2]) || 2;
-      const s2 = scoreMapper(row[startQ+q*2+1]) || 2;
-      scores.push(+((s1+s2)/2).toFixed(2));
+      const pair = [scoreMapper(row[startQ+q*2]), scoreMapper(row[startQ+q*2+1])].filter(v => v !== null);
+      if (!pair.length) { hasAllDimensions = false; break; }
+      scores.push(+(pair.reduce((a,b)=>a+b,0)/pair.length).toFixed(2));
     }
+    if (!hasAllDimensions) { skippedIncompleteRows++; continue; }
+    datesSet.add(dateStr);
     newRows.push({ tingkat, kelas, date: dateStr, scores });
   }
-  if (newRows.length === 0) throw new Error("Data tidak valid atau kosong.");
+  if (newRows.length === 0) throw new Error("Tidak ada baris dengan setidaknya satu jawaban valid pada setiap dimensi. Data lama tetap dipertahankan.");
   activeRows = newRows;
+  updateDatasetMeta("Dataset aktif");
   availableDates = [...datesSet].sort();
   updateDateDropdown(); populateKelasDropdown(); updateDashboard();
   return true;
@@ -2103,8 +2353,8 @@ async function syncFromGoogleSheets() {
     const now = new Date().toLocaleTimeString("id-ID");
     document.getElementById("liveDot").classList.add("on");
     document.getElementById("lastSyncTime").textContent = `Update: ${now}`;
-    document.getElementById("sourceInfo").textContent = `Google Sheets Live (${activeRows.length} Siswa)`;
-    showMessage("Data Google Sheets berhasil disinkronkan.", false);
+    updateDatasetMeta("Google Sheets Live");
+    showMessage(`Data Google Sheets berhasil disinkronkan.${skippedIncompleteRows ? ` ${skippedIncompleteRows} baris tidak lengkap dilewati.` : ""}`, false);
   } catch(err) {
     let msg = err.message;
     if (msg.toLowerCase().includes('failed to fetch')) msg = "Diblokir browser (CORS). Gunakan Publish to Web CSV di Google Sheets.";
@@ -2126,9 +2376,9 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
       const matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1 });
       if (parseSheetMatrix(matrix)) {
         document.getElementById("liveDot").classList.remove("on");
-        document.getElementById("sourceInfo").textContent = `${file.name} (${activeRows.length} Siswa)`;
+        updateDatasetMeta(file.name);
         document.getElementById("lastSyncTime").textContent = "File lokal";
-        showMessage("Dataset berhasil dimuat ke dashboard.", false);
+        showMessage(`Dataset berhasil dimuat ke dashboard.${skippedIncompleteRows ? ` ${skippedIncompleteRows} baris tidak lengkap dilewati.` : ""}`, false);
       }
     } catch(err) { showMessage("Gagal membaca file: " + err.message); }
   };
@@ -2166,6 +2416,7 @@ function loadDefaultData() {
       activeRows.push({ tingkat:bc.t, kelas:bc.k, date:availableDates[i%availableDates.length], scores:bc.sc.map(s=>Math.min(4,Math.max(1,s))) });
     }
   });
+  updateDatasetMeta("Standar Bawaan SMAMIO");
   updateDateDropdown(); populateKelasDropdown(); updateDashboard();
 }
 
@@ -2202,7 +2453,27 @@ function updateDashboard() {
     return true;
   });
   const totalN = filtered.length;
-  if (totalN === 0) { document.getElementById("kpiCount").textContent="0"; return; }
+  const panel = document.getElementById("panel-analytics");
+  panel.classList.toggle("has-no-data", totalN === 0);
+  if (totalN === 0) {
+    const emptyText = "Tidak ada data yang cocok dengan filter aktif. Silakan ubah filter atau pulihkan semua.";
+    document.getElementById("aiExecutiveSummary").textContent = emptyText;
+    ["kpiCount","kpiIndex","kpiMean","kpiBest","kpiWorst","kpiStdDev","kpiTopClass"].forEach(id => document.getElementById(id).textContent = "—");
+    ["kpiPct","kpiBestScore","kpiWorstScore","kpiWorstGap","kpiStdBadge","kpiTopClassScore","kpiTopClassMeta"].forEach(id => document.getElementById(id).textContent = "—");
+    const clearChart = chart => { if (!chart) return; chart.data.labels = []; chart.data.datasets.forEach(ds => ds.data = []); chart.update(); };
+    [radarChart,balanceChart,trendChart,gradeCompareChart,stackedChart,gapChart,bubbleChart,donutChart,polarChart,multiTrendChart,scatterChart,topBottomChart].forEach(clearChart);
+    document.getElementById("bulletChartWrap").innerHTML = "";
+    document.getElementById("classTableBody").innerHTML = "";
+    document.getElementById("heatmapBody").innerHTML = "";
+    ["statCountX","statScoreX","statCountXI","statScoreXI","statCountXII","statScoreXII"].forEach(id => document.getElementById(id).textContent = "0 / —");
+    document.getElementById("statTopClass").textContent = "—";
+    document.getElementById("statTopScore").textContent = "—";
+    document.getElementById("habitsContainer").innerHTML = "";
+    document.getElementById("simTargetLabel").textContent = "Tidak ada data untuk simulasi";
+    document.getElementById("simCurrentIndex").textContent = "—";
+    document.getElementById("simProjectedIndex").textContent = "—";
+    return;
+  }
 
   const habitAvg = [0,0,0,0,0,0,0];
   filtered.forEach(r => r.scores.forEach((s,i) => habitAvg[i] += s));
@@ -2232,9 +2503,8 @@ function updateDashboard() {
     stdDev = Math.sqrt(classRows.reduce((a,c)=>a+Math.pow(c.idx-mi,2),0)/(classRows.length-1));
   }
 
-  // KPI
   document.getElementById("kpiCount").textContent = totalN.toLocaleString("id-ID");
-  document.getElementById("kpiPct").textContent = `${((totalN/activeRows.length)*100).toFixed(1)}% populasi`;
+  document.getElementById("kpiPct").textContent = `${((totalN/activeRows.length)*100).toFixed(1)}% dari data aktif`;
   document.getElementById("kpiIndex").textContent = overallIdx.toFixed(1).replace(".",",");
   document.getElementById("kpiMean").textContent  = overallMean.toFixed(2).replace(".",",");
   const gl = overallIdx>=75?"Prima":(overallIdx>=60?"Baik":"Butuh Perhatian");
@@ -2251,23 +2521,21 @@ function updateDashboard() {
   else if (stdDev<8) { sb.textContent="Variasi Moderat"; sb.className="pill pill-yellow"; }
   else { sb.textContent="Disparitas Lebar"; sb.className="pill pill-red"; }
   const sortedByRank = [...classRows].sort((a,b)=>b.idx-a.idx);
-  if (sortedByRank.length > 0) {
-    document.getElementById("kpiTopClass").textContent     = sortedByRank[0].kelas;
-    document.getElementById("kpiTopClassScore").textContent = `Indeks ${sortedByRank[0].idx}`;
-    document.getElementById("kpiTopClassMeta").textContent  = `${sortedByRank[0].n} siswa`;
-  }
+  document.getElementById("kpiTopClass").textContent = sortedByRank[0]?.kelas || "—";
+  document.getElementById("kpiTopClassScore").textContent = sortedByRank[0] ? `Indeks ${sortedByRank[0].idx}` : "—";
+  document.getElementById("kpiTopClassMeta").textContent = sortedByRank[0] ? `${sortedByRank[0].n} entri` : "—";
 
-  renderAiExecutiveSummary(overallIdx, overallMean, HABIT_NAMES[bestIdx], habitAvg[bestIdx], HABIT_NAMES[worstIdx], habitAvg[worstIdx], stdDev, sortedByRank);
+  renderAiExecutiveSummary(overallIdx, overallMean, HABIT_NAMES[bestIdx], habitAvg[bestIdx], HABIT_NAMES[worstIdx], habitAvg[worstIdx], stdDev, sortedByRank, totalN);
   updateRadarChart(habitAvg);
   updateBalanceChart(habitAvg);
-  updateTrendChart();
+  updateTrendChart(filtered);
   updateGradeCompareChart(filtered);
   updateStackedChart(filtered, totalN);
   updateGapMatrix(habitAvg);
   updateBubbleChart(classRows);
   updateDonutChart(filtered);
   updatePolarChart(habitAvg);
-  updateMultiTrendChart();
+  updateMultiTrendChart(filtered);
   updateScatterChart(classRows);
   renderBulletChart(habitAvg);
   updateTopBottomChart(classRows);
@@ -2280,11 +2548,11 @@ function updateDashboard() {
 /* ================================================================
    AI DIAGNOSTIC TEXT
    ================================================================ */
-function renderAiExecutiveSummary(idx, mean, bestN, bestS, worstN, worstS, std, sorted) {
+function renderAiExecutiveSummary(idx, mean, bestN, bestS, worstN, worstS, std, sorted, filteredCount = activeRows.length) {
   const el = document.getElementById("aiExecutiveSummary");
   const lowCount = sorted.filter(c=>c.mean<2.80).length;
   const topCount  = sorted.filter(c=>c.mean>=3.20).length;
-  let txt = `Berdasarkan analisis terhadap <strong>${activeRows.length} entri data siswa SMAMIO Gresik</strong>, Indeks Karakter berada pada skor <strong>${idx.toFixed(1)}/100</strong> (Rerata: ${mean.toFixed(2)}/4.00). `;
+  let txt = `Berdasarkan analisis terhadap <strong>${filteredCount} entri data pada filter aktif SMAMIO Gresik</strong>, Indeks Karakter berada pada skor <strong>${idx.toFixed(1)}/100</strong> (Rerata: ${mean.toFixed(2)}/4.00). `;
   txt += `Dimensi <strong>${bestN}</strong> menjadi capaian tertinggi dengan skor <strong>${bestS.toFixed(2)}</strong>. Kebiasaan <strong>${worstN}</strong> (${worstS.toFixed(2)}) merupakan prioritas pembinaan utama. `;
   if (lowCount > 0) txt += `Terdapat <strong>${lowCount} rombel</strong> di bawah ambang 2.80, prioritas pendampingan: <strong>${sorted[sorted.length-1].kelas}</strong>. `;
   else txt += `Seluruh rombel di atas ambang 2.80; ${topCount} rombel mencapai kategori berprestasi. `;
@@ -2535,6 +2803,7 @@ function updateBalanceChart(d)  {
   balanceChart.update();
 }
 function updateStackedChart(filtered, totalN) {
+  if (!totalN) { stackedChart.data.datasets.forEach(ds => ds.data = [0,0,0,0,0,0,0]); stackedChart.update(); return; }
   const s4=[0,0,0,0,0,0,0],s3=[0,0,0,0,0,0,0],s2=[0,0,0,0,0,0,0],s1=[0,0,0,0,0,0,0];
   filtered.forEach(r=>r.scores.forEach((s,i)=>{if(s>=3.5)s4[i]++;else if(s>=2.5)s3[i]++;else if(s>=1.5)s2[i]++;else s1[i]++;}));
   stackedChart.data.datasets[0].data=s4.map(v=>+((v/totalN)*100).toFixed(1));
@@ -2543,9 +2812,9 @@ function updateStackedChart(filtered, totalN) {
   stackedChart.data.datasets[3].data=s1.map(v=>+((v/totalN)*100).toFixed(1));
   stackedChart.update();
 }
-function updateTrendChart() {
+function updateTrendChart(rows = activeRows) {
   const dm={};
-  activeRows.forEach(r=>{ if(!dm[r.date]) dm[r.date]={sum:0,c:0}; dm[r.date].sum+=r.scores.reduce((a,b)=>a+b,0)/7; dm[r.date].c++; });
+  rows.forEach(r=>{ if(!dm[r.date]) dm[r.date]={sum:0,c:0}; dm[r.date].sum+=r.scores.reduce((a,b)=>a+b,0)/7; dm[r.date].c++; });
   const dates = Object.keys(dm).sort();
   trendChart.data.labels = dates;
   trendChart.data.datasets[0].data = dates.map(d=>+(dm[d].sum/dm[d].c).toFixed(2));
@@ -2600,16 +2869,16 @@ function updatePolarChart(habitAvg) {
   polarChart.update();
 }
 
-function updateMultiTrendChart() {
+function updateMultiTrendChart(rows = activeRows) {
   if (!multiTrendChart) return;
   const dm = { X:{}, XI:{}, XII:{} };
-  activeRows.forEach(r => {
+  rows.forEach(r => {
     if (!dm[r.tingkat]) return;
     if (!dm[r.tingkat][r.date]) dm[r.tingkat][r.date] = {sum:0,c:0};
     dm[r.tingkat][r.date].sum += r.scores.reduce((a,b)=>a+b,0)/7;
     dm[r.tingkat][r.date].c++;
   });
-  const dates = [...new Set(activeRows.map(r=>r.date))].sort();
+  const dates = [...new Set(rows.map(r=>r.date))].sort();
   multiTrendChart.data.labels = dates;
   ["X","XI","XII"].forEach((g,i) => {
     multiTrendChart.data.datasets[i].data = dates.map(d => dm[g][d] ? +(dm[g][d].sum/dm[g][d].c).toFixed(2) : null);
@@ -2660,7 +2929,8 @@ function updateTopBottomChart(classRows) {
   if (!topBottomChart) return;
   const sorted = [...classRows].sort((a,b) => b.idx - a.idx);
   const top6 = sorted.slice(0,6);
-  const bot6 = sorted.slice(-6).reverse();
+  const bottomPool = sorted.slice(6);
+  const bot6 = bottomPool.slice(-6).reverse();
   const combined = [...top6, ...bot6];
   topBottomChart.data.labels = combined.map(r => r.kelas);
   topBottomChart.data.datasets[0].data = combined.map(r => r.idx);
@@ -2682,7 +2952,7 @@ function renderHabitsDeepDive(habitAvg) {
     const pct = (((sc-1)/3)*100).toFixed(1);
     const statusPill = sc>=3.20 ? '<span class="pill pill-green">Sangat Baik</span>' : (sc>=2.80 ? '<span class="pill pill-yellow">Stabil</span>' : '<span class="pill pill-red">Prioritas</span>');
     const card = document.createElement("div");
-    card.className = "habit-card";
+    card.className = "habit-card" + (idx === Number(document.getElementById("filterHabit").value) ? " habit-card-focused" : "");
     card.innerHTML = `
       <div class="habit-card-head">
         <div>
@@ -2711,21 +2981,19 @@ function renderHabitsDeepDive(habitAvg) {
    ================================================================ */
 function renderSmamioStats(filtered, classRows) {
   const avg = t => {
-    const rows = activeRows.filter(r=>r.tingkat===t);
-    if (!rows.length) return "0.00";
+    const rows = filtered.filter(r=>r.tingkat===t);
+    if (!rows.length) return "—";
     return (rows.reduce((a,r)=>a+(r.scores.reduce((x,y)=>x+y,0)/7),0)/rows.length).toFixed(2);
   };
-  document.getElementById("statCountX").textContent = `${activeRows.filter(r=>r.tingkat==="X").length} Siswa`;
+  document.getElementById("statCountX").textContent = `${filtered.filter(r=>r.tingkat==="X").length} Entri`;
   document.getElementById("statScoreX").textContent = `Rata-Rata: ${avg("X")} / 4.00`;
-  document.getElementById("statCountXI").textContent = `${activeRows.filter(r=>r.tingkat==="XI").length} Siswa`;
+  document.getElementById("statCountXI").textContent = `${filtered.filter(r=>r.tingkat==="XI").length} Entri`;
   document.getElementById("statScoreXI").textContent = `Rata-Rata: ${avg("XI")} / 4.00`;
-  document.getElementById("statCountXII").textContent = `${activeRows.filter(r=>r.tingkat==="XII").length} Siswa`;
+  document.getElementById("statCountXII").textContent = `${filtered.filter(r=>r.tingkat==="XII").length} Entri`;
   document.getElementById("statScoreXII").textContent = `Rata-Rata: ${avg("XII")} / 4.00`;
   const sorted = [...classRows].sort((a,b)=>b.idx-a.idx);
-  if (sorted.length > 0) {
-    document.getElementById("statTopClass").textContent = sorted[0].kelas;
-    document.getElementById("statTopScore").textContent = `Indeks ${sorted[0].idx}`;
-  }
+  document.getElementById("statTopClass").textContent = sorted[0]?.kelas || "—";
+  document.getElementById("statTopScore").textContent = sorted[0] ? `Indeks ${sorted[0].idx}` : "—";
   const tbody = document.getElementById("heatmapBody");
   if (!tbody) return;
   tbody.innerHTML = "";
@@ -2831,9 +3099,13 @@ document.getElementById("chipResetAiFilter").addEventListener("click", () => {
    EXPORT CSV
    ================================================================ */
 document.getElementById("btnExportCsv").addEventListener("click", () => {
-  if (!activeRows.length) { showMessage("Tidak ada data untuk diekspor."); return; }
+  const rowsToExport = activeRows.filter(r => {
+    const t=document.getElementById("filterTingkat").value, k=document.getElementById("filterKelas").value, d=document.getElementById("filterDate").value;
+    return (t==="ALL"||r.tingkat===t) && (k==="ALL"||r.kelas===k) && (d==="ALL"||r.date===d);
+  });
+  if (!rowsToExport.length) { showMessage("Tidak ada data sesuai filter untuk diekspor."); return; }
   let csv = "data:text/csv;charset=utf-8,Tingkat,Kelas,Tanggal," + HABIT_NAMES.join(",") + "\n";
-  activeRows.forEach(r => { csv += [r.tingkat,r.kelas,r.date,...r.scores].join(",") + "\n"; });
+  rowsToExport.forEach(r => { csv += [r.tingkat,r.kelas,r.date,...r.scores].join(",") + "\n"; });
   const link = document.createElement("a");
   link.setAttribute("href", encodeURI(csv));
   link.setAttribute("download", `Analisis_7KAIH_SMAMIO_Gresik_${new Date().toISOString().slice(0,10)}.csv`);
@@ -2867,6 +3139,12 @@ document.getElementById("btnReset").addEventListener("click", () => {
 initTabs();
 initTheme();
 initCharts();
+// Recalculate hidden Chart.js canvases when the user opens advanced analytics.
+document.querySelectorAll('details.analytics-more').forEach(section => {
+  section.addEventListener('toggle', () => {
+    if (section.open) requestAnimationFrame(() => Object.values(Chart.instances).forEach(chart => chart.resize()));
+  });
+});
 const savedUrl = localStorage.getItem("kaih_sheet_url");
 if (savedUrl) { document.getElementById("sheetCsvUrl").value=savedUrl; syncFromGoogleSheets(); }
 else loadDefaultData();
