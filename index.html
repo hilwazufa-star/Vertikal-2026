@@ -5,8 +5,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>VERTIKAL 2026 · SMAMIO Intelligence Platform</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="assets/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'"></script>
+<script src="assets/xlsx.full.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'"></script>
 <style>
     /* ============================================================
        DESIGN TOKENS — Enterprise Intelligence Platform
@@ -931,6 +931,28 @@
     }
     th:hover { color: var(--text-1); }
     tbody tr:hover { background: var(--surface-2); }
+    th.col-focused, td.col-focused {
+      background: rgba(250, 204, 21, 0.18) !important;
+      font-weight: 700;
+    }
+    [data-theme="dark"] th.col-focused, [data-theme="dark"] td.col-focused {
+      background: rgba(250, 204, 21, 0.12) !important;
+    }
+    .focus-dim-banner {
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.74rem;
+      color: var(--text-1);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .focus-dim-banner strong { color: var(--blue-600); }
 
     .rank-num {
       display: inline-flex;
@@ -1386,7 +1408,144 @@
       .disclosure-note { width:100%; margin-left:29px; }
       .visual-intro { margin-top:4px; }
     }
-    .panel.has-no-data .kpi-more, .panel.has-no-data .sim-more, .panel.has-no-data .analytics-more { display:none; }
+    .panel.has-no-data .kpi-more, .panel.has-no-data .sim-more, .panel.has-no-data .analytics-more, .panel.has-no-data #habitDeltaStrip { display:none; }
+    
+    /* FILTER COMPARISON & DELTA STRIP */
+    .habit-delta-strip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .delta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-2);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .delta-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+    @media (max-width: 992px) {
+      .delta-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .delta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    .delta-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .delta-name {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .delta-vals {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .delta-cur {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .delta-diff {
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .diff-up { color: var(--blue-600); }
+    .diff-down { color: #dc2626; }
+    .diff-equal { color: #d97706; }
+
+    /* AUTOMATIC CHART INSIGHTS */
+    .chart-auto-insight {
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(37, 99, 235, 0.05);
+      border: 1px solid rgba(37, 99, 235, 0.15);
+      font-size: 0.72rem;
+      line-height: 1.4;
+      color: var(--text-2);
+    }
+    .chart-auto-insight strong {
+      color: var(--blue-600);
+      font-weight: 600;
+    }
+    [data-theme="dark"] .chart-auto-insight {
+      background: rgba(37, 99, 235, 0.12);
+      border-color: rgba(37, 99, 235, 0.25);
+    }
+
+    /* 7x7 CORRELATION MATRIX */
+    .correlation-matrix-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 6px;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+    .matrix-table th, .matrix-table td {
+      padding: 6px 4px;
+      border: 1px solid var(--border);
+    }
+    .matrix-table th {
+      background: var(--bg-subtle);
+      font-weight: 600;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+    .matrix-table th.row-header {
+      text-align: left;
+      padding-left: 8px;
+      max-width: 130px;
+    }
+    .matrix-cell {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .cell-high-pos { background: rgba(37, 99, 235, 0.25); color: #1d4ed8; }
+    .cell-mod-pos { background: rgba(37, 99, 235, 0.12); color: #2563eb; }
+    .cell-neutral { background: rgba(250, 204, 21, 0.14); color: #854d0e; }
+    .cell-neg { background: rgba(220, 38, 38, 0.15); color: #dc2626; }
+    .cell-diag { background: rgba(148, 163, 184, 0.12); color: var(--text-3); }
+    .matrix-note {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--text-2);
+      line-height: 1.4;
+    }
     
     /* MOBILE FIX — natural document scrolling and compact phone layout */
     html { height:auto; min-height:100%; overflow-x:hidden; }
@@ -1490,9 +1649,235 @@
         padding: 7px 10px;
       }
     }
-</style>
+
+    /* ============================================================
+       DATA PIPELINE & AUDIT ENHANCEMENTS
+       ============================================================ */
+    .sample-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--yellow-400);
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 10px 18px;
+      border-bottom: 2px solid var(--amber-dark);
+      letter-spacing: 0.03em;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .sample-banner svg {
+      width: 18px;
+      height: 18px;
+      stroke: #1e293b;
+      fill: none;
+      stroke-width: 2.2;
+      flex-shrink: 0;
+    }
+    .sample-badge-tag {
+      background: #1e293b;
+      color: var(--yellow-400);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .sheets-guide-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      animation: fadeSlide 0.2s ease-out;
+    }
+    .guide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .guide-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guide-title svg {
+      width: 17px;
+      height: 17px;
+      stroke: var(--blue-600);
+      fill: none;
+      stroke-width: 2;
+    }
+    .guide-steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .guide-step {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+    }
+    .guide-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--blue-600);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .guide-step-text {
+      font-size: 0.76rem;
+      color: var(--text-2);
+      line-height: 1.45;
+    }
+    .guide-step-text strong {
+      color: var(--text-1);
+    }
+    .guide-req-box {
+      background: var(--blue-50);
+      border: 1px solid rgba(37,99,235,0.2);
+      border-radius: var(--r-sm);
+      padding: 12px 16px;
+      font-size: 0.76rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .guide-req-box strong { color: var(--blue-700); }
+    .guide-req-box ul { margin: 6px 0 0 18px; padding: 0; }
+    .guide-req-box li { margin-bottom: 4px; }
+
+    .chart-card {
+      position: relative;
+    }
+    .chart-empty-msg {
+      display: none;
+      position: absolute;
+      inset: 48px 12px 12px;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--r-sm);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 8px;
+      color: var(--text-3);
+      font-size: 0.78rem;
+      padding: 16px;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .chart-empty-msg svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--text-4);
+      fill: none;
+      stroke-width: 1.8;
+    }
+    .chart-card.is-empty .chart-empty-msg {
+      display: flex;
+    }
+    .chart-card.is-empty canvas {
+      opacity: 0.05;
+    }
+    .table-empty-cell {
+      text-align: center !important;
+      padding: 32px 16px !important;
+      color: var(--text-3) !important;
+      font-size: 0.82rem !important;
+      font-style: italic;
+    }
+    .btn-sample {
+      background: var(--yellow-400);
+      color: #1e293b;
+      border: 1px solid var(--amber-dark);
+      font-weight: 700;
+    }
+    .btn-sample:hover {
+      background: var(--yellow-300);
+    }
+    /* Sembunyikan pesan empty dashboard lama karena ditangani per komponen */
+    .dashboard-empty { display: none !important; }
+
+    /* Modal Metodologi & Kualitas Data */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.15s ease-out;
+    }
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      max-width: 860px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
+<div class="sample-banner" id="simulatedDataBanner">
+  <svg viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+  <span>MODE DATA SIMULASI: Terpasang 120 Baris Data Uji Coba Acak (Bukan Data Riil Siswa SMAMIO)</span>
+  <span class="sample-badge-tag">DATA SIMULASI</span>
+</div>
 <div class="shell">
 <!-- ============================================================
        SIDEBAR
@@ -1527,6 +1912,10 @@
 <button class="nav-item" data-tab="smamio">
 <svg class="nav-icon" viewbox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
         Ekosistem SMAMIO
+      </button>
+<button class="nav-item" data-tab="methodology">
+<svg class="nav-icon" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Metodologi &amp; Kualitas
       </button>
 <div class="nav-section-label" style="margin-top: 8px;">Data</div>
 <label class="nav-item" for="excelFile" style="cursor:pointer;">
@@ -1564,6 +1953,18 @@
 </div>
 </div>
 <div class="topbar-right">
+<button class="btn-sm btn-sample" id="btnLoadSample" type="button" title="Muat 120 baris data simulasi">
+<svg class="ico" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Muat Data Contoh
+        </button>
+<button class="btn-sm" id="btnOpenMethodology" type="button" title="Buka Metodologi & Kualitas Data">
+<svg class="ico" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Metodologi
+        </button>
+<button class="btn-sm" id="btnToggleGuide" type="button" title="Buka panduan integrasi Google Sheets">
+<svg class="ico" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+          Panduan Sheets
+        </button>
 <button class="btn-sm" id="themeToggleBtn">
 <span id="themeIconContainer">
 <svg class="ico" viewbox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
@@ -1588,6 +1989,38 @@
 <input id="autoRefreshCheck" style="cursor:pointer;" type="checkbox"/>
 <span>Auto-Refresh 30 dtk</span>
 </label>
+</div>
+<!-- PANDUAN GOOGLE SHEETS & VALIDASI STRUKTUR DATA -->
+<div class="sheets-guide-panel" id="sheetsGuidePanel" style="display:none;">
+  <div class="guide-header">
+    <div class="guide-title">
+      <svg viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+      Panduan Integrasi Google Sheets (Publish to Web CSV)
+    </div>
+    <button class="btn-sm" id="btnCloseGuide" type="button">Tutup Panduan</button>
+  </div>
+  <div class="guide-steps-grid">
+    <div class="guide-step">
+      <div class="guide-step-num">1</div>
+      <div class="guide-step-text">Buka file spreadsheet Google Form respon 7KAIH di browser Anda.</div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-step-num">2</div>
+      <div class="guide-step-text">Klik menu <strong>File</strong> &rarr; <strong>Bagikan (Share)</strong> &rarr; <strong>Publikasikan ke web (Publish to web)</strong>.</div>
+    </div>
+    <div class="guide-step">
+      <div class="guide-step-num">3</div>
+      <div class="guide-step-text">Pilih lembar respons, ubah format dari <em>Halaman Web</em> menjadi <strong>Comma-separated values (.csv)</strong>, klik <strong>Publikasikan</strong>, lalu tempel tautan di atas.</div>
+    </div>
+  </div>
+  <div class="guide-req-box">
+    <strong>Validasi Kolom Wajib Spreadsheet (Anti-Gagal Sinkronisasi):</strong>
+    <ul>
+      <li><strong>Kolom Kelas / Rombel:</strong> Wajib memiliki header yang memuat kata <em>"Kelas"</em> atau <em>"Rombel"</em> (berisi identitas rombel seperti X-1 s.d. XII-6).</li>
+      <li><strong>14 Kolom Pertanyaan 7KAIH:</strong> Wajib memuat minimal 14 kolom pertanyaan berturut-turut (2 indikator untuk masing-masing 7 kebiasaan: Bangun Pagi, Ibadah, Olahraga, Makan Sehat, Gemar Belajar, Bermasyarakat, Tidur Cepat).</li>
+      <li><strong>Skala Nilai yang Diterima:</strong> Angka 1.0 s.d. 4.0 atau skala teks Likert ("Selalu" = 4, "Sering" = 3, "Kadang-kadang" = 2, "Tidak pernah" = 1) serta deskriptor rubrik resmi 7KAIH.</li>
+    </ul>
+  </div>
 </div>
 <!-- ========================================================
            PANEL 1: LATAR BELAKANG
@@ -1642,8 +2075,8 @@
 </div>
 <div class="flow-step">
 <div class="flow-num">3</div>
-<div class="flow-step-title">Mesin Analisis AI</div>
-<div class="flow-step-body">Algoritma normalisasi memetakan jawaban teks ke skala ordinal (1–4), mengagregasi 7 dimensi, dan menghitung deviasi baku.</div>
+<div class="flow-step-title">Mesin Analisis Data</div>
+<div class="flow-step-body">Algoritma normalisasi memetakan rubrik jawaban ke skala 1–4, mengagregasi 7 dimensi karakter, dan mengukur variabilitas serta disparitas antarkelas secara transparan.</div>
 </div>
 <div class="flow-step">
 <div class="flow-num">4</div>
@@ -1662,11 +2095,11 @@
 <div class="insight-head">
 <div class="insight-title">
 <svg class="ico" style="color:var(--amber-dark);" viewbox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
-              Sintesis Diagnostik Data AI
+              Sintesis Analisis Data Otomatis
             </div>
-<span class="pill pill-yellow">Real-Time Evaluation · CI 95%</span>
+<span class="pill pill-yellow" id="aiStatusBadge">Sintesis Otomatis</span>
 </div>
-<div class="insight-body" id="aiExecutiveSummary">Memproses matriks agregasi 7 pilar kebiasaan siswa SMAMIO Gresik…</div>
+<div class="insight-body" id="aiExecutiveSummary">Belum ada data. Hubungkan Google Sheets atau klik "Muat Data Contoh" untuk memulai evaluasi.</div>
 <div class="chip-row">
 <span class="chip" id="chipFilterCritical">
 <svg viewbox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
@@ -1705,6 +2138,7 @@
 <div class="filter-item">
 <span class="filter-label">Dimensi Fokus</span>
 <select class="fsel" id="filterHabit">
+<option value="ALL">Semua Dimensi (Profil Lengkap)</option>
 <option value="0">1. Bangun Pagi</option>
 <option value="1">2. Beribadah</option>
 <option value="2">3. Berolahraga</option>
@@ -1714,11 +2148,27 @@
 <option value="6">7. Tidur Cepat</option>
 </select>
 </div>
+<div class="filter-item">
+<span class="filter-label">Bandingkan Periode</span>
+<select class="fsel" id="filterComparePeriod">
+<option value="NONE">Semua Periode</option>
+<option value="7D_VS_PREV">7 Hari Terakhir vs 7 Hari Sebelumnya</option>
+<option value="MONTH_VS_PREV">Bulan Ini vs Bulan Lalu</option>
+</select>
+</div>
 <button class="btn-sm" id="btnReset" style="align-self:flex-end;">
 <svg class="ico" viewbox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
             Reset
           </button>
 </div>
+<div class="habit-delta-strip" id="habitDeltaStrip" style="display:none;">
+  <div class="delta-header">
+    <span id="deltaPeriodTitle">Perbandingan Skor 7 Kebiasaan</span>
+    <span id="deltaPeriodMeta"></span>
+  </div>
+  <div class="delta-grid" id="deltaGridBody"></div>
+</div>
+<div class="focus-dim-banner" id="focusDimBanner" style="display:none;"></div>
 <div aria-live="polite" class="dashboard-empty" id="dashboardEmpty" role="status">
 <strong>Tidak ada data untuk kombinasi filter ini.</strong>
           Ubah filter jenjang, rombel, atau tanggal untuk menampilkan analisis.
@@ -1732,10 +2182,10 @@
 <svg viewbox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
 </div>
 </div>
-<div class="kpi-value text-blue" id="kpiCount">0</div>
+<div class="kpi-value text-blue" id="kpiCount">—</div>
 <div class="kpi-foot">
-<span class="pill pill-blue" id="kpiSampleBadge">Sampel Lengkap</span>
-<span id="kpiPct">100% populasi</span>
+<span class="pill pill-gray" id="kpiSampleBadge">Belum Ada Data</span>
+<span id="kpiPct">Hubungkan Google Sheets atau muat data contoh</span>
 </div>
 </div>
 <div class="kpi kpi-yellow">
@@ -1745,10 +2195,10 @@
 <svg viewbox="0 0 24 24"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path></svg>
 </div>
 </div>
-<div class="kpi-value text-yellow" id="kpiIndex">0,0</div>
+<div class="kpi-value text-yellow" id="kpiIndex">—</div>
 <div class="kpi-foot">
-<span class="pill pill-yellow" id="kpiIndexGrade">Prima</span>
-<span>Rerata: <strong id="kpiMean">0,00</strong> / 4,00</span>
+<span class="pill pill-gray" id="kpiIndexGrade">—</span>
+<span>Rerata: <strong id="kpiMean">—</strong> / 4,00</span>
 </div>
 </div>
 <div class="kpi kpi-green">
@@ -1760,8 +2210,8 @@
 </div>
 <div class="kpi-value medium-val text-green" id="kpiBest">—</div>
 <div class="kpi-foot">
-<span class="pill pill-green" id="kpiBestScore">Skor 0,00</span>
-<span id="kpiBestDesc">Konsistensi tertinggi</span>
+<span class="pill pill-gray" id="kpiBestScore">—</span>
+<span id="kpiBestDesc">Belum ada data</span>
 </div>
 </div>
 <div class="kpi kpi-red">
@@ -1773,8 +2223,8 @@
 </div>
 <div class="kpi-value medium-val text-red" id="kpiWorst">—</div>
 <div class="kpi-foot">
-<span class="pill pill-red" id="kpiWorstScore">Skor 0,00</span>
-<span id="kpiWorstGap">Gap: 0,00</span>
+<span class="pill pill-gray" id="kpiWorstScore">—</span>
+<span id="kpiWorstGap">Belum ada data</span>
 </div>
 </div>
 
@@ -1786,9 +2236,9 @@
 <svg viewbox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>
 </div>
 </div>
-<div class="kpi-value" id="kpiStdDev">0,00</div>
+<div class="kpi-value" id="kpiStdDev">—</div>
 <div class="kpi-foot">
-<span class="pill pill-gray" id="kpiStdBadge">Variasi Rendah</span>
+<span class="pill pill-gray" id="kpiStdBadge">—</span>
 <span>Indeks pemerataan</span>
 </div>
 </div><div class="kpi kpi-yellow">
@@ -1801,36 +2251,103 @@
 <div class="kpi-value medium-val" id="kpiTopClass">—</div>
 <div class="kpi-foot">
 <span class="pill pill-green" id="kpiTopClassScore">Indeks 0,0</span>
-<span id="kpiTopClassMeta">Teladan konsistensi</span>
+<span id="kpiTopClassMeta">Belum ada data</span>
 </div>
 </div></div></details>
 <!-- What-If Simulator -->
 
 <!-- Charts Grid -->
-<div class="visual-intro"><strong>Gambaran utama</strong><span>Mulai dari profil tujuh kebiasaan dan tren skor. Analisis lainnya tersedia saat dibutuhkan.</span></div><div class="charts-grid">
+<!-- Charts Grid: 6 Grafik Terkuat di Layar Utama -->
+<div class="visual-intro"><strong>6 Grafik Utama Analisis Karakter</strong><span>Ringkasan profil, tren perkembangan, dan disparitas rombel yang paling esensial untuk guru dan wali kelas.</span></div>
+<div class="charts-grid">
 
-
-
-
-
-
-<div class="chart-card col-5">
+<!-- Grafik 1: Profil 7 Kebiasaan Siswa (Radar) -->
+<div class="chart-card col-6">
 <div class="chart-head">
 <div>
-<div class="chart-title">Profil Poligon 7 Kebiasaan (Spider Radar)</div>
-<div class="chart-sub">Capaian riil vs Target Mutu (3.00) vs Standar Emas (3.50)</div>
+<div class="chart-title">Profil 7 Kebiasaan Siswa</div>
+<div class="chart-sub">Capaian pembiasaan murid dibandingkan dengan target mutu sekolah (3.00) dan standar unggul (3.50)</div>
 </div>
 </div>
-<div class="chart-vp"><canvas id="radarChart"></canvas></div>
-</div><div class="chart-card chart-primary col-7">
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="radarChart"></canvas></div>
+<div class="chart-auto-insight" id="insightRadar"></div>
+</div>
+
+<!-- Grafik 2: Perkembangan Karakter dari Waktu ke Waktu (Trend) -->
+<div class="chart-card chart-primary col-6">
 <div class="chart-head">
 <div>
-<div class="chart-title">Evolusi Kronologis Skor Harian</div>
-<div class="chart-sub">Tren pergerakan rata-rata indeks pembiasaan per tanggal</div>
+<div class="chart-title">Perkembangan Karakter dari Waktu ke Waktu</div>
+<div class="chart-sub">Grafik tren pergerakan rata-rata indeks pembiasaan per tanggal pengisian</div>
 </div>
 </div>
-<div class="chart-vp"><canvas id="trendChart"></canvas></div>
-</div></div><details class="sim-more"><summary>Buka simulator kebijakan</summary><div class="sim-card">
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="trendChart"></canvas></div>
+<div class="chart-auto-insight" id="insightTrend"></div>
+</div>
+
+<!-- Grafik 3: Perbandingan Karakter Antar-Tingkat Kelas -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Perbandingan Karakter Antar-Tingkat Kelas</div>
+<div class="chart-sub">Perbandingan rata-rata capaian karakter antara Fase E (Kelas X), Fase F (Kelas XI), dan Fase F Lanjut (Kelas XII)</div>
+</div>
+</div>
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="gradeCompareChart"></canvas></div>
+<div class="chart-auto-insight" id="insightGrade"></div>
+</div>
+
+<!-- Grafik 4: Keseimbangan Karakter terhadap Standar Sekolah -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Keseimbangan Karakter terhadap Standar Sekolah</div>
+<div class="chart-sub">Kebiasaan yang melampaui batas standar kelulusan 3.00 (surplus) vs yang masih perlu ditingkatkan (defisit)</div>
+</div>
+</div>
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="balanceChart"></canvas></div>
+<div class="chart-auto-insight" id="insightBalance"></div>
+</div>
+
+<!-- Grafik 5: Capaian Tiap Kebiasaan terhadap Target Kelulusan -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Capaian Tiap Kebiasaan terhadap Target Kelulusan</div>
+<div class="chart-sub">Posisi nilai nyata dibanding batas kelulusan minimal (3.00) dan standar unggul sekolah (3.50)</div>
+</div>
+</div>
+<div class="bullet-wrap" id="bulletChartWrap" style="max-height:270px;overflow-y:auto;"></div>
+<div class="bullet-legend" style="margin-top:10px;">
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(220,38,38,0.25);"></span>Butuh Intervensi &lt;2.80</div>
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(234,179,8,0.25);"></span>Stabil 2.80–3.00</div>
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(5,150,105,0.18);"></span>Mandiri ≥3.00</div>
+<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:var(--blue-600);border-radius:99px;"></span>Capaian Riil</div>
+</div>
+<div class="chart-auto-insight" id="insightBullet"></div>
+</div>
+
+<!-- Grafik 6: 6 Kelas Paling Tertib vs 6 Kelas Butuh Pendampingan Khusus -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">6 Kelas Paling Tertib vs 6 Kelas Butuh Pendampingan Khusus</div>
+<div class="chart-sub">Pemetaan kelas dengan pembiasaan tertinggi dan kelas prioritas bimbingan intensif wali kelas</div>
+</div>
+</div>
+<div class="chart-vp" style="height:270px;"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="topBottomChart"></canvas></div>
+<div class="chart-auto-insight" id="insightTopBottom"></div>
+</div>
+
+</div>
+
+<!-- Simulator Kebijakan -->
+<details class="sim-more"><summary>Buka simulator kebijakan intervensi</summary><div class="sim-card">
 <div>
 <div class="sim-title">
 <svg class="ico" style="color:var(--blue-600);" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg>
@@ -1846,133 +2363,131 @@
 <div class="sim-metric-box">
 <div class="sim-stat">
 <div class="sim-stat-lbl">Riil</div>
-<div class="sim-stat-val" id="simCurrentIndex">0,0</div>
+<div class="sim-stat-val" id="simCurrentIndex">—</div>
 </div>
 <div class="sim-arrow">→</div>
 <div class="sim-stat">
 <div class="sim-stat-lbl">Proyeksi</div>
-<div class="sim-stat-val" id="simProjectedIndex" style="color:var(--green-600);">0,0</div>
+<div class="sim-stat-val" id="simProjectedIndex" style="color:var(--green-600);">—</div>
 </div>
 </div>
-</div></details><details class="analytics-more"><summary>Lihat analisis lengkap<span class="disclosure-note">Grafik perbandingan, distribusi, kesenjangan, dan analisis lanjutan</span></summary><div class="charts-grid secondary-chart-grid"><div class="chart-card col-5">
-<div class="chart-head">
-<div>
-<div class="chart-title">Neraca Karakter: Surplus &amp; Defisit</div>
-<div class="chart-sub">Deviasi dimensi terhadap standar kelulusan 3.00</div>
-</div>
-</div>
-<div class="chart-vp"><canvas id="balanceChart"></canvas></div>
-</div><div class="chart-card col-6">
-<div class="chart-head">
-<div>
-<div class="chart-title">Komparasi Antar Jenjang (X · XI · XII)</div>
-<div class="chart-sub">Perbandingan capaian karakter antar tingkatan kelas</div>
-</div>
-</div>
-<div class="chart-vp"><canvas id="gradeCompareChart"></canvas></div>
-</div><div class="chart-card col-6">
-<div class="chart-head">
-<div>
-<div class="chart-title">Distribusi Kategori Skor Tiap Dimensi</div>
-<div class="chart-sub">Proporsi Sangat Baik · Baik · Cukup · Kurang</div>
-</div>
-</div>
-<div class="chart-vp"><canvas id="stackedChart"></canvas></div>
-</div><div class="chart-card col-6">
-<div class="chart-head">
-<div>
-<div class="chart-title">Matriks Kesenjangan Target Ideal (3.50)</div>
-<div class="chart-sub">Selisih capaian tiap dimensi terhadap standar kemandirian prima</div>
-</div>
-</div>
-<div class="chart-vp"><canvas id="gapChart"></canvas></div>
-</div></div><div class="charts-grid">
-<div class="chart-section-divider">
-<span class="chart-section-divider-label">Analisis Lanjutan</span>
-<span class="chart-section-divider-line"></span>
-</div>
-<!-- Chart 7: Bubble Chart — Rombel Mapping -->
+</div></details>
+
+<!-- Analisis Lanjutan (Sisa Grafik & Matriks Korelasi 7x7) -->
+<details class="analytics-more"><summary>Lihat Analisis Lanjutan<span class="disclosure-note">Sebaran mutu, matriks kesenjangan target, pola variabilitas kelas, dan hubungan korelasi 7x7</span></summary>
+<div class="charts-grid secondary-chart-grid">
+
+<!-- Grafik 7: Sebaran Mutu Karakter Murid (Stacked) -->
 <div class="chart-card col-6">
 <div class="chart-head">
 <div>
-<div class="chart-title">Pemetaan Rombel: Rerata vs Variabilitas</div>
-<div class="chart-sub">Bubble = jumlah siswa · X = skor rerata · Y = standar deviasi internal</div>
+<div class="chart-title">Sebaran Mutu Karakter Murid</div>
+<div class="chart-sub">Persentase siswa pada kategori Sangat Baik (≥3.50), Baik (3.00–3.49), Cukup (2.50–2.99), dan Kurang (&lt;2.50)</div>
 </div>
-<span class="pill pill-blue">Scatter Intelligence</span>
 </div>
-<div class="chart-vp"><canvas id="bubbleChart"></canvas></div>
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="stackedChart"></canvas></div>
+<div class="chart-auto-insight" id="insightStacked"></div>
 </div>
-<!-- Chart 8: Donut Ring — Distribusi Keseluruhan -->
+
+<!-- Grafik 8: Jarak Menuju Standar Unggul Sekolah (Gap) -->
 <div class="chart-card col-6">
 <div class="chart-head">
 <div>
-<div class="chart-title">Komposisi Kategori Karakter Keseluruhan</div>
-<div class="chart-sub"><span id="donutDatasetSubtitle">Proporsi data aktif dalam 4 kategori capaian 7KAIH</span></div>
+<div class="chart-title">Jarak Menuju Standar Unggul Sekolah</div>
+<div class="chart-sub">Besarnya defisit nilai tiap dimensi karakter yang harus dikejar menuju standar emas (3.50)</div>
 </div>
-<span class="pill pill-yellow">Donut Ring</span>
 </div>
-<div class="chart-vp"><canvas id="donutChart"></canvas></div>
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="gapChart"></canvas></div>
+<div class="chart-auto-insight" id="insightGap"></div>
 </div>
-<!-- Chart 9: Polar Area — Bobot Dimensi -->
+
+<!-- Grafik 9: Peta Konsistensi Pembiasaan Kelas (Bubble) -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Peta Konsistensi Pembiasaan Kelas</div>
+<div class="chart-sub">Lingkaran = kelas (ukuran = jumlah murid) · Sumbu X = Rata-rata kelas · Sumbu Y = Tingkat perbedaan antar-murid (SD)</div>
+</div>
+</div>
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="bubbleChart"></canvas></div>
+<div class="chart-auto-insight" id="insightBubble"></div>
+</div>
+
+<!-- Grafik 10: Ringkasan Tingkat Kemandirian Murid (Donut) -->
+<div class="chart-card col-6">
+<div class="chart-head">
+<div>
+<div class="chart-title">Ringkasan Tingkat Kemandirian Murid</div>
+<div class="chart-sub"><span id="donutDatasetSubtitle">Proporsi seluruh murid dalam 4 kategori kemandirian karakter SMAMIO</span></div>
+</div>
+</div>
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="donutChart"></canvas></div>
+<div class="chart-auto-insight" id="insightDonut"></div>
+</div>
+
+<!-- Grafik 11: Keseimbangan Ketujuh Pilar Karakter (Polar) -->
 <div class="chart-card col-4">
 <div class="chart-head">
 <div>
-<div class="chart-title">Bobot Relatif Dimensi</div>
-<div class="chart-sub">Polar area: kontribusi tiap pilar terhadap total indeks</div>
+<div class="chart-title">Keseimbangan Ketujuh Pilar Karakter</div>
+<div class="chart-sub">Melihat keteraturan dan keselarasan nilai pembiasaan di seluruh aspek</div>
 </div>
 </div>
-<div class="chart-vp" style="height:260px;"><canvas id="polarChart"></canvas></div>
+<div class="chart-vp" style="height:260px;"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="polarChart"></canvas></div>
+<div class="chart-auto-insight" id="insightPolar"></div>
 </div>
-<!-- Chart 10: Multi-line Area — X vs XI vs XII over time -->
+
+<!-- Grafik 12: Perbandingan Tren Perkembangan Kelas X, XI, dan XII (Multi-Trend) -->
 <div class="chart-card col-8">
 <div class="chart-head">
 <div>
-<div class="chart-title">Tren Indeks Harian: X · XI · XII Terpisah</div>
-<div class="chart-sub">Pergerakan rata-rata skor tiap jenjang per tanggal pengisian</div>
-</div>
-<span class="pill pill-green">Time Series</span>
-</div>
-<div class="chart-vp"><canvas id="multiTrendChart"></canvas></div>
-</div>
-<!-- Chart 11: Scatter Korelasi Dua Dimensi -->
-<div class="chart-card col-6">
-<div class="chart-head">
-<div>
-<div class="chart-title">Korelasi: Bangun Pagi × Gemar Belajar</div>
-<div class="chart-sub">Setiap titik = satu rombel · ukuran = jumlah siswa dalam rombel</div>
-</div>
-<span class="pill pill-blue">Correlation Plot</span>
-</div>
-<div class="chart-vp"><canvas id="scatterChart"></canvas></div>
-</div>
-<!-- Chart 12: Bullet Chart — Realisasi vs Target per Dimensi -->
-<div class="chart-card col-6">
-<div class="chart-head">
-<div>
-<div class="chart-title">Bullet Chart: Realisasi vs Ambang Bertingkat</div>
-<div class="chart-sub">Merah &lt;2.80 · Kuning 2.80–3.00 · Hijau ≥3.00 · Emas 3.50</div>
-</div>
-<span class="pill pill-yellow">Bullet KPI</span>
-</div>
-<div class="bullet-wrap" id="bulletChartWrap" style="max-height:300px;overflow-y:auto;"></div>
-<div class="bullet-legend" style="margin-top:10px;">
-<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(220,38,38,0.25);"></span>Butuh Intervensi &lt;2.80</div>
-<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(234,179,8,0.25);"></span>Stabil 2.80–3.00</div>
-<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:rgba(5,150,105,0.18);"></span>Mandiri ≥3.00</div>
-<div class="bullet-legend-item"><span class="bullet-legend-dot" style="background:var(--blue-600);border-radius:99px;"></span>Capaian Riil</div>
+<div class="chart-title">Perbandingan Tren Perkembangan Kelas X, XI, dan XII</div>
+<div class="chart-sub">Pergerakan rata-rata skor tiap tingkatan kelas sepanjang tanggal pemantauan</div>
 </div>
 </div>
-<!-- Chart 13: Horizontal Rank Bar — Top 6 vs Bottom 6 Rombel -->
+<div class="chart-vp"><div class="chart-empty-msg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="12"></line><line x1="12" x2="12.01" y1="16" y2="16"></line></svg><span>Belum ada data. Hubungkan Google Sheets atau muat data contoh.</span></div>
+<canvas id="multiTrendChart"></canvas></div>
+<div class="chart-auto-insight" id="insightMultiTrend"></div>
+</div>
+
+<!-- Matriks Korelasi 7x7 (Menggantikan Scatter) -->
 <div class="chart-card col-12">
 <div class="chart-head">
 <div>
-<div class="chart-title">Top 6 Rombel Teladan vs Bottom 6 Rombel Prioritas Intervensi</div>
-<div class="chart-sub">Perbandingan langsung rombel capaian tertinggi dan terendah berdasarkan Indeks Karakter</div>
+<div class="chart-title">Tabel Hubungan Antar-Kebiasaan Siswa (Matriks Korelasi Pearson 7x7)</div>
+<div class="chart-sub">Koefisien keterkaitan statistik (-1.00 s/d +1.00) antar-seluruh pilar karakter berdasarkan data respons siswa</div>
 </div>
-<span class="pill pill-blue">Top/Bottom Analysis</span>
 </div>
-<div class="chart-vp" style="height:320px;"><canvas id="topBottomChart"></canvas></div>
+<div class="correlation-matrix-wrap" id="correlationMatrixWrap">
+  <table class="matrix-table" id="matrixTable">
+    <thead>
+      <tr>
+        <th class="row-header">Dimensi Karakter</th>
+        <th>1. Bangun</th>
+        <th>2. Ibadah</th>
+        <th>3. Olahraga</th>
+        <th>4. Makan</th>
+        <th>5. Belajar</th>
+        <th>6. Sosial</th>
+        <th>7. Tidur</th>
+      </tr>
+    </thead>
+    <tbody id="matrixTableBody">
+      <tr><td colspan="8" class="table-empty-cell">Belum ada data korelasi. Hubungkan Google Sheets atau muat data contoh.</td></tr>
+    </tbody>
+  </table>
+  <div class="matrix-note">
+    <strong>Catatan Metodologi:</strong> Nilai korelasi Pearson (r) mengukur derajat keterkaitan bersama antar-kebiasaan. <strong>Korelasi statistik BUKAN merupakan bukti hubungan sebab-akibat (kausalitas).</strong> Hubungan dua kebiasaan dapat dipengaruhi oleh faktor ketiga seperti pola asuh keluarga, jadwal sekolah, atau lingkungan belajar.
+  </div>
 </div>
+<div class="chart-auto-insight" id="insightCorrelation"></div>
+</div>
+
 </div></details>
 <!-- ======================================================
              CHARTS GRID 2: ADVANCED ANALYTICS
@@ -1987,7 +2502,7 @@
 </div>
 <div class="table-search">
 <svg viewbox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-<input id="tableSearchInput" placeholder="Cari rombel (misal: XII-3)…" type="text"/>
+<input id="tableSearchInput" placeholder="Cari rombel (misal: X-1, XI-2)…" type="text"/>
 </div>
 </div>
 <div class="tbl-wrap">
@@ -2009,7 +2524,7 @@
 <th onclick="sortTable(12)">Tidur Cepat</th>
 </tr>
 </thead>
-<tbody id="classTableBody"></tbody>
+<tbody id="classTableBody"><tr><td colspan="12" class="table-empty-cell">Belum ada data. Hubungkan Google Sheets atau klik "Muat Data Contoh".</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -2052,31 +2567,31 @@
 <div class="p-stat-lbl">Entri Responden</div>
 </div>
 <div class="p-stat">
-<div class="p-stat-val" style="color:var(--green-600);">100%</div>
-<div class="p-stat-lbl">Integrasi KA</div>
+<div class="p-stat-val" id="statResponseRate" style="color:var(--green-600);">—</div>
+<div class="p-stat-lbl">Tingkat Respons</div>
 </div>
 </div>
 </div>
 <div class="jenjang-row">
 <div class="jenjang-card">
 <div class="jenjang-label">Kelas X · Fase E</div>
-<div class="jenjang-count" id="statCountX" style="color:var(--blue-600);">476 Siswa</div>
-<div class="jenjang-score" id="statScoreX">Rata-Rata: 0,00</div>
+<div class="jenjang-count" id="statCountX" style="color:var(--blue-600);">Belum ada data</div>
+<div class="jenjang-score" id="statScoreX">Rata-Rata: —</div>
 </div>
 <div class="jenjang-card">
 <div class="jenjang-label">Kelas XI · Fase F</div>
-<div class="jenjang-count" id="statCountXI" style="color:var(--amber-dark);">474 Siswa</div>
-<div class="jenjang-score" id="statScoreXI">Rata-Rata: 0,00</div>
+<div class="jenjang-count" id="statCountXI" style="color:var(--amber-dark);">Belum ada data</div>
+<div class="jenjang-score" id="statScoreXI">Rata-Rata: —</div>
 </div>
 <div class="jenjang-card">
 <div class="jenjang-label">Kelas XII · Fase F Lanjut</div>
-<div class="jenjang-count" id="statCountXII" style="color:var(--green-600);">479 Siswa</div>
-<div class="jenjang-score" id="statScoreXII">Rata-Rata: 0,00</div>
+<div class="jenjang-count" id="statCountXII" style="color:var(--green-600);">Belum ada data</div>
+<div class="jenjang-score" id="statScoreXII">Rata-Rata: —</div>
 </div>
 <div class="jenjang-card">
-<div class="jenjang-label">Rombel Teladan #1</div>
-<div class="jenjang-count" id="statTopClass">XII-3</div>
-<div><span class="pill pill-green" id="statTopScore">Indeks 85,2</span></div>
+<div class="jenjang-label">Rombel Peringkat #1</div>
+<div class="jenjang-count" id="statTopClass">—</div>
+<div><span class="pill pill-gray" id="statTopScore">—</span></div>
 </div>
 </div>
 <div class="matrix-card">
@@ -2100,19 +2615,304 @@
 <th>Makan Sehat</th><th>Gemar Belajar</th><th>Bermasyarakat</th><th>Tidur Cepat</th>
 </tr>
 </thead>
-<tbody id="heatmapBody"></tbody>
+<tbody id="heatmapBody"><tr><td colspan="11" class="table-empty-cell">Belum ada data. Hubungkan Google Sheets atau klik "Muat Data Contoh".</td></tr></tbody>
 </table>
 </div>
 </div>
 </div>
+<!-- ========================================================
+     PANEL 5: METODOLOGI & KUALITAS DATA
+     ======================================================== -->
+<div class="panel panel-animate" id="panel-methodology">
+  <div class="manifesto-hero">
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <span class="pill pill-blue">DOKUMENTASI SISTEM &amp; METODOLOGI</span>
+      <span class="pill pill-yellow">TRANSPARANSI DATA SMAMIO</span>
+    </div>
+    <h2>Metodologi Pengukuran, Standar Mutu &amp; Kualitas Data</h2>
+    <p class="manifesto-lead" style="margin-top:8px;">
+      Landasan matematis, formula normalisasi indeks, penetapan ambang batas internal sekolah, audit pembersihan data, serta batasan analitik platform 7KAIH SMAMIO Gresik.
+    </p>
+  </div>
+
+  <!-- AUDIT KUALITAS DATA LIVE -->
+  <div class="matrix-card" style="margin-bottom:20px;">
+    <div style="font-size:0.95rem;font-weight:700;color:var(--text-1);margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+      <svg class="ico" style="color:var(--blue-600);" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      Ringkasan Kualitas Data Aktif (Live Data Quality Audit)
+    </div>
+    <div style="font-size:0.75rem;color:var(--text-3);margin-bottom:16px;">
+      Kondisi kebersihan dataset yang sedang diolah oleh dashboard saat ini.
+    </div>
+    <div class="kpi-grid" style="margin-bottom:14px;">
+      <div class="kpi">
+        <div class="kpi-head"><span class="kpi-label">Total Baris Dimuat</span></div>
+        <div class="kpi-value text-blue" id="metaRawRows">—</div>
+        <div class="kpi-foot"><span>Entri input mentah</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-head"><span class="kpi-label">Baris Data Valid</span></div>
+        <div class="kpi-value text-green" id="metaValidRows">—</div>
+        <div class="kpi-foot"><span class="pill pill-green" id="metaValidBadge">Aktif Dianalisis</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-head"><span class="kpi-label">Baris Kotor Dibuang</span></div>
+        <div class="kpi-value text-red" id="metaDroppedRows">—</div>
+        <div class="kpi-foot"><span id="metaDroppedDesc">Kosong / Duplikat / Out-scale</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-head"><span class="kpi-label">Tingkat Respons Sekolah</span></div>
+        <div class="kpi-value text-yellow" id="metaResponseRate">—</div>
+        <div class="kpi-foot"><span>Dari 1.429 murid terdaftar</span></div>
+      </div>
+    </div>
+    <div class="guide-req-box" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center;">
+      <div>
+        <strong>Rincian Baris Dibuang:</strong>
+        <span id="metaEmptyRows">0</span> baris kosong total &middot;
+        <span id="metaDuplicateRows">0</span> baris duplikat identik &middot;
+        <span id="metaInvalidRows">0</span> baris tidak lengkap / di luar skala (1–4).
+      </div>
+      <div>
+        <strong>Rentang Tanggal Survei:</strong>
+        <span id="metaDateRange" style="font-weight:700;color:var(--blue-700);">Belum ada data</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BAGIAN METODOLOGI & RUMUS -->
+  <div class="manifesto-cards" style="margin-bottom:20px;">
+    <!-- KARTU 1: RUMUS INDEKS -->
+    <div class="manifesto-box">
+      <div class="manifesto-box-head" style="color:var(--blue-600);">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        1. Konversi Skala &amp; Formula Indeks Karakter
+      </div>
+      <p>
+        Setiap instrumen pertanyaan harian memiliki rentang nilai <strong>1.00 s.d. 4.00</strong>:
+      </p>
+      <ul style="margin:6px 0 12px 18px;font-size:0.78rem;color:var(--text-2);line-height:1.5;">
+        <li><strong>Skor 4 (Mandiri):</strong> Sangat baik, konsisten tanpa perlu diingatkan.</li>
+        <li><strong>Skor 3 (Terbiasa):</strong> Baik, rutin dilakukan dengan pengingat minimal.</li>
+        <li><strong>Skor 2 (Butuh Pendampingan):</strong> Cukup, belum stabil dan sering tertunda.</li>
+        <li><strong>Skor 1 (Prioritas Intervensi):</strong> Kurang, jarang atau tidak pernah terlaksana.</li>
+      </ul>
+      <div class="formula-box" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;font-family:monospace;font-size:0.75rem;color:var(--text-1);margin-bottom:8px;">
+        Skor Dimensi (S_i) = (Q_i1 + Q_i2) / 2<br/>
+        Rerata Keseluruhan (μ) = (Σ S_i) / 7<br/>
+        <strong>Indeks Karakter KAIH = ((μ - 1.00) / 3.00) × 100</strong>
+      </div>
+      <p style="font-size:0.74rem;color:var(--text-3);">
+        Formula di atas menormalisasikan rentang skor riil [1.00, 4.00] menjadi skala baku persentase [0.0, 100.0]. Skor 1.00 = 0.0, Skor 2.50 = 50.0, Skor 3.00 = 66.7, dan Skor 4.00 = 100.0.
+      </p>
+    </div>
+
+    <!-- KARTU 2: AMBANG BATAS & TARGET MUTU -->
+    <div class="manifesto-box">
+      <div class="manifesto-box-head" style="color:var(--amber-dark);">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+        2. Asal-Usul Ambang Batas Evaluasi
+      </div>
+      <div class="guide-req-box" style="margin-bottom:10px;background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.3);color:var(--text-2);">
+        <strong>Keterbukaan Standar:</strong> Seluruh nilai ambang batas berikut <strong>ditetapkan oleh tim pengembang bersama guru pendamping SMAMIO</strong> untuk kebutuhan evaluasi internal dan kompetisi analitik, <em>bukan merupakan standar regulasi resmi pemerintah</em>.
+      </div>
+      <ul style="margin:6px 0 10px 18px;font-size:0.78rem;color:var(--text-2);line-height:1.5;">
+        <li><strong>Ambang 2,80 (Batas Stabilitas Rombel):</strong> Batas toleransi minimum konsistensi kelas. Rombel di bawah 2,80 diprioritaskan untuk pembinaan wali kelas.</li>
+        <li><strong>Ambang 3,00 (Target Mutu SMAMIO):</strong> Standar kelulusan pembiasaan karakter yang dicanangkan satuan pendidikan.</li>
+        <li><strong>Ambang 3,20 (Kemandirian Prima):</strong> Ambang batas kategori berprestasi di mana murid mandiri tanpa instruksi.</li>
+        <li><strong>Ambang 3,50 (Standar Emas Sekolah):</strong> Aspirasi keunggulan pembiasaan karakter prima ekosistem sekolah.</li>
+      </ul>
+    </div>
+
+    <!-- KARTU 3: STANDAR DEVIASI & KATEGORI -->
+    <div class="manifesto-box">
+      <div class="manifesto-box-head" style="color:var(--green-600);">
+        <svg viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg>
+        3. Disparitas Antarkelas &amp; Kategori Capaian
+      </div>
+      <p>
+        Disparitas antarkelas dihitung menggunakan <strong>Standar Deviasi Sampel</strong> dari Indeks Karakter antarkelas aktif:
+      </p>
+      <div class="formula-box" style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;font-family:monospace;font-size:0.75rem;color:var(--text-1);margin-bottom:8px;">
+        σ = √ [ Σ (Indeks_k - Indeks_rerata)² / (K - 1) ]
+      </div>
+      <ul style="margin:6px 0 10px 18px;font-size:0.78rem;color:var(--text-2);line-height:1.5;">
+        <li><strong>σ &lt; 4.00 (Pemerataan Tinggi):</strong> Indeks karakter tiap rombel merata dan seimbang.</li>
+        <li><strong>4.00 ≤ σ &lt; 8.00 (Variasi Moderat):</strong> Terdapat kesenjangan wajar antartingkat kelas.</li>
+        <li><strong>σ ≥ 8.00 (Disparitas Lebar):</strong> Kesenjangan signifikan yang memerlukan rotasi pendampingan.</li>
+      </ul>
+      <p style="font-size:0.74rem;color:var(--text-3);">
+        Kategori Capaian: Mandiri Prima (≥3.20), Terbiasa Baik (2.80–3.19), Perlu Pembinaan (2.50–2.79), Prioritas Intervensi (&lt;2.50).
+      </p>
+    </div>
+  </div>
+
+  <!-- BATASAN METODOLOGIS & PRIVASI -->
+  <div class="matrix-card" style="margin-bottom:20px;">
+    <div style="font-size:0.95rem;font-weight:700;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+      <svg class="ico" style="color:var(--red-600);" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" x2="12" y1="9" y2="13"></line><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+      Batasan Analisis &amp; Perlindungan Privasi Peserta Didik
+    </div>
+    <div style="font-size:0.75rem;color:var(--text-3);margin-bottom:14px;">
+      Empat batasan metodologis yang harus dipahami oleh seluruh pembaca dan pemangku kepentingan:
+    </div>
+    <div class="guide-steps-grid">
+      <div class="guide-step">
+        <div class="guide-step-num" style="background:var(--red-600);">1</div>
+        <div class="guide-step-text">
+          <strong>Data Self-Report (Laporan Mandiri):</strong> Pengisian dilakukan mandiri oleh murid melalui form digital, sehingga berpotensi memuat bias kepatutan sosial (social desirability bias).
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num" style="background:var(--red-600);">2</div>
+        <div class="guide-step-text">
+          <strong>Tanpa Verifikasi Fisik / Faktual:</strong> Sistem tidak melakukan observasi visual langsung, pengawasan kamera, atau konfirmasi orang tua untuk memverifikasi jam tidur dan bangun siswa secara faktual.
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num" style="background:var(--amber-dark);">3</div>
+        <div class="guide-step-text">
+          <strong>Korelasi Bukan Sebab-Akibat:</strong> Hubungan antar-dimensi kebiasaan (misal: tidur cepat vs konsentrasi belajar) mencerminkan asosiasi statistik, bukan klaim kausalitas deterministik.
+        </div>
+      </div>
+      <div class="guide-step">
+        <div class="guide-step-num" style="background:var(--blue-600);">4</div>
+        <div class="guide-step-text">
+          <strong>Anonimitas &amp; Perlindungan Privasi:</strong> Data hanya disajikan dalam bentuk agregat tingkat rombel dan jenjang sekolah; nama dan data pribadi murid tidak ditampilkan untuk menjaga etika privasi.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATATAN RESMI: PERAN AI DALAM PROYEK INI -->
+  <div class="guide-req-box" style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--blue-600);padding:16px 20px;">
+    <div style="font-size:0.86rem;font-weight:700;color:var(--text-1);margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+      <svg class="ico" style="color:var(--blue-600);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="16" y2="12"></line><line x1="12" x2="12.01" y1="8" y2="8"></line></svg>
+      Catatan Keterbukaan: Peran AI dalam Proyek Ini
+    </div>
+    <p style="font-size:0.78rem;color:var(--text-2);line-height:1.6;margin:0;">
+      Kecerdasan Artifisial (AI) digunakan sebagai sarana pembantu teknis dalam merancang tata letak antarmuka, menyusun visualisasi, dan menulis sintaks kode program (HTML, CSS, dan JavaScript).
+      Perumusan rubrik 7 kebiasaan, penentuan ambang batas, interpretasi data survei, dan rekomendasi aksi dirumuskan oleh tim pengembang bersama guru pendamping SMAMIO.
+    </p>
+  </div>
+</div>
 </div><!-- /content -->
 </div><!-- /main -->
 </div><!-- /shell -->
+
+<!-- MODAL METODOLOGI & KUALITAS DATA -->
+<div class="modal-backdrop" id="methodologyModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modalMethodologyTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-title" id="modalMethodologyTitle">
+        <svg class="ico" style="color:var(--blue-600);" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Metodologi, Kualitas Data &amp; Batasan Analitik SMAMIO
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn-sm" id="btnModalGoToTab" type="button" title="Buka sebagai halaman penuh">Tampilan Penuh</button>
+        <button class="btn-sm" id="btnCloseMethodologyModal" type="button" aria-label="Tutup modal">Tutup</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <!-- 1. METODOLOGI -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);margin-bottom:8px;">1. Formula &amp; Konversi Skor Karakter 7KAIH</div>
+        <p style="font-size:0.78rem;color:var(--text-2);margin-bottom:6px;">
+          Setiap dimensi kebiasaan diukur melalui 2 pertanyaan indikator, dinormalisasi ke skala persentase 0–100:
+        </p>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;font-family:monospace;font-size:0.75rem;color:var(--text-1);margin-bottom:8px;">
+          Indeks Karakter KAIH = ((Rerata - 1.00) / 3.00) × 100
+        </div>
+        <div style="font-size:0.74rem;color:var(--text-3);line-height:1.45;">
+          • Skor 4: Pembiasaan Mandiri (Sangat Baik)<br/>
+          • Skor 3: Pembiasaan Terbiasa (Baik)<br/>
+          • Skor 2: Butuh Pendampingan (Cukup)<br/>
+          • Skor 1: Prioritas Intervensi (Kurang)
+        </div>
+      </div>
+
+      <!-- 2. ASAL AMBANG BATAS -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);margin-bottom:6px;">2. Asal-Usul Nilai Ambang Batas</div>
+        <div class="guide-req-box" style="margin-bottom:8px;background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.3);color:var(--text-2);">
+          <strong>Catatan Transparansi:</strong> Seluruh ambang batas evaluasi di bawah ini <strong>ditetapkan oleh tim sekolah SMAMIO</strong> sebagai target mutu internal (bukan standar regulasi resmi pemerintah).
+        </div>
+        <div style="font-size:0.76rem;color:var(--text-2);line-height:1.5;">
+          • <strong>2,80:</strong> Batas stabilitas karakter rombel (di bawah 2,80 = prioritas pendampingan wali kelas).<br/>
+          • <strong>3,00:</strong> Target Mutu Sekolah (ambang tuntas pembiasaan karakter standar kelulusan).<br/>
+          • <strong>3,20:</strong> Ambang batas kategori Mandiri Prima.<br/>
+          • <strong>3,50:</strong> Standar Emas (aspirasi kemandirian prima ekosistem sekolah).
+        </div>
+      </div>
+
+      <!-- 3. KUALITAS DATA & STANDAR DEVIASI -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);margin-bottom:6px;">3. Standar Deviasi &amp; Kualitas Data</div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;font-family:monospace;font-size:0.75rem;color:var(--text-1);margin-bottom:8px;">
+          σ = √ [ Σ (Indeks_k - Indeks_rerata)² / (K - 1) ]
+        </div>
+        <div style="font-size:0.74rem;color:var(--text-3);line-height:1.45;">
+          • σ &lt; 4.00: Pemerataan Tinggi &middot; 4.00 ≤ σ &lt; 8.00: Variasi Moderat &middot; σ ≥ 8.00: Disparitas Lebar.<br/>
+          • Pipeline data otomatis membuang baris kosong, duplikat, dan nilai di luar skala 1–4.
+        </div>
+      </div>
+
+      <!-- 4. BATASAN -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:0.88rem;font-weight:700;color:var(--text-1);margin-bottom:6px;">4. Batasan Analitik</div>
+        <div style="font-size:0.76rem;color:var(--text-2);line-height:1.5;">
+          1. <strong>Self-Report:</strong> Pengisian dilakukan mandiri oleh murid, berpotensi memuat social desirability bias.<br/>
+          2. <strong>Tanpa Verifikasi:</strong> Tidak ada observasi langsung atau verifikasi orang tua secara faktual.<br/>
+          3. <strong>Korelasi ≠ Kausalitas:</strong> Asosiasi antardimensi bukan hubungan sebab-akibat deterministik.<br/>
+          4. <strong>Privasi:</strong> Data diagregasi di tingkat rombel; nama siswa tidak ditampilkan untuk melindungi etika privasi.
+        </div>
+      </div>
+
+      <!-- 5. PERAN AI -->
+      <div class="guide-req-box" style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--blue-600);padding:12px 16px;">
+        <div style="font-size:0.84rem;font-weight:700;color:var(--text-1);margin-bottom:4px;">Peran AI dalam Proyek Ini</div>
+        <p style="font-size:0.76rem;color:var(--text-2);line-height:1.55;margin:0;">
+          Kecerdasan Artifisial (AI) digunakan sebagai sarana pembantu teknis dalam merancang antarmuka, visualisasi, dan menulis kode program. Perumusan rubrik, pengujian, interpretasi data, serta rekomendasi aksi dirumuskan oleh tim pengembang bersama guru pendamping SMAMIO.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 /* ================================================================
-   KONSTANTA
+   KONFIGURASI SEKOLAH (SMAMIO 2026)
+   Parameter kapasitas resmi sekolah. Nilai di bawah merupakan acuan
+   yang dapat disesuaikan langsung dengan data riil Dapodik sekolah.
    ================================================================ */
-const HABIT_NAMES = ["Bangun Pagi","Beribadah","Berolahraga","Makan Sehat & Bergizi","Gemar Belajar","Bermasyarakat","Tidur Cepat"];
+const SCHOOL_CONFIG = {
+  name: "SMA Muhammadiyah 10 GKB Gresik",
+  brand: "SMAMIO",
+  // Catatan: Jumlah siswa & rombel dapat disesuaikan dengan data riil Dapodik sekolah
+  registeredStudents: {
+    X: 476,
+    XI: 474,
+    XII: 479,
+    get total() { return this.X + this.XI + this.XII; } // Total 1.429 siswa
+  },
+  totalRombel: 18, // Dapat disesuaikan dengan jumlah rombel Dapodik riil
+  targetMutu: 3.00,
+  standarEmas: 3.50,
+  minQuestions: 7, // Fleksibel: menerima 7 kolom dimensi langsung atau 14 sub-indikator
+  requiredDimensions: 7
+};
+
+/* ================================================================
+   KONSTANTA 7 KEBIASAAN (7KAIH)
+   ================================================================ */
+const HABIT_NAMES = [
+  "Bangun Pagi",
+  "Beribadah",
+  "Berolahraga",
+  "Makan Sehat & Bergizi",
+  "Gemar Belajar",
+  "Bermasyarakat",
+  "Tidur Cepat"
+];
 
 const HABIT_DETAILS = [
   { name:"Bangun Pagi", sub:"Integritas Fajar & Ritme Sirkadian", indikator:"Bangun sebelum 04.30 WIB dengan kesadaran mandiri tanpa alarm berulang.", dampak:"Meningkatkan kesiapan kognitif pagi hari dan kestabilan fokus belajar.", strategi:"Edukasi sleep hygiene & integrasi pelaporan salam fajar di grup kelas." },
@@ -2125,22 +2925,27 @@ const HABIT_DETAILS = [
 ];
 
 /* ================================================================
-   STATE
+   STATE UTAMA
    ================================================================ */
-let activeRows = [], availableDates = [];
+let activeRows = [];
+let availableDates = [];
+let isSimulatedData = false;
+let cleanReport = { raw: 0, valid: 0, empty: 0, duplicate: 0, invalid: 0, dropped: 0 };
+
 let radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart;
-let bubbleChart, donutChart, polarChart, multiTrendChart, scatterChart, topBottomChart;
+let bubbleChart, donutChart, polarChart, multiTrendChart, topBottomChart;
 let refreshInterval = null;
 let currentSortColumn = 4, sortAscending = false;
 
 /* ================================================================
-   NAVIGATION
+   NAVIGASI TAB
    ================================================================ */
 const PAGE_TITLES = {
   manifesto: "Latar Belakang & Urgensi Program",
   analytics:  "Live Analytics Hub",
   habits:     "Profil & Hasil 7 Kebiasaan Hebat",
-  smamio:     "Ekosistem Sekolah SMAMIO"
+  smamio:     "Ekosistem Sekolah SMAMIO",
+  methodology: "Metodologi, Kualitas Data & Batasan"
 };
 
 function initTabs() {
@@ -2162,89 +2967,142 @@ function initTabs() {
 }
 
 /* ================================================================
-   THEME
+   THEME TOGGLE
    ================================================================ */
 function initTheme() {
   const navToggle = document.getElementById("mobileNavToggle");
   const navBackdrop = document.getElementById("mobileNavBackdrop");
-  const sidebar = document.querySelector(".sidebar");
-  if (navToggle && navBackdrop && sidebar) {
-    const toggleNav = () => {
-      const open = !sidebar.classList.contains("mobile-open");
-      sidebar.classList.toggle("mobile-open", open);
-      navBackdrop.classList.toggle("active", open);
-      navToggle.setAttribute("aria-expanded", String(open));
-    };
-    navToggle.addEventListener("click", toggleNav);
-    navBackdrop.addEventListener("click", toggleNav);
-  }
+  const toggleNav = () => {
+    const sidebar = document.querySelector(".sidebar");
+    const isOpen = sidebar.classList.toggle("mobile-open");
+    navBackdrop.classList.toggle("active", isOpen);
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+  };
+  if (navToggle) navToggle.addEventListener("click", toggleNav);
+  if (navBackdrop) navBackdrop.addEventListener("click", toggleNav);
+
   applyTheme(localStorage.getItem("kaih_theme") || "light");
   document.getElementById("themeToggleBtn").addEventListener("click", () => {
-    const cur = document.documentElement.getAttribute("data-theme") || "light";
-    applyTheme(cur === "light" ? "dark" : "light");
+    const cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
   });
 }
 
 function applyTheme(theme) {
-  const ic = document.getElementById("themeIconContainer");
-  const tt = document.getElementById("themeText");
-  if (theme === "dark") {
-    document.documentElement.setAttribute("data-theme", "dark");
-    ic.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
-    tt.textContent = "Mode Terang";
-  } else {
-    document.documentElement.removeAttribute("data-theme");
-    ic.innerHTML = `<svg class="ico" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
-    tt.textContent = "Mode Gelap";
+  document.documentElement.setAttribute("data-theme", theme);
+  const isDark = theme === "dark";
+  document.getElementById("themeText").textContent = isDark ? "Mode Terang" : "Mode Gelap";
+  const iconContainer = document.getElementById("themeIconContainer");
+  if (iconContainer) {
+    iconContainer.innerHTML = isDark
+      ? `<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`
+      : `<svg class="ico" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>`;
   }
   localStorage.setItem("kaih_theme", theme);
   updateChartThemeColors();
 }
 
 function updateChartThemeColors() {
-  if (!radarChart) return;
   const dark = document.documentElement.getAttribute("data-theme") === "dark";
   const tick = dark ? "#64748b" : "#94a3b8";
   const grid = dark ? "rgba(30,45,74,0.8)" : "rgba(226,232,240,0.9)";
-  [radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart,
-   bubbleChart, donutChart, polarChart, multiTrendChart, scatterChart, topBottomChart].forEach(c => {
+  [radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart, bubbleChart, donutChart, polarChart, multiTrendChart, topBottomChart].forEach(c => {
     if (!c) return;
     if (c.options.scales) {
-      Object.keys(c.options.scales).forEach(k => {
-        const s = c.options.scales[k];
+      Object.values(c.options.scales).forEach(s => {
         if (s.ticks) s.ticks.color = tick;
         if (s.grid) s.grid.color = grid;
         if (s.pointLabels) s.pointLabels.color = tick;
       });
     }
-    c.resize(); c.update();
+    c.resize();
+    c.update();
   });
 }
 
 /* ================================================================
-   ALERT
+   NOTIFIKASI / ALERT BOX
    ================================================================ */
 function showMessage(msg, isError = true) {
   const b = document.getElementById("alertBox");
+  if (!b) return;
   b.style.display = "block";
   b.style.backgroundColor = isError ? "var(--red-50)" : "var(--green-50)";
   b.style.color = isError ? "var(--red-600)" : "var(--green-600)";
   b.style.borderColor = isError ? "var(--red-100)" : "var(--green-100)";
-  b.innerHTML = msg.replace(/\n/g,"<br/>");
-  if (!isError) setTimeout(() => { b.style.display = "none"; }, 7000);
+  b.innerHTML = msg.replace(/\n/g, "<br/>");
+  if (!isError) {
+    setTimeout(() => { b.style.display = "none"; }, 8000);
+  }
 }
 
 /* ================================================================
-   SCORE MAPPER
+   SCORE MAPPER (Normalisasi Skala Jawaban ke 1–4)
+   Mendukung angka 1-4, skala teks Likert, serta rubrik deskriptif.
    ================================================================ */
 function scoreMapper(val) {
   if (val === undefined || val === null || val === "") return null;
-  if (!isNaN(val)) { const n = parseFloat(val); if (n >= 1 && n <= 4) return n; }
+  
+  // Nilai numerik langsung
+  if (!isNaN(val)) {
+    const n = parseFloat(val);
+    if (n >= 1 && n <= 4) return n;
+    return null; // Di luar skala ordinal 1-4 dibuang
+  }
+  
   const s = String(val).trim().toLowerCase();
-  if (s.includes("sebelum pukul 04.00")||s.includes("bangun sendiri tepat waktu")||s.includes("selalu tepat waktu")||s.includes("tidak pernah tertinggal")||s.includes("kesadaran pribadi penuh")||s.includes("rutin setiap hari")||s.includes("sedang–berat")||s.includes("selalu terpenuhi")||s.includes("bebas junk food")||s.includes("lebih dari 90 menit")||s.includes("aktif mencari referensi")||s.includes("aktif berkomunikasi")||s.includes("mencegah bullying")||s.includes("sebelum atau tepat pukul 21.00")||s.includes("mematikan/menjauhkan gawai")) return 4;
-  if (s.includes("04.00 – 05.00")||s.includes("sekali panggil")||s.includes("alarm berbunyi 1-2")||s.includes("sesekali tertunda")||s.includes("rutinitas/ingatan")||s.includes("2-3 kali")||s.includes("ringan/peregangan")||s.includes("sebagian besar")||s.includes("membatasi junk food")||s.includes("45 – 90 menit")||s.includes("tepat waktu dan membaca")||s.includes("bersosialisasi dengan baik")||s.includes("ramah dan tidak pernah")||s.includes("21.00 – 22.00")||s.includes("sebentar untuk hal penting")) return 3;
-  if (s.includes("05.00 – 06.00")||s.includes("beberapa kali alarm")||s.includes("sebagian ibadah")||s.includes("diingatkan")||s.includes("1 kali dalam seminggu")||s.includes("jalan kaki")||s.includes("jarang mengonsumsi sayur")||s.includes("sering mengonsumsi junk food")||s.includes("15 – 44 menit")||s.includes("mendekati batas waktu")||s.includes("pasif")||s.includes("kata-kata kasar")||s.includes("22.00 – 23.00")||s.includes("di atas tempat tidur")) return 2;
-  return 1;
+  
+  // Skala Likert teks & rubrik instrumen SMAMIO
+  // Level 4 (Sangat Baik / Mandiri)
+  if (s === "4" || s === "selalu" || s === "sangat baik" || s === "sangat setuju" ||
+      s.includes("sebelum pukul 04.00") || s.includes("bangun sendiri tepat waktu") ||
+      s.includes("selalu tepat waktu") || s.includes("tidak pernah tertinggal") ||
+      s.includes("kesadaran pribadi penuh") || s.includes("rutin setiap hari") ||
+      s.includes("sedang–berat") || s.includes("selalu terpenuhi") ||
+      s.includes("bebas junk food") || s.includes("lebih dari 90 menit") ||
+      s.includes("aktif mencari referensi") || s.includes("aktif berkomunikasi") ||
+      s.includes("mencegah bullying") || s.includes("sebelum atau tepat pukul 21.00") ||
+      s.includes("mematikan/menjauhkan gawai")) {
+    return 4;
+  }
+  
+  // Level 3 (Baik / Stabil)
+  if (s === "3" || s === "sering" || s === "baik" || s === "setuju" ||
+      s.includes("04.00 – 05.00") || s.includes("sekali panggil") ||
+      s.includes("alarm berbunyi 1-2") || s.includes("sesekali tertunda") ||
+      s.includes("rutinitas/ingatan") || s.includes("2-3 kali") ||
+      s.includes("ringan/peregangan") || s.includes("sebagian besar") ||
+      s.includes("membatasi junk food") || s.includes("45 – 90 menit") ||
+      s.includes("tepat waktu dan membaca") || s.includes("bersosialisasi dengan baik") ||
+      s.includes("ramah dan tidak pernah") || s.includes("21.00 – 22.00") ||
+      s.includes("sebentar untuk hal penting")) {
+    return 3;
+  }
+  
+  // Level 2 (Cukup / Butuh Pendampingan)
+  if (s === "2" || s === "kadang" || s === "kadang-kadang" || s === "cukup" || s === "kurang setuju" ||
+      s.includes("05.00 – 06.00") || s.includes("beberapa kali alarm") ||
+      s.includes("sebagian ibadah") || s.includes("diingatkan") ||
+      s.includes("1 kali dalam seminggu") || s.includes("jalan kaki") ||
+      s.includes("jarang mengonsumsi sayur") || s.includes("sering mengonsumsi junk food") ||
+      s.includes("15 – 44 menit") || s.includes("mendekati batas waktu") ||
+      s.includes("pasif") || s.includes("kata-kata kasar") ||
+      s.includes("22.00 – 23.00") || s.includes("di atas tempat tidur")) {
+    return 2;
+  }
+  
+  // Level 1 (Kurang / Prioritas Intervensi)
+  if (s === "1" || s === "tidak pernah" || s === "kurang" || s === "sangat kurang" || s === "tidak setuju" ||
+      s.includes("setelah pukul 06.00") || s.includes("dibangunkan berulang") ||
+      s.includes("terlambat") || s.includes("tidak beribadah") ||
+      s.includes("tidak olahraga") || s.includes("junk food setiap hari") ||
+      s.includes("kurang dari 15 menit") || s.includes("terlambat mengumpulkan") ||
+      s.includes("menarik diri") || s.includes("terlibat perundungan") ||
+      s.includes("setelah pukul 23.00") || s.includes("begadang")) {
+    return 1;
+  }
+  
+  return null;
 }
 
 function normalizeKelasAndTingkat(k) {
@@ -2252,13 +3110,24 @@ function normalizeKelasAndTingkat(k) {
   let raw = String(k).toUpperCase().trim();
   let s = raw.replace(/[^A-Z0-9]/g, '');
   let tingkat = "Lainnya", rest = "";
-  if (s.startsWith('XII')||s.startsWith('12')) { tingkat="XII"; rest=s.replace(/^(KELAS)?(XII|12|CII)/,''); }
-  else if (s.startsWith('XI')||s.startsWith('11')) { tingkat="XI"; rest=s.replace(/^(XI|11|CI)/,''); if(s==='SEBELASTIGA') rest='3'; }
-  else if (s.startsWith('X')||s.startsWith('10')) { tingkat="X"; rest=s.replace(/^(X|10)/,''); }
-  else return { tingkat:"Lainnya", kelas:raw||"Lainnya" };
+  if (s.startsWith('XII') || s.startsWith('12')) {
+    tingkat = "XII";
+    rest = s.replace(/^(KELAS)?(XII|12|CII)/, '');
+  } else if (s.startsWith('XI') || s.startsWith('11')) {
+    tingkat = "XI";
+    rest = s.replace(/^(XI|11|CI)/, '');
+    if (s === 'SEBELASTIGA') rest = '3';
+  } else if (s.startsWith('X') || s.startsWith('10')) {
+    tingkat = "X";
+    rest = s.replace(/^(X|10)/, '');
+  } else {
+    return { tingkat:"Lainnya", kelas: raw || "Lainnya" };
+  }
   const m = rest.match(/(\d+)/);
-  if (m && parseInt(m[1],10)>=1 && parseInt(m[1],10)<=6) return { tingkat, kelas:`${tingkat}-${parseInt(m[1],10)}` };
-  return { tingkat, kelas:`${tingkat}-Umum` };
+  if (m && parseInt(m[1], 10) >= 1 && parseInt(m[1], 10) <= 6) {
+    return { tingkat, kelas: `${tingkat}-${parseInt(m[1], 10)}` };
+  }
+  return { tingkat, kelas: `${tingkat}-Umum` };
 }
 
 function updateDatasetMeta(sourceLabel = "Dataset aktif") {
@@ -2266,76 +3135,228 @@ function updateDatasetMeta(sourceLabel = "Dataset aktif") {
   const rombelCount = new Set(activeRows.map(r => r.kelas)).size;
   const totalText = total.toLocaleString("id-ID");
   const rombelText = rombelCount.toLocaleString("id-ID");
+  const registeredTotal = SCHOOL_CONFIG.registeredStudents.total.toLocaleString("id-ID");
+  const respPct = total > 0 ? ((total / SCHOOL_CONFIG.registeredStudents.total) * 100).toFixed(1) : "0,0";
+
+  const prefix = isSimulatedData ? "[DATA SIMULASI] " : "";
   const source = document.getElementById("sourceInfo");
-  if (source) source.textContent = `${sourceLabel} · ${totalText} entri · ${rombelText} rombel`;
+  if (source) source.textContent = `${prefix}${sourceLabel} · ${totalText} entri · ${rombelText} rombel (${respPct}% partisipasi)`;
+
   const flow = document.getElementById("flowStudentCount");
-  if (flow) flow.textContent = `${totalText} entri responden`;
+  if (flow) flow.textContent = total > 0 ? `${totalText} entri responden (${respPct}% dari ${registeredTotal} terdaftar)` : "Belum ada data";
+
   const donut = document.getElementById("donutDatasetSubtitle");
-  if (donut) donut.textContent = `Proporsi ${totalText} entri responden dalam 4 kategori capaian 7KAIH`;
+  if (donut) donut.textContent = total > 0 ? `Proporsi ${totalText} entri responden dalam 4 kategori capaian 7KAIH` : "Menunggu pemuatan data";
+
   const habit = document.getElementById("habitDatasetCount");
-  if (habit) habit.textContent = `${totalText} entri responden`;
+  if (habit) habit.textContent = total > 0 ? `${totalText} entri responden` : "Belum ada data";
+
   const rombelStat = document.getElementById("statRombelCount");
-  if (rombelStat) rombelStat.textContent = rombelText;
+  if (rombelStat) rombelStat.textContent = total > 0 ? `${rombelText} / ${SCHOOL_CONFIG.totalRombel}` : "—";
+
   const totalStat = document.getElementById("statTotalStudents");
-  if (totalStat) totalStat.textContent = totalText;
-  ["rombelDatasetCount","rombelRankCount","heatmapRombelCount"].forEach(id => {
+  if (totalStat) totalStat.textContent = total > 0 ? `${totalText} / ${registeredTotal}` : "—";
+
+  const rateStat = document.getElementById("statResponseRate");
+  if (rateStat) rateStat.textContent = total > 0 ? `${respPct}%` : "—";
+
+  ["rombelDatasetCount", "rombelRankCount", "heatmapRombelCount"].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.textContent = `${rombelText} rombel`;
+    if (el) el.textContent = total > 0 ? `${rombelText} rombel` : "— rombel";
   });
 }
 
-let skippedIncompleteRows = 0;
+/* ================================================================
+   PARSER SPREADSHEET & PEMBERSIHAN DATA KOTOR (ANTI-BIAS)
+   ================================================================ */
 function parseSheetMatrix(matrix) {
-  if (!matrix || matrix.length < 2) throw new Error("Belum ada data responden.");
-  skippedIncompleteRows = 0;
-  const headers = matrix[0].map(h => String(h||"").trim());
-  const colKelas = headers.findIndex(h => h.toLowerCase().includes('kelas')||h.toLowerCase().includes('rombel'));
-  const colTime  = headers.findIndex(h => h.toLowerCase().includes('timestamp')||h.toLowerCase().includes('waktu'));
-  let startQ = colKelas !== -1 ? colKelas + 1 : 3;
-  if (headers.length >= 15 && (startQ + 14) > headers.length) startQ = headers.length - 14;
-  const newRows = [], datesSet = new Set();
+  if (!matrix || matrix.length < 2) {
+    throw new Error("File kosong atau tidak memiliki baris data responden.");
+  }
+
+  const headers = matrix[0].map(h => String(h || "").trim());
+
+  // 1. VALIDASI KOLOM WAJIB & FLEKSIBEL (7 ATAU 14 KOLOM)
+  const missingCols = [];
+  const colKelas = headers.findIndex(h => h.toLowerCase().includes('kelas') || h.toLowerCase().includes('rombel'));
+  if (colKelas === -1) missingCols.push("Kolom Kelas / Rombel");
+
+  const colTime = headers.findIndex(h => h.toLowerCase().includes('timestamp') || h.toLowerCase().includes('waktu') || h.toLowerCase().includes('tanggal'));
+  const colIdentitas = headers.findIndex(h => {
+    const s = h.toLowerCase();
+    return s.includes('nama') || s.includes('nis') || s.includes('email') || s.includes('identitas') || s.includes('siswa') || s.includes('responden');
+  });
+
+  let startQ = colKelas !== -1 ? colKelas + 1 : 1;
+  let availableQ = headers.length - startQ;
+  const is14Questions = availableQ >= 14;
+  const is7Questions = availableQ >= 7 && availableQ < 14;
+
+  if (!is14Questions && !is7Questions) {
+    missingCols.push(`Kolom Pertanyaan 7KAIH (minimal 7 kolom dimensi langsung atau 14 sub-indikator, ditemukan ${Math.max(0, availableQ)} kolom)`);
+  }
+
+  if (missingCols.length > 0) {
+    throw new Error(`Struktur spreadsheet tidak valid.<br/>Kolom wajib yang kurang: <strong>${missingCols.join(', ')}</strong>.<br/>Silakan buka menu <em>Panduan Sheets</em> di kanan atas untuk mencocokkan header kolom.`);
+  }
+
+  // 2. AUDIT & PEMBERSIHAN DATA KOTOR (DEDUPLIKASI HANYA JIKA ADA KOLOM PEMBEDA)
+  const hasDifferentiator = (colTime !== -1 || colIdentitas !== -1);
+  cleanReport = {
+    raw: matrix.length - 1,
+    valid: 0,
+    empty: 0,
+    duplicate: 0,
+    invalid: 0,
+    dropped: 0,
+    identicalAnswersCount: 0,
+    hasDifferentiator: hasDifferentiator
+  };
+
+  const newRows = [];
+  const datesSet = new Set();
+  const seenSignatures = new Set();
+
   for (let i = 1; i < matrix.length; i++) {
     const row = matrix[i];
-    if (!row || row.length === 0) continue;
-    let filled = 0;
-    for (let q = 0; q < 14; q++) if (row[startQ+q]!==undefined && String(row[startQ+q]).trim()!=="") filled++;
-    if (filled < 4) { skippedIncompleteRows++; continue; }
-    const { tingkat, kelas } = normalizeKelasAndTingkat(colKelas!==-1 ? row[colKelas] : "");
+
+    // Cek baris kosong total
+    if (!row || row.length === 0 || row.every(cell => cell === undefined || cell === null || String(cell).trim() === "")) {
+      cleanReport.empty++;
+      continue;
+    }
+
+    // Normalisasi kelas & jenjang
+    const rawKelas = colKelas !== -1 ? row[colKelas] : "";
+    const { tingkat, kelas } = normalizeKelasAndTingkat(rawKelas);
+    if (tingkat === "Lainnya" && (!rawKelas || String(rawKelas).trim() === "")) {
+      cleanReport.invalid++;
+      continue;
+    }
+
+    // Tanggal survei
     let dateStr = "2026-11-04";
     if (colTime !== -1 && row[colTime]) {
       let t = String(row[colTime]).trim();
-      if (t.match(/^\d{4}-\d{2}-\d{2}/)) dateStr = t.slice(0,10);
-      else if (t.includes('/')) { const p=t.split(' ')[0].split('/'); if(p.length===3){const y=p[2].length===4?p[2]:'20'+p[2]; dateStr=`${y}-${p[0].padStart(2,'0')}-${p[1].padStart(2,'0')}`;} }
+      if (t.match(/^\d{4}-\d{2}-\d{2}/)) dateStr = t.slice(0, 10);
+      else if (t.includes('/')) {
+        const p = t.split(' ')[0].split('/');
+        if (p.length === 3) {
+          const y = p[2].length === 4 ? p[2] : '20' + p[2];
+          dateStr = `${y}-${p[0].padStart(2, '0')}-${p[1].padStart(2, '0')}`;
+        }
+      }
     }
+
+    // 7 Dimensi Karakter (fleksibel 14 pertanyaan atau 7 pertanyaan langsung)
     const scores = [];
     let hasAllDimensions = true;
-    for (let q = 0; q < 7; q++) {
-      const pair = [scoreMapper(row[startQ+q*2]), scoreMapper(row[startQ+q*2+1])].filter(v => v !== null);
-      if (!pair.length) { hasAllDimensions = false; break; }
-      scores.push(+(pair.reduce((a,b)=>a+b,0)/pair.length).toFixed(2));
+
+    if (is14Questions) {
+      for (let q = 0; q < 7; q++) {
+        const v1 = scoreMapper(row[startQ + q * 2]);
+        const v2 = scoreMapper(row[startQ + q * 2 + 1]);
+        const pair = [v1, v2].filter(v => v !== null && v >= 1 && v <= 4);
+        if (!pair.length) {
+          hasAllDimensions = false;
+          break;
+        }
+        scores.push(+(pair.reduce((a, b) => a + b, 0) / pair.length).toFixed(2));
+      }
+    } else {
+      for (let q = 0; q < 7; q++) {
+        const v = scoreMapper(row[startQ + q]);
+        if (v === null || v < 1 || v > 4) {
+          hasAllDimensions = false;
+          break;
+        }
+        scores.push(v);
+      }
     }
-    if (!hasAllDimensions) { skippedIncompleteRows++; continue; }
+
+    if (!hasAllDimensions) {
+      cleanReport.invalid++;
+      continue;
+    }
+
+    // Aturan Deduplikasi: Hanya drop jika ada timestamp / identitas yang sama persis
+    if (hasDifferentiator) {
+      const timeVal = colTime !== -1 ? String(row[colTime] || "").trim() : "";
+      const idVal = colIdentitas !== -1 ? String(row[colIdentitas] || "").trim() : "";
+      const diffKey = `${timeVal}|${idVal}|${scores.join(',')}`;
+      if (seenSignatures.has(diffKey)) {
+        cleanReport.duplicate++;
+        continue; // Duplikat sejati
+      }
+      seenSignatures.add(diffKey);
+    } else {
+      // Form anonim tanpa timestamp: JANGAN dibuang, catat jawaban identik sebagai informasi saja
+      const ansKey = `${tingkat}|${kelas}|${scores.join(',')}`;
+      if (seenSignatures.has(ansKey)) {
+        cleanReport.identicalAnswersCount++;
+      }
+      seenSignatures.add(ansKey);
+    }
+
     datesSet.add(dateStr);
     newRows.push({ tingkat, kelas, date: dateStr, scores });
   }
-  if (newRows.length === 0) throw new Error("Tidak ada baris dengan setidaknya satu jawaban valid pada setiap dimensi. Data lama tetap dipertahankan.");
+
+  cleanReport.valid = newRows.length;
+  cleanReport.dropped = cleanReport.empty + cleanReport.duplicate + cleanReport.invalid;
+
+  if (newRows.length === 0) {
+    throw new Error(`Seluruh ${cleanReport.raw} baris data tidak memenuhi syarat validasi (kosong atau di luar skala 1–4). Data aktif sebelumnya dipertahankan.`);
+  }
+
+  isSimulatedData = false;
+  const banner = document.getElementById("simulatedDataBanner");
+  if (banner) banner.style.display = "none";
+
   activeRows = newRows;
-  updateDatasetMeta("Dataset aktif");
+  updateDatasetMeta("Dataset Asli (Terverifikasi)");
   availableDates = [...datesSet].sort();
-  updateDateDropdown(); populateKelasDropdown(); updateDashboard();
-  return true;
+  updateDateDropdown();
+  populateKelasDropdown();
+  updateDashboard();
+
+  if (cleanReport.dropped > 0 || cleanReport.identicalAnswersCount > 0) {
+    let msg = `<strong>Pembersihan Data Selesai:</strong> Berhasil memuat <strong>${cleanReport.valid}</strong> entri valid. `;
+    if (cleanReport.dropped > 0) {
+      msg += `<strong>${cleanReport.dropped} baris dibuang</strong> (${cleanReport.empty} kosong, ${cleanReport.duplicate} duplikat ganda, ${cleanReport.invalid} tidak valid/di luar skala). `;
+    }
+    if (!hasDifferentiator && cleanReport.identicalAnswersCount > 0) {
+      msg += `<br/><span style="font-size:0.75rem;color:var(--text-3);">Catatan: Deduplikasi dinonaktifkan karena form tidak memiliki kolom timestamp/identitas. Terdapat ${cleanReport.identicalAnswersCount} baris berjawaban identik yang seluruhnya tetap dipertahankan.</span>`;
+    }
+    showMessage(msg, false);
+  } else {
+    showMessage(`<strong>Data Bersih:</strong> Seluruh <strong>${cleanReport.valid}</strong> entri data berhasil dimuat tanpa baris kotor.`, false);
+  }
+  window.cleanReport = cleanReport;
+  return cleanReport;
 }
 
 /* ================================================================
-   GOOGLE SHEETS SYNC
+   GOOGLE SHEETS SYNC (Live Fetch via CSV)
    ================================================================ */
 async function syncFromGoogleSheets() {
   document.getElementById("alertBox").style.display = "none";
   let url = document.getElementById("sheetCsvUrl").value.trim();
-  if (!url) { showMessage("Silakan tempel URL Google Sheets terlebih dahulu."); return; }
+  if (!url) {
+    showMessage("Silakan tempel URL Google Sheets terlebih dahulu.<br/>Buka menu <strong>Panduan Sheets</strong> di atas jika memerlukan langkah publikasi.");
+    return;
+  }
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    showMessage("Format URL tidak valid. Tautan harus diawali dengan http:// atau https://.");
+    return;
+  }
   if (url.includes("docs.google.com/spreadsheets")) {
-    if (url.includes("/pub")||url.includes("/d/e/")) { if (!url.includes("output=csv")) url += (url.includes("?")?"&":"?")+"output=csv"; }
-    else if (url.includes("/d/")) { const m=url.match(/\/d\/([a-zA-Z0-9-_]+)/); if(m&&m[1]!=='e') url=`https://docs.google.com/spreadsheets/d/${m[1]}/export?format=csv`; }
+    if (url.includes("/pub") || url.includes("/d/e/")) {
+      if (!url.includes("output=csv")) url += (url.includes("?") ? "&" : "?") + "output=csv";
+    } else if (url.includes("/d/")) {
+      const m = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+      if (m && m[1] !== 'e') url = `https://docs.google.com/spreadsheets/d/${m[1]}/export?format=csv`;
+    }
     document.getElementById("sheetCsvUrl").value = url;
   }
   localStorage.setItem("kaih_sheet_url", url);
@@ -2344,27 +3365,44 @@ async function syncFromGoogleSheets() {
   btn.innerHTML = `<span>Menghubungkan…</span>`;
   try {
     const res = await fetch(url, { method:'GET', cache:'no-store', headers:{'Accept':'text/csv'} });
-    if (!res.ok) throw new Error(`Status HTTP: ${res.status}`);
+    if (!res.ok) throw new Error(`Status respon server HTTP: ${res.status} (${res.statusText || 'Gagal'})`);
     const csv = await res.text();
-    if (csv.trim().toLowerCase().startsWith("<!doctype html")||csv.trim().toLowerCase().startsWith("<html")) throw new Error("Link terproteksi. Aktifkan 'Siapa saja yang memiliki link' di Google Sheets.");
+    if (csv.trim().toLowerCase().startsWith("<!doctype html") || csv.trim().toLowerCase().startsWith("<html")) {
+      throw new Error("Tautan menghasilkan dokumen HTML, bukan teks CSV. Pastikan spreadsheet dipublikasikan via menu: <em>File &rarr; Bagikan &rarr; Publikasikan ke web &rarr; Comma-separated values (.csv)</em>.");
+    }
     const wb = XLSX.read(csv, { type:"string" });
     const matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1 });
     parseSheetMatrix(matrix);
     const now = new Date().toLocaleTimeString("id-ID");
     document.getElementById("liveDot").classList.add("on");
     document.getElementById("lastSyncTime").textContent = `Update: ${now}`;
-    updateDatasetMeta("Google Sheets Live");
-    showMessage(`Data Google Sheets berhasil disinkronkan.${skippedIncompleteRows ? ` ${skippedIncompleteRows} baris tidak lengkap dilewati.` : ""}`, false);
   } catch(err) {
     let msg = err.message;
-    if (msg.toLowerCase().includes('failed to fetch')) msg = "Diblokir browser (CORS). Gunakan Publish to Web CSV di Google Sheets.";
-    showMessage(`<strong>Gagal sinkronisasi:</strong> ${msg}`);
+    if (msg.toLowerCase().includes('failed to fetch')) {
+      msg = "Akses tautan tidak dapat dijangkau oleh peramban (kendala jaringan offline atau CORS).";
+    }
+    const errorHtml = `
+      <strong>Gagal Sinkronisasi Google Sheets:</strong><br/>
+      ${msg}<br/>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button class="btn-sm btn-primary" onclick="loadSampleData120()" style="font-size:0.75rem;">
+          Muat Data Contoh (Offline / Simulasi)
+        </button>
+        <button class="btn-sm" onclick="document.getElementById('excelFile').click()" style="font-size:0.75rem;">
+          Impor File Lokal (CSV / Excel)
+        </button>
+      </div>
+    `;
+    showMessage(errorHtml);
     document.getElementById("liveDot").classList.remove("on");
   } finally {
     btn.innerHTML = orig;
   }
 }
 
+/* ================================================================
+   IMPORT FILE LOKAL (EXCEL / CSV)
+   ================================================================ */
 document.getElementById("excelFile").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -2378,52 +3416,76 @@ document.getElementById("excelFile").addEventListener("change", function(e) {
         document.getElementById("liveDot").classList.remove("on");
         updateDatasetMeta(file.name);
         document.getElementById("lastSyncTime").textContent = "File lokal";
-        showMessage(`Dataset berhasil dimuat ke dashboard.${skippedIncompleteRows ? ` ${skippedIncompleteRows} baris tidak lengkap dilewati.` : ""}`, false);
       }
-    } catch(err) { showMessage("Gagal membaca file: " + err.message); }
+    } catch(err) {
+      showMessage("Gagal membaca file lokal: " + err.message);
+    }
   };
   reader.readAsArrayBuffer(file);
 });
 
 /* ================================================================
-   DEFAULT DATA
+   DATA CONTOH (SIMULASI 120 BARIS TERDISTRIBUSI)
+   Hanya untuk pengujian visualisasi. Ditandai label permanen.
    ================================================================ */
-function loadDefaultData() {
-  availableDates = ["2026-11-04","2026-11-06","2026-11-11","2026-11-13"];
-  const baseClasses = [
-    {k:"X-1",  t:"X",   n:52,  sc:[2.93,3.45,2.91,3.03,2.71,3.38,2.80]},
-    {k:"X-2",  t:"X",   n:57,  sc:[3.21,3.63,3.18,3.31,3.04,3.56,3.08]},
-    {k:"X-3",  t:"X",   n:80,  sc:[2.92,3.44,2.90,3.02,2.70,3.37,2.79]},
-    {k:"X-4",  t:"X",   n:85,  sc:[2.75,3.27,2.73,2.84,2.52,3.20,2.61]},
-    {k:"X-5",  t:"X",   n:101, sc:[2.94,3.46,2.92,3.04,2.72,3.39,2.81]},
-    {k:"X-6",  t:"X",   n:101, sc:[2.84,3.36,2.82,2.93,2.61,3.29,2.70]},
-    {k:"XI-1", t:"XI",  n:73,  sc:[2.80,3.34,2.61,2.96,2.68,3.31,2.66]},
-    {k:"XI-2", t:"XI",  n:72,  sc:[2.87,3.41,2.69,3.04,2.76,3.39,2.74]},
-    {k:"XI-3", t:"XI",  n:75,  sc:[2.88,3.42,2.70,3.05,2.77,3.40,2.75]},
-    {k:"XI-4", t:"XI",  n:84,  sc:[2.98,3.51,2.81,3.12,2.89,3.46,2.85]},
-    {k:"XI-5", t:"XI",  n:85,  sc:[2.85,3.39,2.67,3.02,2.74,3.37,2.72]},
-    {k:"XI-6", t:"XI",  n:85,  sc:[2.85,3.38,2.66,3.01,2.73,3.36,2.71]},
-    {k:"XII-1",t:"XII", n:72,  sc:[2.99,3.53,2.62,3.05,2.96,3.41,2.72]},
-    {k:"XII-2",t:"XII", n:83,  sc:[3.04,3.56,2.69,3.09,3.03,3.47,2.79]},
-    {k:"XII-3",t:"XII", n:90,  sc:[3.15,3.64,2.79,3.19,3.16,3.54,2.86]},
-    {k:"XII-4",t:"XII", n:59,  sc:[3.11,3.59,2.74,3.14,3.10,3.52,2.85]},
-    {k:"XII-5",t:"XII", n:58,  sc:[3.09,3.61,2.76,3.16,3.12,3.51,2.83]},
-    {k:"XII-6",t:"XII", n:60,  sc:[2.74,3.31,2.41,2.82,2.73,3.18,2.49]}
+function loadSampleData120() {
+  isSimulatedData = true;
+  availableDates = ["2026-11-04", "2026-11-06", "2026-11-11", "2026-11-13"];
+
+  const classesList = [
+    { k:"X-1",  t:"X",  base:[2.93, 3.45, 2.91, 3.03, 2.71, 3.38, 2.80] },
+    { k:"X-2",  t:"X",  base:[3.21, 3.63, 3.18, 3.31, 3.04, 3.56, 3.08] },
+    { k:"X-3",  t:"X",  base:[2.92, 3.44, 2.90, 3.02, 2.70, 3.37, 2.79] },
+    { k:"X-4",  t:"X",  base:[2.75, 3.27, 2.73, 2.84, 2.52, 3.20, 2.61] },
+    { k:"X-5",  t:"X",  base:[2.94, 3.46, 2.92, 3.04, 2.72, 3.39, 2.81] },
+    { k:"X-6",  t:"X",  base:[2.84, 3.36, 2.82, 2.93, 2.61, 3.29, 2.70] },
+    { k:"XI-1", t:"XI", base:[2.80, 3.34, 2.61, 2.96, 2.68, 3.31, 2.66] },
+    { k:"XI-2", t:"XI", base:[2.87, 3.41, 2.69, 3.04, 2.76, 3.39, 2.74] },
+    { k:"XI-3", t:"XI", base:[2.88, 3.42, 2.70, 3.05, 2.77, 3.40, 2.75] },
+    { k:"XI-4", t:"XI", base:[2.98, 3.51, 2.81, 3.12, 2.89, 3.46, 2.85] },
+    { k:"XI-5", t:"XI", base:[2.85, 3.39, 2.67, 3.02, 2.74, 3.37, 2.72] },
+    { k:"XI-6", t:"XI", base:[2.85, 3.38, 2.66, 3.01, 2.73, 3.36, 2.71] },
+    { k:"XII-1",t:"XII",base:[2.99, 3.53, 2.62, 3.05, 2.96, 3.41, 2.72] },
+    { k:"XII-2",t:"XII",base:[3.04, 3.56, 2.69, 3.09, 3.03, 3.47, 2.79] },
+    { k:"XII-3",t:"XII",base:[3.15, 3.64, 2.79, 3.19, 3.16, 3.54, 2.86] },
+    { k:"XII-4",t:"XII",base:[3.11, 3.59, 2.74, 3.14, 3.10, 3.52, 2.85] },
+    { k:"XII-5",t:"XII",base:[3.09, 3.61, 2.76, 3.16, 3.12, 3.51, 2.83] },
+    { k:"XII-6",t:"XII",base:[2.74, 3.31, 2.41, 2.82, 2.73, 3.18, 2.49] }
   ];
-  activeRows = [];
-  baseClasses.forEach(bc => {
-    for (let i = 0; i < bc.n; i++) {
-      activeRows.push({ tingkat:bc.t, kelas:bc.k, date:availableDates[i%availableDates.length], scores:bc.sc.map(s=>Math.min(4,Math.max(1,s))) });
-    }
-  });
-  updateDatasetMeta("Standar Bawaan SMAMIO");
-  updateDateDropdown(); populateKelasDropdown(); updateDashboard();
+
+  const newRows = [];
+  // Buat tepat 120 baris data simulasi
+  for (let i = 0; i < 120; i++) {
+    const c = classesList[i % classesList.length];
+    const date = availableDates[i % availableDates.length];
+    const scores = c.base.map((b, sIdx) => {
+      const offset = (((i * 7 + sIdx * 13) % 31) - 15) / 100;
+      return +(Math.min(4, Math.max(1, b + offset))).toFixed(2);
+    });
+    newRows.push({ tingkat: c.t, kelas: c.k, date, scores });
+  }
+
+  activeRows = newRows;
+  const banner = document.getElementById("simulatedDataBanner");
+  if (banner) banner.style.display = "flex";
+
+  updateDatasetMeta("DATA SIMULASI");
+  updateDateDropdown();
+  populateKelasDropdown();
+  updateDashboard();
+
+  showMessage("<strong>Mode Data Simulasi Aktif:</strong> Memuat 120 baris data contoh acak terdistribusi pada 18 rombel. Banner DATA SIMULASI diaktifkan secara permanen.", false);
 }
 
 function updateDateDropdown() {
   const sel = document.getElementById("filterDate");
   sel.innerHTML = '<option value="ALL">Semua Tanggal</option>';
-  availableDates.forEach(d => { const o=document.createElement("option"); o.value=d; o.textContent=d; sel.appendChild(o); });
+  availableDates.forEach(d => {
+    const o = document.createElement("option");
+    o.value = d;
+    o.textContent = d;
+    sel.appendChild(o);
+  });
 }
 
 function populateKelasDropdown() {
@@ -2431,102 +3493,218 @@ function populateKelasDropdown() {
   const sel = document.getElementById("filterKelas");
   const prev = sel.value;
   sel.innerHTML = '<option value="ALL">Semua Rombel</option>';
-  const uniq = [...new Set(activeRows.filter(r=>tingkat==="ALL"||r.tingkat===tingkat).map(r=>r.kelas))].sort();
+  const uniq = [...new Set(activeRows.filter(r => tingkat === "ALL" || r.tingkat === tingkat).map(r => r.kelas))].sort();
   uniq.forEach(k => {
-    const cnt = activeRows.filter(r=>r.kelas===k).length;
-    const o = document.createElement("option"); o.value=k; o.textContent=`${k} (${cnt})`; sel.appendChild(o);
+    const cnt = activeRows.filter(r => r.kelas === k).length;
+    const o = document.createElement("option");
+    o.value = k;
+    o.textContent = `${k} (${cnt})`;
+    sel.appendChild(o);
   });
-  if ([...sel.options].some(o=>o.value===prev)) sel.value = prev;
+  if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
 }
 
 /* ================================================================
    DASHBOARD ENGINE
    ================================================================ */
 function updateDashboard() {
-  const tingkat = document.getElementById("filterTingkat").value;
-  const kelas   = document.getElementById("filterKelas").value;
-  const date    = document.getElementById("filterDate").value;
+  const tingkat = document.getElementById("filterTingkat")?.value || "ALL";
+  const kelas   = document.getElementById("filterKelas")?.value || "ALL";
+  const date    = document.getElementById("filterDate")?.value || "ALL";
+
   const filtered = activeRows.filter(r => {
-    if (tingkat!=="ALL" && r.tingkat!==tingkat) return false;
-    if (kelas!=="ALL" && r.kelas!==kelas) return false;
-    if (date!=="ALL" && r.date!==date) return false;
+    if (tingkat && tingkat !== "ALL" && r.tingkat !== tingkat) return false;
+    if (kelas && kelas !== "ALL" && r.kelas !== kelas) return false;
+    if (date && date !== "ALL" && r.date !== date) return false;
     return true;
   });
+
   const totalN = filtered.length;
   const panel = document.getElementById("panel-analytics");
-  panel.classList.toggle("has-no-data", totalN === 0);
+  if (panel) panel.classList.toggle("has-no-data", totalN === 0);
+
+  // KONDISI STATE KOSONG (0 DATA)
   if (totalN === 0) {
-    const emptyText = "Tidak ada data yang cocok dengan filter aktif. Silakan ubah filter atau pulihkan semua.";
+    document.querySelectorAll('.chart-card').forEach(c => c.classList.add('is-empty'));
+
+    const emptyText = activeRows.length === 0
+      ? "Belum ada data. Hubungkan Google Sheets atau klik 'Muat Data Contoh' untuk memulai analisis."
+      : "Tidak ada data yang cocok dengan kombinasi filter saat ini. Ubah filter untuk menampilkan kembali.";
     document.getElementById("aiExecutiveSummary").textContent = emptyText;
-    ["kpiCount","kpiIndex","kpiMean","kpiBest","kpiWorst","kpiStdDev","kpiTopClass"].forEach(id => document.getElementById(id).textContent = "—");
-    ["kpiPct","kpiBestScore","kpiWorstScore","kpiWorstGap","kpiStdBadge","kpiTopClassScore","kpiTopClassMeta"].forEach(id => document.getElementById(id).textContent = "—");
-    const clearChart = chart => { if (!chart) return; chart.data.labels = []; chart.data.datasets.forEach(ds => ds.data = []); chart.update(); };
-    [radarChart,balanceChart,trendChart,gradeCompareChart,stackedChart,gapChart,bubbleChart,donutChart,polarChart,multiTrendChart,scatterChart,topBottomChart].forEach(clearChart);
-    document.getElementById("bulletChartWrap").innerHTML = "";
-    document.getElementById("classTableBody").innerHTML = "";
-    document.getElementById("heatmapBody").innerHTML = "";
-    ["statCountX","statScoreX","statCountXI","statScoreXI","statCountXII","statScoreXII"].forEach(id => document.getElementById(id).textContent = "0 / —");
+
+    ["kpiCount", "kpiIndex", "kpiMean", "kpiBest", "kpiWorst", "kpiStdDev", "kpiTopClass"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = "—";
+    });
+
+    document.getElementById("kpiSampleBadge").textContent = "Belum Ada Data";
+    document.getElementById("kpiSampleBadge").className = "pill pill-gray";
+    document.getElementById("kpiPct").textContent = "Hubungkan Google Sheets atau muat data contoh";
+
+    document.getElementById("kpiIndexGrade").textContent = "—";
+    document.getElementById("kpiIndexGrade").className = "pill pill-gray";
+
+    document.getElementById("kpiBestScore").textContent = "—";
+    document.getElementById("kpiBestDesc").textContent = "Belum ada data";
+
+    document.getElementById("kpiWorstScore").textContent = "—";
+    document.getElementById("kpiWorstGap").textContent = "Belum ada data";
+
+    document.getElementById("kpiStdBadge").textContent = "—";
+    document.getElementById("kpiStdBadge").className = "pill pill-gray";
+
+    document.getElementById("kpiTopClassScore").textContent = "—";
+    document.getElementById("kpiTopClassMeta").textContent = "Belum ada data";
+
+    const clearChart = chart => {
+      if (!chart) return;
+      chart.data.labels = [];
+      chart.data.datasets.forEach(ds => ds.data = []);
+      chart.update();
+    };
+    [radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart, bubbleChart, donutChart, polarChart, multiTrendChart, topBottomChart].forEach(clearChart);
+
+    const deltaStrip = document.getElementById("habitDeltaStrip");
+    if (deltaStrip) deltaStrip.style.display = "none";
+
+    const matrixBody = document.getElementById("matrixTableBody");
+    if (matrixBody) matrixBody.innerHTML = '<tr><td colspan="8" class="table-empty-cell">Belum ada data korelasi. Hubungkan Google Sheets atau muat data contoh.</td></tr>';
+
+    ["insightRadar", "insightTrend", "insightGrade", "insightBalance", "insightBullet", "insightTopBottom", "insightStacked", "insightGap", "insightBubble", "insightDonut", "insightPolar", "insightMultiTrend", "insightCorrelation"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = ""; el.style.display = "none"; }
+    });
+
+    document.getElementById("bulletChartWrap").innerHTML = '<div class="table-empty-cell">Belum ada data. Hubungkan Google Sheets atau muat data contoh.</div>';
+    document.getElementById("classTableBody").innerHTML = '<tr><td colspan="12" class="table-empty-cell">Belum ada data. Hubungkan Google Sheets atau klik "Muat Data Contoh".</td></tr>';
+    document.getElementById("heatmapBody").innerHTML = '<tr><td colspan="11" class="table-empty-cell">Belum ada data. Hubungkan Google Sheets atau klik "Muat Data Contoh".</td></tr>';
+
+    ["statCountX", "statCountXI", "statCountXII"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = "Belum ada data";
+    });
+    ["statScoreX", "statScoreXI", "statScoreXII"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = "Rata-Rata: —";
+    });
     document.getElementById("statTopClass").textContent = "—";
     document.getElementById("statTopScore").textContent = "—";
-    document.getElementById("habitsContainer").innerHTML = "";
-    document.getElementById("simTargetLabel").textContent = "Tidak ada data untuk simulasi";
+    document.getElementById("statResponseRate").textContent = "—";
+    document.getElementById("statRombelCount").textContent = "—";
+    document.getElementById("statTotalStudents").textContent = "—";
+
+    document.getElementById("habitsContainer").innerHTML = '<div class="table-empty-cell" style="grid-column:1/-1;">Belum ada data kebiasaan. Silakan hubungkan Google Sheets.</div>';
+    document.getElementById("simTargetLabel").textContent = "Belum ada data untuk simulasi";
     document.getElementById("simCurrentIndex").textContent = "—";
     document.getElementById("simProjectedIndex").textContent = "—";
+    renderMethodologyAudit([]);
     return;
   }
 
-  const habitAvg = [0,0,0,0,0,0,0];
-  filtered.forEach(r => r.scores.forEach((s,i) => habitAvg[i] += s));
-  for (let i=0;i<7;i++) habitAvg[i] = +(habitAvg[i]/totalN).toFixed(2);
-  const overallMean = habitAvg.reduce((a,b)=>a+b,0)/7;
-  const overallIdx  = (((overallMean-1)/3)*100);
+  // KONDISI DATA TERSEDIA (HITUNG RIIL TANPA HARDCODE)
+  document.querySelectorAll('.chart-card').forEach(c => c.classList.remove('is-empty'));
 
-  let bestIdx=0, worstIdx=0;
-  habitAvg.forEach((v,i) => { if(v>habitAvg[bestIdx]) bestIdx=i; if(v<habitAvg[worstIdx]) worstIdx=i; });
+  const habitAvg = [0, 0, 0, 0, 0, 0, 0];
+  filtered.forEach(r => r.scores.forEach((s, i) => habitAvg[i] += s));
+  for (let i = 0; i < 7; i++) habitAvg[i] = +(habitAvg[i] / totalN).toFixed(2);
+
+  const overallMean = habitAvg.reduce((a, b) => a + b, 0) / 7;
+  const overallIdx  = (((overallMean - 1) / 3) * 100);
+
+  let bestIdx = 0, worstIdx = 0;
+  habitAvg.forEach((v, i) => {
+    if (v > habitAvg[bestIdx]) bestIdx = i;
+    if (v < habitAvg[worstIdx]) worstIdx = i;
+  });
 
   const classMap = {};
   filtered.forEach(r => {
-    if (!classMap[r.kelas]) classMap[r.kelas]={kelas:r.kelas,tingkat:r.tingkat,n:0,scores:[0,0,0,0,0,0,0]};
+    if (!classMap[r.kelas]) classMap[r.kelas] = { kelas: r.kelas, tingkat: r.tingkat, n: 0, scores: [0, 0, 0, 0, 0, 0, 0] };
     classMap[r.kelas].n++;
-    r.scores.forEach((s,i) => classMap[r.kelas].scores[i]+=s);
+    r.scores.forEach((s, i) => classMap[r.kelas].scores[i] += s);
   });
+
   const classRows = Object.values(classMap).map(c => {
-    const scores = c.scores.map(v=>+(v/c.n).toFixed(2));
-    const mean = scores.reduce((a,b)=>a+b,0)/7;
-    const idx  = +(((mean-1)/3)*100).toFixed(1);
-    return {...c, scores, idx, mean};
+    const scores = c.scores.map(v => +(v / c.n).toFixed(2));
+    const mean = scores.reduce((a, b) => a + b, 0) / 7;
+    const idx  = +(((mean - 1) / 3) * 100).toFixed(1);
+    return { ...c, scores, idx, mean };
   });
 
   let stdDev = 0;
   if (classRows.length > 1) {
-    const mi = classRows.reduce((a,c)=>a+c.idx,0)/classRows.length;
-    stdDev = Math.sqrt(classRows.reduce((a,c)=>a+Math.pow(c.idx-mi,2),0)/(classRows.length-1));
+    const mi = classRows.reduce((a, c) => a + c.idx, 0) / classRows.length;
+    stdDev = Math.sqrt(classRows.reduce((a, c) => a + Math.pow(c.idx - mi, 2), 0) / (classRows.length - 1));
   }
 
-  document.getElementById("kpiCount").textContent = totalN.toLocaleString("id-ID");
-  document.getElementById("kpiPct").textContent = `${((totalN/activeRows.length)*100).toFixed(1)}% dari data aktif`;
-  document.getElementById("kpiIndex").textContent = overallIdx.toFixed(1).replace(".",",");
-  document.getElementById("kpiMean").textContent  = overallMean.toFixed(2).replace(".",",");
-  const gl = overallIdx>=75?"Prima":(overallIdx>=60?"Baik":"Butuh Perhatian");
+  // HITUNG TINGKAT RESPONS VS KUOTA TERDAFTAR RESMI
+  const responseRate = ((totalN / SCHOOL_CONFIG.registeredStudents.total) * 100).toFixed(1);
+
+  document.getElementById("kpiCount").textContent = `${totalN.toLocaleString("id-ID")} Responden`;
+  document.getElementById("kpiPct").textContent = `${totalN.toLocaleString("id-ID")} dari ${SCHOOL_CONFIG.registeredStudents.total.toLocaleString("id-ID")} terdaftar (${responseRate}% respons)`;
+
+  const sampleBadge = document.getElementById("kpiSampleBadge");
+  if (parseFloat(responseRate) >= 90) {
+    sampleBadge.textContent = "Respons Prima (≥90%)";
+    sampleBadge.className = "pill pill-green";
+  } else if (parseFloat(responseRate) >= 60) {
+    sampleBadge.textContent = "Respons Cukup (≥60%)";
+    sampleBadge.className = "pill pill-yellow";
+  } else {
+    sampleBadge.textContent = "Respons Terbatas (<60%)";
+    sampleBadge.className = "pill pill-red";
+  }
+
+  document.getElementById("kpiIndex").textContent = overallIdx.toFixed(1).replace(".", ",");
+  document.getElementById("kpiMean").textContent  = overallMean.toFixed(2).replace(".", ",");
+
+  const gl = overallIdx >= 75 ? "Prima" : (overallIdx >= 60 ? "Baik" : "Butuh Perhatian");
   const ge = document.getElementById("kpiIndexGrade");
-  ge.textContent = gl; ge.className = `pill ${overallIdx>=75?"pill-green":(overallIdx>=60?"pill-yellow":"pill-red")}`;
+  ge.textContent = gl;
+  ge.className = `pill ${overallIdx >= 75 ? "pill-green" : (overallIdx >= 60 ? "pill-yellow" : "pill-red")}`;
+
   document.getElementById("kpiBest").textContent      = HABIT_NAMES[bestIdx];
-  document.getElementById("kpiBestScore").textContent = `Skor ${habitAvg[bestIdx].toFixed(2).replace(".",",")}`;
+  document.getElementById("kpiBestScore").textContent = `Skor ${habitAvg[bestIdx].toFixed(2).replace(".", ",")}`;
+  document.getElementById("kpiBestDesc").textContent  = "Konsistensi tertinggi";
+
   document.getElementById("kpiWorst").textContent      = HABIT_NAMES[worstIdx];
-  document.getElementById("kpiWorstScore").textContent = `Skor ${habitAvg[worstIdx].toFixed(2).replace(".",",")}`;
-  document.getElementById("kpiWorstGap").textContent   = `Gap: −${Math.max(0,3.0-habitAvg[worstIdx]).toFixed(2)} poin`;
+  document.getElementById("kpiWorstScore").textContent = `Skor ${habitAvg[worstIdx].toFixed(2).replace(".", ",")}`;
+  document.getElementById("kpiWorstGap").textContent   = `Gap: −${Math.max(0, 3.0 - habitAvg[worstIdx]).toFixed(2)} poin`;
+
   document.getElementById("kpiStdDev").textContent = `± ${stdDev.toFixed(2)}`;
   const sb = document.getElementById("kpiStdBadge");
-  if (stdDev<4) { sb.textContent="Pemerataan Tinggi"; sb.className="pill pill-green"; }
-  else if (stdDev<8) { sb.textContent="Variasi Moderat"; sb.className="pill pill-yellow"; }
-  else { sb.textContent="Disparitas Lebar"; sb.className="pill pill-red"; }
-  const sortedByRank = [...classRows].sort((a,b)=>b.idx-a.idx);
+  if (stdDev < 4) {
+    sb.textContent = "Pemerataan Tinggi";
+    sb.className = "pill pill-green";
+  } else if (stdDev < 8) {
+    sb.textContent = "Variasi Moderat";
+    sb.className = "pill pill-yellow";
+  } else {
+    sb.textContent = "Disparitas Lebar";
+    sb.className = "pill pill-red";
+  }
+
+  const sortedByRank = [...classRows].sort((a, b) => b.idx - a.idx);
   document.getElementById("kpiTopClass").textContent = sortedByRank[0]?.kelas || "—";
   document.getElementById("kpiTopClassScore").textContent = sortedByRank[0] ? `Indeks ${sortedByRank[0].idx}` : "—";
-  document.getElementById("kpiTopClassMeta").textContent = sortedByRank[0] ? `${sortedByRank[0].n} entri` : "—";
+  document.getElementById("kpiTopClassMeta").textContent = sortedByRank[0] ? `${sortedByRank[0].n} entri (${sortedByRank[0].tingkat})` : "—";
+
+  const habitFocus = document.getElementById("filterHabit")?.value || "ALL";
+  const focusBanner = document.getElementById("focusDimBanner");
+  if (focusBanner) {
+    if (habitFocus !== "ALL" && !isNaN(parseInt(habitFocus, 10))) {
+      const fIdx = parseInt(habitFocus, 10);
+      const fScore = habitAvg[fIdx];
+      const fStatus = fScore >= 3.00 ? "Memenuhi Target Mutu (≥3.00)" : "Di Bawah Target Mutu (<3.00)";
+      focusBanner.style.display = "flex";
+      focusBanner.innerHTML = `<span><strong>Dimensi Fokus Aktif:</strong> ${HABIT_NAMES[fIdx]} &bull; Skor Rerata Sekolah: <strong>${fScore.toFixed(2)} / 4.00</strong> (${fStatus})</span><button class="btn-sm" onclick="document.getElementById('filterHabit').value='ALL';updateDashboard();" style="font-size:0.68rem;padding:3px 8px;">Tampilkan Semua</button>`;
+    } else {
+      focusBanner.style.display = "none";
+    }
+  }
 
   renderAiExecutiveSummary(overallIdx, overallMean, HABIT_NAMES[bestIdx], habitAvg[bestIdx], HABIT_NAMES[worstIdx], habitAvg[worstIdx], stdDev, sortedByRank, totalN);
-  updateRadarChart(habitAvg);
+  updateRadarChart(habitAvg, habitFocus);
   updateBalanceChart(habitAvg);
   updateTrendChart(filtered);
   updateGradeCompareChart(filtered);
@@ -2536,522 +3714,1035 @@ function updateDashboard() {
   updateDonutChart(filtered);
   updatePolarChart(habitAvg);
   updateMultiTrendChart(filtered);
-  updateScatterChart(classRows);
+  renderCorrelationMatrix(filtered);
+  renderPeriodComparison(filtered);
+  generateChartInsights({
+    filtered,
+    totalN,
+    habitAvg,
+    overallIdx,
+    overallMean,
+    bestIdx,
+    worstIdx,
+    classRows,
+    sortedByRank,
+    stdDev,
+    habitFocus
+  });
   renderBulletChart(habitAvg);
   updateTopBottomChart(classRows);
-  updateSimulatorBaseline(overallIdx, worstIdx, habitAvg[worstIdx]);
-  renderTable(classRows);
+  updateSimulatorBaseline(overallIdx, worstIdx, habitAvg[worstIdx], habitAvg);
+  renderTable(classRows, habitFocus);
   renderHabitsDeepDive(habitAvg, filtered);
   renderSmamioStats(filtered, classRows);
+  renderMethodologyAudit(filtered);
 }
 
 /* ================================================================
-   AI DIAGNOSTIC TEXT
+   SINTESIS DIAGNOSTIK DATA
    ================================================================ */
 function renderAiExecutiveSummary(idx, mean, bestN, bestS, worstN, worstS, std, sorted, filteredCount = activeRows.length) {
   const el = document.getElementById("aiExecutiveSummary");
-  const lowCount = sorted.filter(c=>c.mean<2.80).length;
-  const topCount  = sorted.filter(c=>c.mean>=3.20).length;
-  let txt = `Berdasarkan analisis terhadap <strong>${filteredCount} entri data pada filter aktif SMAMIO Gresik</strong>, Indeks Karakter berada pada skor <strong>${idx.toFixed(1)}/100</strong> (Rerata: ${mean.toFixed(2)}/4.00). `;
-  txt += `Dimensi <strong>${bestN}</strong> menjadi capaian tertinggi dengan skor <strong>${bestS.toFixed(2)}</strong>. Kebiasaan <strong>${worstN}</strong> (${worstS.toFixed(2)}) merupakan prioritas pembinaan utama. `;
-  if (lowCount > 0) txt += `Terdapat <strong>${lowCount} rombel</strong> di bawah ambang 2.80, prioritas pendampingan: <strong>${sorted[sorted.length-1].kelas}</strong>. `;
-  else txt += `Seluruh rombel di atas ambang 2.80; ${topCount} rombel mencapai kategori berprestasi. `;
-  txt += `<br><strong style="color:var(--text-1);">Rekomendasi:</strong> Fokuskan intervensi pada dimensi <em>${worstN}</em>, replikasi pola pembiasaan rombel <em>${sorted[0].kelas}</em> ke kuartil bawah.`;
+  if (!el) return;
+  const lowCount = sorted.filter(c => c.mean < 2.80).length;
+  const topCount = sorted.filter(c => c.mean >= 3.20).length;
+  const respPct = ((filteredCount / SCHOOL_CONFIG.registeredStudents.total) * 100).toFixed(1);
+
+  let txt = `Berdasarkan pengolahan terhadap <strong>${filteredCount} entri responden (${respPct}% partisipasi sekolah)</strong>, Indeks Karakter berada pada skor <strong>${idx.toFixed(1)}/100</strong> (Rerata: ${mean.toFixed(2)}/4.00). `;
+  txt += `Dimensi <strong>${bestN}</strong> mencatatkan capaian tertinggi dengan skor <strong>${bestS.toFixed(2)}</strong>. Sebaliknya, kebiasaan <strong>${worstN}</strong> (${worstS.toFixed(2)}) menjadi prioritas pembinaan utama. `;
+  if (lowCount > 0) {
+    txt += `Terdapat <strong>${lowCount} rombel</strong> di bawah ambang stabilitas 2.80, prioritas pendampingan: <strong>${sorted[sorted.length-1].kelas}</strong>. `;
+  } else {
+    txt += `Seluruh rombel berada di atas ambang 2.80; ${topCount} rombel mencapai kategori kemandirian prima. `;
+  }
+  txt += `<br><strong style="color:var(--text-1);">Rekomendasi Aksi:</strong> Fokuskan program intervensi wali kelas pada dimensi <em>${worstN}</em>, lakukan desiminasi pembiasaan positif rombel <em>${sorted[0].kelas}</em> ke rombel prioritas.`;
   el.innerHTML = txt;
 }
 
 /* ================================================================
-   CHARTS INIT
+   INISIALISASI SEMUA GRAFIK CHART.JS
    ================================================================ */
 function initCharts() {
-  const dark = document.documentElement.getAttribute("data-theme")==="dark";
-  const tick = dark?"#64748b":"#94a3b8";
-  const grid = dark?"rgba(30,45,74,0.8)":"rgba(226,232,240,0.9)";
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  const tick = dark ? "#64748b" : "#94a3b8";
+  const grid = dark ? "rgba(30,45,74,0.8)" : "rgba(226,232,240,0.9)";
 
   // 1. Radar
   radarChart = new Chart(document.getElementById("radarChart"), {
-    type:"radar",
-    data:{
+    type: "radar",
+    data: {
       labels: HABIT_NAMES,
-      datasets:[
+      datasets: [
         { label:"Capaian SMAMIO", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.18)", borderColor:"#2563eb", pointBackgroundColor:"#FACC15", pointBorderColor:"#fff", pointBorderWidth:1.5, pointRadius:4.5, borderWidth:2.2 },
         { label:"Target Mutu (3.00)", data:[3,3,3,3,3,3,3], borderColor:"rgba(234,179,8,0.85)", borderDash:[4,4], borderWidth:1.8, fill:false, pointRadius:0 },
-        { label:"Standar Emas (3.50)", data:[3.5,3.5,3.5,3.5,3.5,3.5,3.5], borderColor:"rgba(5,150,105,0.65)", borderDash:[2,2], borderWidth:1.5, fill:false, pointRadius:0 }
+        { label:"Standar Emas (3.50)", data:[3.5,3.5,3.5,3.5,3.5,3.5,3.5], borderColor:"rgba(5,150,105,0.65)", borderDash:[2,2], borderWidth:1.5, fill:false, pointRadius:0 },
+        { label:"Proyeksi Intervensi", data:[0,0,0,0,0,0,0], borderColor:"#059669", borderDash:[5,4], borderWidth:2.2, fill:false, pointRadius:4, pointBackgroundColor:"#10B981", pointBorderColor:"#fff", hidden:true }
       ]
     },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } } }, scales:{ r:{ min:1, max:4, ticks:{ stepSize:1, color:tick, font:{size:10} }, grid:{ color:grid }, pointLabels:{ color:tick, font:{size:11} }, angleLines:{ color:grid } } } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position:'top', labels: { boxWidth:11, font:{size:10.5} } } },
+      scales: {
+        r: {
+          min: 1, max: 4,
+          ticks: { stepSize: 1, color: tick, font:{size:10} },
+          grid: { color: grid },
+          pointLabels: { color: tick, font:{size:11} },
+          angleLines: { color: grid }
+        }
+      }
+    }
   });
+  window.radarChart = radarChart;
 
   // 2. Balance (Neraca)
   balanceChart = new Chart(document.getElementById("balanceChart"), {
-    type:"bar",
-    data:{ labels:HABIT_NAMES, datasets:[{ label:"Deviasi vs 3.00", data:[0,0,0,0,0,0,0], backgroundColor:"#059669", borderRadius:4, borderSkipped:false }] },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`Deviasi: ${c.raw>0?'+':''}${c.raw}`}} },
-      scales:{
-        x:{ grid:{display:false}, ticks:{color:tick, font:{size:10}} },
-        y:{ min:-1, max:1, grid:{color:grid}, ticks:{color:tick, stepSize:0.25,
-          callback:v=>`${v>0?'+':''}${v.toFixed(2)}`
-        },
-        border:{ display:true, color:grid }
-        }
+    type: "bar",
+    data: { labels: HABIT_NAMES, datasets: [{ label:"Deviasi vs 3.00", data:[0,0,0,0,0,0,0], backgroundColor:"#059669", borderRadius:4, borderSkipped:false }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `Deviasi: ${c.raw > 0 ? '+' : ''}${c.raw}` } } },
+      scales: {
+        x: { ticks: { color: tick, font:{size:10.5} }, grid: { display: false } },
+        y: { ticks: { color: tick, font:{size:10} }, grid: { color: grid } }
       }
     }
   });
 
   // 3. Trend
   trendChart = new Chart(document.getElementById("trendChart"), {
-    type:"line",
-    data:{ labels:[], datasets:[{ label:"Rata-Rata Harian", data:[], borderColor:"#2563eb", backgroundColor:"rgba(37,99,235,0.08)", borderWidth:2, pointRadius:4, pointBackgroundColor:"#2563eb", tension:0.4, fill:true }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ x:{grid:{display:false},ticks:{color:tick}}, y:{min:1,max:4,grid:{color:grid},ticks:{color:tick}} } }
+    type: "line",
+    data: { labels: [], datasets: [{ label:"Indeks Karakter Harian", data:[], borderColor:"#2563eb", backgroundColor:"rgba(37,99,235,0.08)", fill:true, tension:0.35, pointRadius:4, pointBackgroundColor:"#FACC15", borderWidth:2 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: tick, font:{size:10.5} }, grid: { display: false } },
+        y: { min: 40, max: 100, ticks: { color: tick, font:{size:10} }, grid: { color: grid } }
+      }
+    }
   });
 
   // 4. Grade Compare
   gradeCompareChart = new Chart(document.getElementById("gradeCompareChart"), {
-    type:"bar",
-    data:{
-      labels: HABIT_NAMES,
-      datasets:[
-        { label:"Kelas X",   data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.75)", borderRadius:3 },
-        { label:"Kelas XI",  data:[0,0,0,0,0,0,0], backgroundColor:"rgba(234,179,8,0.75)",  borderRadius:3 },
-        { label:"Kelas XII", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(5,150,105,0.75)",  borderRadius:3 }
-      ]
+    type: "bar",
+    data: {
+      labels: ["Kelas X (Fase E)", "Kelas XI (Fase F)", "Kelas XII (Fase F Lanjut)"],
+      datasets: [{ label:"Rata-Rata Capaian", data:[0,0,0], backgroundColor:["#2563eb", "#F59E0B", "#10B981"], borderRadius:4 }]
     },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'top',labels:{boxWidth:11,font:{size:10.5}}} }, scales:{ x:{grid:{display:false},ticks:{color:tick,font:{size:10}}}, y:{min:1,max:4,grid:{color:grid},ticks:{color:tick}} } }
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: tick, font:{size:10.5} }, grid: { display: false } },
+        y: { min: 1, max: 4, ticks: { color: tick, font:{size:10} }, grid: { color: grid } }
+      }
+    }
   });
 
   // 5. Stacked
   stackedChart = new Chart(document.getElementById("stackedChart"), {
-    type:"bar",
-    data:{
+    type: "bar",
+    data: {
       labels: HABIT_NAMES,
-      datasets:[
-        { label:"Sangat Baik (≥3.5)", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(5,150,105,0.8)",   borderRadius:0 },
-        { label:"Baik (2.5–3.49)",    data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.75)",  borderRadius:0 },
-        { label:"Cukup (1.5–2.49)",   data:[0,0,0,0,0,0,0], backgroundColor:"rgba(234,179,8,0.75)",  borderRadius:0 },
-        { label:"Kurang (<1.5)",       data:[0,0,0,0,0,0,0], backgroundColor:"rgba(220,38,38,0.75)",  borderRadius:0 }
+      datasets: [
+        { label:"Sangat Baik", data:[], backgroundColor:"#059669" },
+        { label:"Baik",        data:[], backgroundColor:"#2563eb" },
+        { label:"Cukup",       data:[], backgroundColor:"#d97706" },
+        { label:"Kurang",      data:[], backgroundColor:"#dc2626" }
       ]
     },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'top',labels:{boxWidth:11,font:{size:10.5}}} }, scales:{ x:{stacked:true,grid:{display:false},ticks:{color:tick,font:{size:10}}}, y:{stacked:true,max:100,grid:{color:grid},ticks:{color:tick,callback:v=>v+"%"}} } }
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position:'top', labels: { boxWidth:10, font:{size:10} } } },
+      scales: {
+        x: { stacked: true, ticks: { color: tick, font:{size:10} }, grid: { display: false } },
+        y: { stacked: true, max: 100, ticks: { color: tick, font:{size:10}, callback: v => v + '%' }, grid: { color: grid } }
+      }
+    }
   });
 
-  // 6. Gap
+  // 6. Gap Chart
   gapChart = new Chart(document.getElementById("gapChart"), {
-    type:"bar",
-    data:{
-      labels: HABIT_NAMES,
-      datasets:[
-        { label:"Capaian Riil", data:[0,0,0,0,0,0,0], backgroundColor:"rgba(37,99,235,0.75)", borderRadius:4 },
-        { label:"Standar Emas (3.50)", data:[3.5,3.5,3.5,3.5,3.5,3.5,3.5], backgroundColor:"rgba(234,179,8,0.25)", borderRadius:4, borderWidth:1.5, borderColor:"rgba(234,179,8,0.8)" }
-      ]
-    },
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'top',labels:{boxWidth:11,font:{size:10.5}}} }, scales:{ x:{min:0,max:4,grid:{color:grid},ticks:{color:tick}}, y:{grid:{display:false},ticks:{color:tick,font:{size:10}}} } }
+    type: "bar",
+    data: { labels: HABIT_NAMES, datasets: [{ label:"Defisit vs 3.50", data:[], backgroundColor:"#dc2626", borderRadius:4 }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `Defisit: ${c.raw}` } } },
+      scales: {
+        x: { ticks: { color: tick, font:{size:10} }, grid: { color: grid } },
+        y: { ticks: { color: tick, font:{size:10.5} }, grid: { display: false } }
+      }
+    }
   });
 
-  // 7. Bubble Chart — Rombel Mapping (x=mean, y=score stddev, r=sqrt(n))
+  // 7. Bubble
   bubbleChart = new Chart(document.getElementById("bubbleChart"), {
-    type:"bubble",
-    data:{
-      datasets:[
-        { label:"Kelas X",   data:[], backgroundColor:"rgba(37,99,235,0.6)",  borderColor:"rgba(37,99,235,0.9)",  borderWidth:1 },
-        { label:"Kelas XI",  data:[], backgroundColor:"rgba(234,179,8,0.65)", borderColor:"rgba(234,179,8,0.9)",  borderWidth:1 },
-        { label:"Kelas XII", data:[], backgroundColor:"rgba(5,150,105,0.6)",  borderColor:"rgba(5,150,105,0.9)",  borderWidth:1 }
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } },
-        tooltip:{ callbacks:{
-          label: ctx => {
-            const d = ctx.raw;
-            return [`${d.label}`, `Rerata: ${d.x.toFixed(2)}`, `Variabilitas: ${d.y.toFixed(2)}`, `Siswa: ${d.siswa}`];
-          }
-        }}
+    type: "bubble",
+    data: { datasets: [{ label:"Rombel", data:[], backgroundColor:"rgba(37,99,235,0.45)", borderColor:"#2563eb", borderWidth:1 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => `${c.raw.label}: Rerata ${c.raw.x.toFixed(2)}, SD ±${c.raw.y.toFixed(2)} (${c.raw.n} siswa)` } }
       },
-      scales:{
-        x:{ min:1, max:4, title:{ display:true, text:"Skor Rata-Rata", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} },
-        y:{ min:0, max:1, title:{ display:true, text:"Variabilitas (Std Dev)", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.2} }
+      scales: {
+        x: { title: { display: true, text: "Skor Rerata Rombel", color: tick, font:{size:10} }, ticks: { color: tick }, grid: { color: grid } },
+        y: { title: { display: true, text: "Standar Deviasi Internal", color: tick, font:{size:10} }, ticks: { color: tick }, grid: { color: grid } }
       }
     }
   });
 
-  // 8. Donut Ring — Distribusi Kategori Keseluruhan
+  // 8. Donut
   donutChart = new Chart(document.getElementById("donutChart"), {
-    type:"doughnut",
-    data:{
-      labels:["Sangat Baik (≥3.5)","Baik (2.5–3.49)","Cukup (1.5–2.49)","Kurang (<1.5)"],
-      datasets:[{
-        data:[0,0,0,0],
-        backgroundColor:["rgba(5,150,105,0.82)","rgba(37,99,235,0.78)","rgba(234,179,8,0.78)","rgba(220,38,38,0.78)"],
-        borderColor:["#059669","#2563eb","#eab308","#dc2626"],
-        borderWidth:2,
-        hoverOffset:6
-      }]
+    type: "doughnut",
+    data: {
+      labels: ["Mandiri Prima (≥3.20)", "Terbiasa Baik (2.80–3.19)", "Perlu Pembinaan (2.50–2.79)", "Prioritas Intervensi (<2.50)"],
+      datasets: [{ data: [0,0,0,0], backgroundColor: ["#059669", "#2563eb", "#F59E0B", "#dc2626"], borderWidth: 1 }]
     },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      cutout:"62%",
-      plugins:{
-        legend:{ position:'right', labels:{ boxWidth:12, font:{size:10.5}, padding:12 } },
-        tooltip:{ callbacks:{ label: ctx => `${ctx.label}: ${ctx.raw.toFixed(1)}%` } }
-      }
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10.5 } } } }
     }
   });
 
-  // 9. Polar Area — Bobot Relatif Dimensi
+  // 9. Polar Area
   polarChart = new Chart(document.getElementById("polarChart"), {
-    type:"polarArea",
-    data:{
+    type: "polarArea",
+    data: {
       labels: HABIT_NAMES,
-      datasets:[{
-        data:[0,0,0,0,0,0,0],
-        backgroundColor:[
-          "rgba(37,99,235,0.72)","rgba(5,150,105,0.72)","rgba(234,179,8,0.72)",
-          "rgba(220,38,38,0.65)","rgba(37,99,235,0.5)","rgba(5,150,105,0.5)","rgba(234,179,8,0.5)"
+      datasets: [{
+        data: [0,0,0,0,0,0,0],
+        backgroundColor: [
+          "rgba(37,99,235,0.65)", "rgba(16,185,129,0.65)", "rgba(245,158,11,0.65)",
+          "rgba(239,68,68,0.65)", "rgba(139,92,246,0.65)", "rgba(6,182,212,0.65)", "rgba(249,115,22,0.65)"
         ],
-        borderColor:["#2563eb","#059669","#eab308","#dc2626","#60a5fa","#34d399","#fde047"],
-        borderWidth:1.5
+        borderWidth: 1
       }]
     },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'right', labels:{ boxWidth:11, font:{size:9.5}, padding:8 } } },
-      scales:{ r:{ ticks:{ display:false }, grid:{ color:grid }, pointLabels:{ display:false } } }
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } } },
+      scales: { r: { min: 1, max: 4, ticks: { display: false }, grid: { color: grid } } }
     }
   });
 
-  // 10. Multi-line Area Trend — X, XI, XII terpisah
+  // 10. Multi Trend
   multiTrendChart = new Chart(document.getElementById("multiTrendChart"), {
-    type:"line",
-    data:{
-      labels:[],
-      datasets:[
-        { label:"Kelas X",   data:[], borderColor:"#2563eb", backgroundColor:"rgba(37,99,235,0.07)", borderWidth:2, pointRadius:3.5, pointBackgroundColor:"#2563eb", tension:0.4, fill:true },
-        { label:"Kelas XI",  data:[], borderColor:"#eab308", backgroundColor:"rgba(234,179,8,0.07)", borderWidth:2, pointRadius:3.5, pointBackgroundColor:"#eab308", tension:0.4, fill:true },
-        { label:"Kelas XII", data:[], borderColor:"#059669", backgroundColor:"rgba(5,150,105,0.07)", borderWidth:2, pointRadius:3.5, pointBackgroundColor:"#059669", tension:0.4, fill:true }
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } } },
-      scales:{
-        x:{ grid:{display:false}, ticks:{color:tick} },
-        y:{ min:1, max:4, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} }
+    type: "line",
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } },
+      scales: {
+        x: { ticks: { color: tick, font: { size: 10 } }, grid: { display: false } },
+        y: { min: 1, max: 4, ticks: { color: tick, font: { size: 10 } }, grid: { color: grid } }
       }
     }
   });
 
-  // 11. Scatter Korelasi — Bangun Pagi vs Gemar Belajar per rombel
-  scatterChart = new Chart(document.getElementById("scatterChart"), {
-    type:"scatter",
-    data:{
-      datasets:[
-        { label:"Kelas X",   data:[], backgroundColor:"rgba(37,99,235,0.7)",  pointRadius:8, pointHoverRadius:10 },
-        { label:"Kelas XI",  data:[], backgroundColor:"rgba(234,179,8,0.75)", pointRadius:8, pointHoverRadius:10 },
-        { label:"Kelas XII", data:[], backgroundColor:"rgba(5,150,105,0.7)",  pointRadius:8, pointHoverRadius:10 }
-      ]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{ position:'top', labels:{ boxWidth:11, font:{size:10.5} } },
-        tooltip:{ callbacks:{
-          label: ctx => {
-            const d = ctx.raw;
-            return [`${d.label}`, `Bangun Pagi: ${d.x.toFixed(2)}`, `Gemar Belajar: ${d.y.toFixed(2)}`];
-          }
-        }}
-      },
-      scales:{
-        x:{ min:1, max:4, title:{ display:true, text:"Bangun Pagi", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} },
-        y:{ min:1, max:4, title:{ display:true, text:"Gemar Belajar", color:tick, font:{size:10} }, grid:{color:grid}, ticks:{color:tick, stepSize:0.5} }
-      }
-    }
-  });
-
-  // 13. Top/Bottom Horizontal Bar — Top 6 vs Bottom 6
+  // 11. Top vs Bottom Chart
   topBottomChart = new Chart(document.getElementById("topBottomChart"), {
-    type:"bar",
-    data:{
-      labels:[],
-      datasets:[
-        { label:"Indeks Karakter (0–100)", data:[], backgroundColor:[], borderRadius:5, borderSkipped:false }
-      ]
-    },
-    options:{
-      indexAxis:'y',
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend:{ display:false },
-        tooltip:{ callbacks:{ label: ctx => `Indeks: ${ctx.raw.toFixed(1)}` } }
-      },
-      scales:{
-        x:{ min:0, max:100, grid:{color:grid}, ticks:{color:tick, callback:v=>v+""} },
-        y:{ grid:{display:false}, ticks:{color:tick, font:{size:10.5}} }
+    type: "bar",
+    data: { labels: [], datasets: [{ label: "Indeks Karakter", data: [], backgroundColor: [] }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { min: 40, max: 100, ticks: { color: tick, font: { size: 10 } }, grid: { color: grid } },
+        y: { ticks: { color: tick, font: { size: 10.5 } }, grid: { display: false } }
       }
     }
   });
 }
-
-function updateRadarChart(d)    { radarChart.data.datasets[0].data=d; radarChart.update(); }
-function updateBalanceChart(d)  {
-  const devs = d.map(s=>+(s-3.0).toFixed(2));
-  balanceChart.data.datasets[0].data = devs;
-  balanceChart.data.datasets[0].backgroundColor = devs.map(v=>v>=0?"rgba(5,150,105,0.8)":"rgba(220,38,38,0.8)");
-  balanceChart.update();
-}
-function updateStackedChart(filtered, totalN) {
-  if (!totalN) { stackedChart.data.datasets.forEach(ds => ds.data = [0,0,0,0,0,0,0]); stackedChart.update(); return; }
-  const s4=[0,0,0,0,0,0,0],s3=[0,0,0,0,0,0,0],s2=[0,0,0,0,0,0,0],s1=[0,0,0,0,0,0,0];
-  filtered.forEach(r=>r.scores.forEach((s,i)=>{if(s>=3.5)s4[i]++;else if(s>=2.5)s3[i]++;else if(s>=1.5)s2[i]++;else s1[i]++;}));
-  stackedChart.data.datasets[0].data=s4.map(v=>+((v/totalN)*100).toFixed(1));
-  stackedChart.data.datasets[1].data=s3.map(v=>+((v/totalN)*100).toFixed(1));
-  stackedChart.data.datasets[2].data=s2.map(v=>+((v/totalN)*100).toFixed(1));
-  stackedChart.data.datasets[3].data=s1.map(v=>+((v/totalN)*100).toFixed(1));
-  stackedChart.update();
-}
-function updateTrendChart(rows = activeRows) {
-  const dm={};
-  rows.forEach(r=>{ if(!dm[r.date]) dm[r.date]={sum:0,c:0}; dm[r.date].sum+=r.scores.reduce((a,b)=>a+b,0)/7; dm[r.date].c++; });
-  const dates = Object.keys(dm).sort();
-  trendChart.data.labels = dates;
-  trendChart.data.datasets[0].data = dates.map(d=>+(dm[d].sum/dm[d].c).toFixed(2));
-  trendChart.update();
-}
-function updateGradeCompareChart(filtered) {
-  ["X","XI","XII"].forEach((g,idx)=>{
-    const gr=filtered.filter(r=>r.tingkat===g);
-    const avg=[0,0,0,0,0,0,0];
-    if(gr.length>0){gr.forEach(r=>r.scores.forEach((s,i)=>avg[i]+=s));avg.forEach((v,i)=>avg[i]=+(v/gr.length).toFixed(2));}
-    gradeCompareChart.data.datasets[idx].data=avg;
-  });
-  gradeCompareChart.update();
-}
-function updateGapMatrix(d) { gapChart.data.datasets[0].data=d; gapChart.update(); }
 
 /* ================================================================
-   CHARTS UPDATE — 7 through 13
+   UPDATERS MASING-MASING GRAFIK
    ================================================================ */
+function updateRadarChart(avg, focusHabit = "ALL") {
+  if (!radarChart) return;
+  radarChart.data.datasets[0].data = avg;
+
+  const fIdx = (focusHabit !== "ALL" && !isNaN(parseInt(focusHabit, 10))) ? parseInt(focusHabit, 10) : -1;
+  if (fIdx !== -1) {
+    radarChart.data.datasets[0].pointRadius = avg.map((_, i) => i === fIdx ? 9 : 4.5);
+    radarChart.data.datasets[0].pointBackgroundColor = avg.map((_, i) => i === fIdx ? "#F59E0B" : "#FACC15");
+    radarChart.data.datasets[0].pointBorderWidth = avg.map((_, i) => i === fIdx ? 3 : 1.5);
+  } else {
+    radarChart.data.datasets[0].pointRadius = 4.5;
+    radarChart.data.datasets[0].pointBackgroundColor = "#FACC15";
+    radarChart.data.datasets[0].pointBorderWidth = 1.5;
+  }
+  radarChart.update();
+}
+
+function updateBalanceChart(avg) {
+  if (!balanceChart) return;
+  const dev = avg.map(v => +(v - 3.00).toFixed(2));
+  balanceChart.data.datasets[0].data = dev;
+  balanceChart.data.datasets[0].backgroundColor = dev.map(d => d >= 0 ? "#059669" : "#dc2626");
+  balanceChart.update();
+}
+
+function updateTrendChart(rows) {
+  if (!trendChart) return;
+  const dates = [...new Set(rows.map(r => r.date))].sort();
+  const pts = dates.map(d => {
+    const dr = rows.filter(r => r.date === d);
+    if (!dr.length) return null;
+    let s = 0;
+    dr.forEach(r => s += (r.scores.reduce((a, b) => a + b, 0) / 7));
+    return +((( (s / dr.length) - 1) / 3) * 100).toFixed(1);
+  });
+  trendChart.data.labels = dates;
+  trendChart.data.datasets[0].data = pts;
+  trendChart.update();
+}
+
+function updateGradeCompareChart(rows) {
+  if (!gradeCompareChart) return;
+  const grades = ["X", "XI", "XII"];
+  const vals = grades.map(g => {
+    const gr = rows.filter(r => r.tingkat === g);
+    if (!gr.length) return 0;
+    let s = 0;
+    gr.forEach(r => s += (r.scores.reduce((a, b) => a + b, 0) / 7));
+    return +(s / gr.length).toFixed(2);
+  });
+  gradeCompareChart.data.datasets[0].data = vals;
+  gradeCompareChart.update();
+}
+
+function updateStackedChart(rows, totalN) {
+  if (!stackedChart || !totalN) return;
+  const pcts = [[], [], [], []];
+  for (let i = 0; i < 7; i++) {
+    let c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+    rows.forEach(r => {
+      const v = r.scores[i];
+      if (v >= 3.5) c4++;
+      else if (v >= 3.0) c3++;
+      else if (v >= 2.5) c2++;
+      else c1++;
+    });
+    pcts[0].push(+((c4 / totalN) * 100).toFixed(1));
+    pcts[1].push(+((c3 / totalN) * 100).toFixed(1));
+    pcts[2].push(+((c2 / totalN) * 100).toFixed(1));
+    pcts[3].push(+((c1 / totalN) * 100).toFixed(1));
+  }
+  for (let j = 0; j < 4; j++) stackedChart.data.datasets[j].data = pcts[j];
+  stackedChart.update();
+}
+
+function updateGapMatrix(avg) {
+  if (!gapChart) return;
+  const gaps = avg.map(v => +(Math.max(0, 3.50 - v)).toFixed(2));
+  gapChart.data.datasets[0].data = gaps;
+  gapChart.update();
+}
+
 function updateBubbleChart(classRows) {
   if (!bubbleChart) return;
-  ["X","XI","XII"].forEach((g,gi) => {
-    bubbleChart.data.datasets[gi].data = classRows
-      .filter(c => c.tingkat === g)
-      .map(c => {
-        const mean = c.scores.reduce((a,b)=>a+b,0)/7;
-        const variance = c.scores.reduce((a,s)=>a+Math.pow(s-mean,2),0)/7;
-        const sd = Math.sqrt(variance);
-        return { x:+mean.toFixed(2), y:+sd.toFixed(2), r:Math.max(5,Math.sqrt(c.n)*1.4), label:c.kelas, siswa:c.n };
-      });
+  const pts = classRows.map(c => {
+    const dev = Math.sqrt(c.scores.reduce((a, s) => a + Math.pow(s - c.mean, 2), 0) / 7);
+    return { x: c.mean, y: +dev.toFixed(2), r: Math.max(5, Math.min(18, Math.sqrt(c.n) * 1.8)), label: c.kelas, n: c.n };
   });
+  bubbleChart.data.datasets[0].data = pts;
   bubbleChart.update();
 }
 
-function updateDonutChart(filtered) {
-  if (!donutChart) return;
-  let s4=0,s3=0,s2=0,s1=0;
-  filtered.forEach(r => r.scores.forEach(s => { if(s>=3.5)s4++; else if(s>=2.5)s3++; else if(s>=1.5)s2++; else s1++; }));
-  const total = filtered.length*7 || 1;
-  donutChart.data.datasets[0].data = [
-    +((s4/total)*100).toFixed(1),
-    +((s3/total)*100).toFixed(1),
-    +((s2/total)*100).toFixed(1),
-    +((s1/total)*100).toFixed(1)
-  ];
+function updateDonutChart(rows) {
+  if (!donutChart || !rows.length) return;
+  let c4 = 0, c3 = 0, c2 = 0, c1 = 0;
+  rows.forEach(r => {
+    const m = r.scores.reduce((a, b) => a + b, 0) / 7;
+    if (m >= 3.20) c4++;
+    else if (m >= 2.80) c3++;
+    else if (m >= 2.50) c2++;
+    else c1++;
+  });
+  donutChart.data.datasets[0].data = [c4, c3, c2, c1];
   donutChart.update();
 }
 
-function updatePolarChart(habitAvg) {
+function updatePolarChart(avg) {
   if (!polarChart) return;
-  polarChart.data.datasets[0].data = habitAvg;
+  polarChart.data.datasets[0].data = avg;
   polarChart.update();
 }
 
-function updateMultiTrendChart(rows = activeRows) {
+function updateMultiTrendChart(rows) {
   if (!multiTrendChart) return;
-  const dm = { X:{}, XI:{}, XII:{} };
-  rows.forEach(r => {
-    if (!dm[r.tingkat]) return;
-    if (!dm[r.tingkat][r.date]) dm[r.tingkat][r.date] = {sum:0,c:0};
-    dm[r.tingkat][r.date].sum += r.scores.reduce((a,b)=>a+b,0)/7;
-    dm[r.tingkat][r.date].c++;
+  const dates = [...new Set(rows.map(r => r.date))].sort();
+  const colors = ["#2563eb", "#10B981", "#F59E0B", "#dc2626", "#8B5CF6", "#06B6D4", "#F97316"];
+  const dss = HABIT_NAMES.map((name, idx) => {
+    const pts = dates.map(d => {
+      const dr = rows.filter(r => r.date === d);
+      if (!dr.length) return null;
+      let s = 0;
+      dr.forEach(r => s += r.scores[idx]);
+      return +(s / dr.length).toFixed(2);
+    });
+    return {
+      label: name,
+      data: pts,
+      borderColor: colors[idx],
+      backgroundColor: "transparent",
+      tension: 0.3,
+      borderWidth: 1.8,
+      pointRadius: 2.5
+    };
   });
-  const dates = [...new Set(rows.map(r=>r.date))].sort();
   multiTrendChart.data.labels = dates;
-  ["X","XI","XII"].forEach((g,i) => {
-    multiTrendChart.data.datasets[i].data = dates.map(d => dm[g][d] ? +(dm[g][d].sum/dm[g][d].c).toFixed(2) : null);
-  });
+  multiTrendChart.data.datasets = dss;
   multiTrendChart.update();
 }
 
-function updateScatterChart(classRows) {
-  if (!scatterChart) return;
-  ["X","XI","XII"].forEach((g,gi) => {
-    scatterChart.data.datasets[gi].data = classRows
-      .filter(c => c.tingkat === g)
-      .map(c => ({ x:c.scores[0], y:c.scores[4], label:c.kelas }));
-  });
-  scatterChart.update();
+/* ================================================================
+   MATRIKS KORELASI 7x7 (PEARSON INTER-DIMENSI)
+   ================================================================ */
+function renderCorrelationMatrix(filtered) {
+  const tbody = document.getElementById("matrixTableBody");
+  if (!tbody) return;
+  if (!filtered || filtered.length < 2) {
+    tbody.innerHTML = '<tr><td colspan="8" class="table-empty-cell">Data belum mencukupi untuk menghitung matriks korelasi.</td></tr>';
+    return;
+  }
+
+  const shortNames = ["1. Bangun Pagi", "2. Beribadah", "3. Berolahraga", "4. Makan Sehat", "5. Gemar Belajar", "6. Bermasyarakat", "7. Tidur Cepat"];
+
+  function calcR(colA, colB) {
+    const n = colA.length;
+    let sumA = 0, sumB = 0;
+    for (let i = 0; i < n; i++) {
+      sumA += colA[i];
+      sumB += colB[i];
+    }
+    const meanA = sumA / n;
+    const meanB = sumB / n;
+    let num = 0, denA = 0, denB = 0;
+    for (let i = 0; i < n; i++) {
+      const da = colA[i] - meanA;
+      const db = colB[i] - meanB;
+      num += da * db;
+      denA += da * da;
+      denB += db * db;
+    }
+    const den = Math.sqrt(denA * denB);
+    return den === 0 ? 0 : num / den;
+  }
+
+  const cols = [];
+  for (let h = 0; h < 7; h++) {
+    cols.push(filtered.map(r => r.scores[h]));
+  }
+
+  let html = "";
+  for (let i = 0; i < 7; i++) {
+    html += `<tr><th class="row-header">${shortNames[i]}</th>`;
+    for (let j = 0; j < 7; j++) {
+      if (i === j) {
+        html += `<td class="matrix-cell cell-diag" title="${HABIT_NAMES[i]} vs ${HABIT_NAMES[j]}: Identik">1,00</td>`;
+      } else {
+        const rVal = calcR(cols[i], cols[j]);
+        const rStr = (rVal >= 0 ? "+" : "") + rVal.toFixed(2).replace(".", ",");
+        let cls = "cell-neutral";
+        if (rVal >= 0.50) cls = "cell-high-pos";
+        else if (rVal >= 0.20) cls = "cell-mod-pos";
+        else if (rVal < -0.20) cls = "cell-neg";
+        html += `<td class="matrix-cell ${cls}" title="Korelasi ${HABIT_NAMES[i]} × ${HABIT_NAMES[j]}: r = ${rStr}">${rStr}</td>`;
+      }
+    }
+    html += "</tr>";
+  }
+  tbody.innerHTML = html;
 }
 
-function renderBulletChart(habitAvg) {
-  const wrap = document.getElementById("bulletChartWrap");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  HABIT_NAMES.forEach((name, i) => {
-    const sc = habitAvg[i];
-    const pct      = ((sc-1)/3)*100;
-    const zone_crit = ((2.80-1)/3)*100;
-    const zone_std  = ((3.00-1)/3)*100;
-    const zone_gold = ((3.50-1)/3)*100;
-    const fillColor = sc>=3.00 ? "#2563eb" : (sc>=2.80 ? "#eab308" : "#dc2626");
-    const statusText= sc>=3.00 ? "Mencapai Standar" : (sc>=2.80 ? "Hampir Mencapai" : "Di Bawah Standar");
-    const row = document.createElement("div");
-    row.className = "bullet-row";
-    row.innerHTML = `
-      <div class="bullet-label">${name}<span>${sc.toFixed(2)} / 4.00 &mdash; ${statusText}</span></div>
-      <div class="bullet-track">
-        <div class="bullet-zone-crit" style="left:0;width:${zone_crit}%;"></div>
-        <div class="bullet-zone-std"  style="left:${zone_crit}%;width:${zone_std-zone_crit}%;"></div>
-        <div class="bullet-zone-gold" style="left:${zone_std}%;width:${zone_gold-zone_std}%;"></div>
-        <div class="bullet-fill" style="width:${Math.min(100,pct)}%;background:${fillColor};position:absolute;left:0;top:50%;transform:translateY(-50%);height:8px;border-radius:2px;z-index:2;"></div>
-        <div class="bullet-marker" style="left:${zone_crit}%;background:rgba(220,38,38,0.6);"></div>
-        <div class="bullet-marker" style="left:${zone_std}%;background:rgba(234,179,8,0.8);"></div>
-        <div class="bullet-marker" style="left:${zone_gold}%;background:rgba(5,150,105,0.8);"></div>
-      </div>`;
-    wrap.appendChild(row);
-  });
+/* ================================================================
+   FILTER PERIODE PERBANDINGAN & DELTA SKOR KEBIASAAN
+   ================================================================ */
+function renderPeriodComparison(filtered) {
+  const mode = document.getElementById("filterComparePeriod")?.value || "NONE";
+  const container = document.getElementById("habitDeltaStrip");
+  const titleEl = document.getElementById("deltaPeriodTitle");
+  const metaEl = document.getElementById("deltaPeriodMeta");
+  const gridEl = document.getElementById("deltaGridBody");
+  if (!container || !titleEl || !metaEl || !gridEl) return;
+
+  if (mode === "NONE" || !filtered || filtered.length === 0) {
+    container.style.display = "none";
+    gridEl.innerHTML = "";
+    return;
+  }
+
+  const validDates = [...new Set(filtered.map(r => r.date))].filter(Boolean).sort();
+  if (validDates.length < 2) {
+    container.style.display = "flex";
+    titleEl.textContent = mode === "7D_VS_PREV" ? "Perbandingan 7 Hari Terakhir vs 7 Hari Sebelumnya" : "Perbandingan Bulan Ini vs Bulan Lalu";
+    metaEl.textContent = "Data hanya mencakup 1 tanggal; butuh minimal 2 rentang tanggal untuk komparasi";
+    gridEl.innerHTML = '<div class="table-empty-cell" style="grid-column:1/-1;">Data riil belum mencukupi untuk perbandingan antar-periode waktu.</div>';
+    return;
+  }
+
+  let curRows = [];
+  let prevRows = [];
+  let periodDesc = "";
+
+  if (mode === "7D_VS_PREV") {
+    const maxDateStr = validDates[validDates.length - 1];
+    const maxD = new Date(maxDateStr);
+    const d7Ago = new Date(maxD);
+    d7Ago.setDate(d7Ago.getDate() - 6);
+    const d14Ago = new Date(maxD);
+    d14Ago.setDate(d14Ago.getDate() - 13);
+
+    const fmt = d => d.toISOString().slice(0, 10);
+    const sCurStart = fmt(d7Ago);
+    const sCurEnd = fmt(maxD);
+    const sPrevStart = fmt(d14Ago);
+    const sPrevEnd = fmt(new Date(d7Ago.getTime() - 86400000));
+
+    curRows = filtered.filter(r => r.date >= sCurStart && r.date <= sCurEnd);
+    prevRows = filtered.filter(r => r.date >= sPrevStart && r.date <= sPrevEnd);
+
+    if (prevRows.length === 0 && validDates.length >= 4) {
+      const mid = Math.floor(validDates.length / 2);
+      const prevDates = validDates.slice(0, mid);
+      const curDates = validDates.slice(mid);
+      curRows = filtered.filter(r => curDates.includes(r.date));
+      prevRows = filtered.filter(r => prevDates.includes(r.date));
+      periodDesc = `Periode Terkini (${curDates[0]} s.d ${curDates[curDates.length-1]} | ${curRows.length} entri) vs Periode Pembanding (${prevDates[0]} s.d ${prevDates[prevDates.length-1]} | ${prevRows.length} entri)`;
+    } else {
+      periodDesc = `7 Hari Terkini (${curRows.length} entri) vs 7 Hari Sebelumnya (${prevRows.length} entri)`;
+    }
+  } else if (mode === "MONTH_VS_PREV") {
+    const maxDateStr = validDates[validDates.length - 1];
+    const curYearMonth = maxDateStr.slice(0, 7);
+    const parts = curYearMonth.split("-");
+    const yr = parseInt(parts[0], 10);
+    const mo = parseInt(parts[1], 10);
+    const prevYr = mo === 1 ? yr - 1 : yr;
+    const prevMo = mo === 1 ? 12 : mo - 1;
+    const prevYearMonth = `${prevYr}-${String(prevMo).padStart(2, '0')}`;
+
+    curRows = filtered.filter(r => r.date.startsWith(curYearMonth));
+    prevRows = filtered.filter(r => r.date.startsWith(prevYearMonth));
+
+    if (prevRows.length === 0 && validDates.length >= 4) {
+      const mid = Math.floor(validDates.length / 2);
+      const prevDates = validDates.slice(0, mid);
+      const curDates = validDates.slice(mid);
+      curRows = filtered.filter(r => curDates.includes(r.date));
+      prevRows = filtered.filter(r => prevDates.includes(r.date));
+      periodDesc = `Paruh Akhir Bulan (${curRows.length} entri) vs Paruh Awal Bulan (${prevRows.length} entri)`;
+    } else {
+      periodDesc = `Bulan Terkini (${curYearMonth} | ${curRows.length} entri) vs Bulan Sebelumnya (${prevYearMonth} | ${prevRows.length} entri)`;
+    }
+  }
+
+  container.style.display = "flex";
+  titleEl.textContent = mode === "7D_VS_PREV" ? "Perbandingan 7 Hari Terakhir vs 7 Hari Sebelumnya" : "Perbandingan Bulan Ini vs Bulan Lalu";
+  metaEl.textContent = periodDesc;
+
+  if (curRows.length === 0 || prevRows.length === 0) {
+    gridEl.innerHTML = `<div class="table-empty-cell" style="grid-column:1/-1;">Data pembanding tidak lengkap (${curRows.length} entri vs ${prevRows.length} entri). Butuh data kedua periode untuk menghitung selisih kebiasaan.</div>`;
+    return;
+  }
+
+  const curAvg = [0, 0, 0, 0, 0, 0, 0];
+  const prevAvg = [0, 0, 0, 0, 0, 0, 0];
+  curRows.forEach(r => r.scores.forEach((s, i) => curAvg[i] += s));
+  prevRows.forEach(r => r.scores.forEach((s, i) => prevAvg[i] += s));
+  for (let i = 0; i < 7; i++) {
+    curAvg[i] = curAvg[i] / curRows.length;
+    prevAvg[i] = prevAvg[i] / prevRows.length;
+  }
+
+  let html = "";
+  for (let i = 0; i < 7; i++) {
+    const diff = +(curAvg[i] - prevAvg[i]).toFixed(2);
+    let diffClass = "diff-equal";
+    let diffSymbol = "→";
+    let diffStr = "0,00";
+
+    if (diff > 0.005) {
+      diffClass = "diff-up";
+      diffSymbol = "↑";
+      diffStr = `+${diff.toFixed(2).replace(".", ",")}`;
+    } else if (diff < -0.005) {
+      diffClass = "diff-down";
+      diffSymbol = "↓";
+      diffStr = `${diff.toFixed(2).replace(".", ",")}`;
+    }
+
+    html += `
+      <div class="delta-card">
+        <div class="delta-name" title="${HABIT_NAMES[i]}">${HABIT_NAMES[i]}</div>
+        <div class="delta-vals">
+          <span class="delta-cur">${curAvg[i].toFixed(2).replace(".", ",")}</span>
+          <span class="delta-diff ${diffClass}">${diffSymbol} ${diffStr}</span>
+        </div>
+      </div>
+    `;
+  }
+  gridEl.innerHTML = html;
+}
+
+/* ================================================================
+   INSIGHT OTOMATIS BERBASIS DATA (SATU KALIMAT PER GRAFIK)
+   ================================================================ */
+function generateChartInsights(ctx) {
+  const { filtered, totalN, habitAvg, overallIdx, overallMean, bestIdx, worstIdx, classRows, sortedByRank } = ctx;
+  
+  const setInsight = (id, text) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!text || totalN === 0) {
+      el.textContent = "";
+      el.style.display = "none";
+    } else {
+      el.innerHTML = text;
+      el.style.display = "block";
+    }
+  };
+
+  if (!filtered || totalN === 0) {
+    [
+      "insightRadar", "insightTrend", "insightGrade", "insightBalance",
+      "insightBullet", "insightTopBottom", "insightStacked", "insightGap",
+      "insightBubble", "insightDonut", "insightPolar", "insightMultiTrend",
+      "insightCorrelation"
+    ].forEach(id => setInsight(id, ""));
+    return;
+  }
+
+  const compareMode = document.getElementById("filterComparePeriod")?.value || "NONE";
+  let deltaNote = "";
+  if (compareMode !== "NONE") {
+    const validDates = [...new Set(filtered.map(r => r.date))].sort();
+    if (validDates.length >= 2) {
+      const mid = Math.floor(validDates.length / 2);
+      const pRows = filtered.filter(r => validDates.slice(0, mid).includes(r.date));
+      const cRows = filtered.filter(r => validDates.slice(mid).includes(r.date));
+      if (pRows.length && cRows.length) {
+        const pAvg = pRows.reduce((a, b) => a + b.scores[worstIdx], 0) / pRows.length;
+        const cAvg = cRows.reduce((a, b) => a + b.scores[worstIdx], 0) / cRows.length;
+        const diff = cAvg - pAvg;
+        deltaNote = diff >= 0 ? ` (naik ${diff.toFixed(2).replace(".", ",")} dari periode sebelumnya)` : ` (turun ${Math.abs(diff).toFixed(2).replace(".", ",")} dari periode sebelumnya)`;
+      }
+    }
+  }
+
+  // 1. Radar
+  setInsight("insightRadar", `<strong>Insight Profil:</strong> Dimensi <strong>${HABIT_NAMES[worstIdx]}</strong> terendah (${habitAvg[worstIdx].toFixed(2).replace(".", ",")})${deltaNote}, sementara <strong>${HABIT_NAMES[bestIdx]}</strong> mencatat konsistensi tertinggi (${habitAvg[bestIdx].toFixed(2).replace(".", ",")}).`);
+
+  // 2. Trend
+  const dates = [...new Set(filtered.map(r => r.date))].sort();
+  if (dates.length >= 2) {
+    const firstDateRows = filtered.filter(r => r.date === dates[0]);
+    const lastDateRows = filtered.filter(r => r.date === dates[dates.length - 1]);
+    const firstScore = firstDateRows.reduce((a, b) => a + b.scores.reduce((s, v) => s + v, 0) / 7, 0) / firstDateRows.length;
+    const lastScore = lastDateRows.reduce((a, b) => a + b.scores.reduce((s, v) => s + v, 0) / 7, 0) / lastDateRows.length;
+    const diff = lastScore - firstScore;
+    const dir = diff >= 0 ? "meningkat" : "mengalami penurunan";
+    setInsight("insightTrend", `<strong>Insight Tren:</strong> Rerata pembiasaan bergerak ${dir} sebesar ${Math.abs(diff).toFixed(2).replace(".", ",")} poin dari tanggal ${dates[0]} hingga ${dates[dates.length-1]}.`);
+  } else {
+    setInsight("insightTrend", `<strong>Insight Tren:</strong> Data saat ini mencakup 1 tanggal pemantauan; belum cukup untuk menyimpulkan arah pergerakan tren.`);
+  }
+
+  // 3. Grade Compare
+  const grades = ["X", "XI", "XII"];
+  const gradeAvgs = grades.map(g => {
+    const rows = filtered.filter(r => r.tingkat === g);
+    if (!rows.length) return { g, avg: 0, count: 0 };
+    const avg = rows.reduce((a, b) => a + b.scores.reduce((s, v) => s + v, 0) / 7, 0) / rows.length;
+    return { g, avg, count: rows.length };
+  }).filter(g => g.count > 0).sort((a, b) => b.avg - a.avg);
+
+  if (gradeAvgs.length >= 2) {
+    const topG = gradeAvgs[0];
+    const botG = gradeAvgs[gradeAvgs.length - 1];
+    setInsight("insightGrade", `<strong>Insight Jenjang:</strong> Kelas <strong>${topG.g}</strong> memimpin (${topG.avg.toFixed(2).replace(".", ",")}), unggul ${(topG.avg - botG.avg).toFixed(2).replace(".", ",")} poin di atas Kelas <strong>${botG.g}</strong> (${botG.avg.toFixed(2).replace(".", ",")}).`);
+  } else if (gradeAvgs.length === 1) {
+    setInsight("insightGrade", `<strong>Insight Jenjang:</strong> Menampilkan data capaian Kelas <strong>${gradeAvgs[0].g}</strong> dengan rerata ${gradeAvgs[0].avg.toFixed(2).replace(".", ",")}.`);
+  } else {
+    setInsight("insightGrade", "");
+  }
+
+  // 4. Balance
+  const surplusCount = habitAvg.filter(v => v >= 3.00).length;
+  setInsight("insightBalance", `<strong>Insight Keseimbangan:</strong> <strong>${surplusCount} dari 7 kebiasaan</strong> telah melampaui standar kelulusan 3.00, dengan <strong>${7 - surplusCount} kebiasaan</strong> masih berada pada zona defisit.`);
+
+  // 5. Bullet
+  const passCount = habitAvg.filter(v => v >= 3.00).length;
+  const under28 = habitAvg.filter(v => v < 2.80).length;
+  setInsight("insightBullet", `<strong>Insight Kelulusan:</strong> ${passCount} kebiasaan berada di zona Mandiri (≥3.00), ${under28 > 0 ? `sementara ${under28} kebiasaan berada pada zona butuh intervensi (<2.80)` : 'dan seluruh kebiasaan berada di atas ambang kritis 2.80'}.`);
+
+  // 6. Top Bottom
+  if (sortedByRank.length >= 2) {
+    const top = sortedByRank[0];
+    const bot = sortedByRank[sortedByRank.length - 1];
+    setInsight("insightTopBottom", `<strong>Insight Rombel:</strong> Kelas <strong>${top.kelas}</strong> tertinggi (indeks ${top.idx}), sedangkan kelas <strong>${bot.kelas}</strong> (indeks ${bot.idx}) prioritas pendampingan intensif.`);
+  } else if (sortedByRank.length === 1) {
+    setInsight("insightTopBottom", `<strong>Insight Rombel:</strong> Kelas <strong>${sortedByRank[0].kelas}</strong> mencatat indeks ${sortedByRank[0].idx} dari ${sortedByRank[0].n} entri.`);
+  } else {
+    setInsight("insightTopBottom", "");
+  }
+
+  // 7. Stacked
+  let maxGoodIdx = 0, maxPoorIdx = 0;
+  let maxGoodVal = 0, maxPoorVal = 0;
+  for (let i = 0; i < 7; i++) {
+    const good = filtered.filter(r => r.scores[i] >= 3.5).length;
+    const poor = filtered.filter(r => r.scores[i] < 2.5).length;
+    if (good > maxGoodVal) { maxGoodVal = good; maxGoodIdx = i; }
+    if (poor > maxPoorVal) { maxPoorVal = poor; maxPoorIdx = i; }
+  }
+  const goodPct = ((maxGoodVal / totalN) * 100).toFixed(0);
+  const poorPct = ((maxPoorVal / totalN) * 100).toFixed(0);
+  setInsight("insightStacked", `<strong>Insight Sebaran:</strong> Kategori Sangat Baik terbanyak pada <strong>${HABIT_NAMES[maxGoodIdx]}</strong> (${goodPct}%), sedangkan proporsi Kurang tertinggi pada <strong>${HABIT_NAMES[maxPoorIdx]}</strong> (${poorPct}%).`);
+
+  // 8. Gap
+  const maxGap = +(3.50 - habitAvg[worstIdx]).toFixed(2);
+  setInsight("insightGap", `<strong>Insight Kesenjangan:</strong> Dimensi <strong>${HABIT_NAMES[worstIdx]}</strong> membutuhkan akselerasi paling besar dengan jarak ${maxGap.toFixed(2).replace(".", ",")} poin menuju target emas 3.50.`);
+
+  // 9. Bubble
+  if (classRows.length >= 3) {
+    const meanSD = classRows.reduce((a, c) => a + Math.sqrt(c.scores.reduce((s, v) => s + Math.pow(v - c.mean, 2), 0) / 7), 0) / classRows.length;
+    setInsight("insightBubble", `<strong>Insight Variabilitas:</strong> Rerata variabilitas internal kelas sebesar ±${meanSD.toFixed(2).replace(".", ",")}, menunjukkan kekompakan pembiasaan yang ${meanSD < 0.35 ? 'sangat stabil' : 'cukup beragam'}.`);
+  } else {
+    setInsight("insightBubble", `<strong>Insight Variabilitas:</strong> Jumlah rombel aktif belum mencukupi untuk pemetaan sebaran klaster.`);
+  }
+
+  // 10. Donut
+  let cGood = 0;
+  filtered.forEach(r => { if ((r.scores.reduce((a, b) => a + b, 0) / 7) >= 2.80) cGood++; });
+  const pctGood = ((cGood / totalN) * 100).toFixed(1);
+  setInsight("insightDonut", `<strong>Insight Kemandirian:</strong> <strong>${pctGood}% siswa aktif</strong> berada dalam kategori Mandiri Prima dan Terbiasa Baik (skor rerata ≥ 2.80).`);
+
+  // 11. Polar
+  setInsight("insightPolar", `<strong>Insight Bobot:</strong> Ketujuh pilar karakter terdistribusi proporsional dengan kekuatan jangkar pada dimensi <strong>${HABIT_NAMES[bestIdx]}</strong>.`);
+
+  // 12. Multi Trend
+  if (dates.length >= 2) {
+    setInsight("insightMultiTrend", `<strong>Insight Lintas Jenjang:</strong> Evaluasi ${dates.length} tanggal pengisian menunjukkan dinamika pembiasaan seluruh tingkatan kelas bergerak dalam koridor positif.`);
+  } else {
+    setInsight("insightMultiTrend", `<strong>Insight Lintas Jenjang:</strong> Memerlukan minimal 2 tanggal pengamatan untuk membaca divergensi tren per jenjang.`);
+  }
+
+  // 13. Correlation Matrix
+  if (filtered.length >= 3) {
+    let maxR = -1;
+    let pairA = 0, pairB = 1;
+    function calcR(colA, colB) {
+      const n = colA.length;
+      let sumA = 0, sumB = 0;
+      for (let i = 0; i < n; i++) { sumA += colA[i]; sumB += colB[i]; }
+      const meanA = sumA / n; const meanB = sumB / n;
+      let num = 0, denA = 0, denB = 0;
+      for (let i = 0; i < n; i++) {
+        const da = colA[i] - meanA; const db = colB[i] - meanB;
+        num += da * db; denA += da * da; denB += db * db;
+      }
+      const den = Math.sqrt(denA * denB);
+      return den === 0 ? 0 : num / den;
+    }
+    const cols = [];
+    for (let h = 0; h < 7; h++) cols.push(filtered.map(r => r.scores[h]));
+    for (let i = 0; i < 7; i++) {
+      for (let j = i + 1; j < 7; j++) {
+        const r = calcR(cols[i], cols[j]);
+        if (r > maxR) { maxR = r; pairA = i; pairB = j; }
+      }
+    }
+    setInsight("insightCorrelation", `<strong>Insight Korelasi:</strong> Keterkaitan positif terkuat ditemukan antara <strong>${HABIT_NAMES[pairA]}</strong> dan <strong>${HABIT_NAMES[pairB]}</strong> (r = +${maxR.toFixed(2).replace(".", ",")}); korelasi statistik bukan hubungan sebab-akibat.`);
+  } else {
+    setInsight("insightCorrelation", `<strong>Insight Korelasi:</strong> Data responden belum mencukupi untuk menganalisis hubungan korelasi.`);
+  }
 }
 
 function updateTopBottomChart(classRows) {
   if (!topBottomChart) return;
-  const sorted = [...classRows].sort((a,b) => b.idx - a.idx);
-  const top6 = sorted.slice(0,6);
-  const bottomPool = sorted.slice(6);
-  const bot6 = bottomPool.slice(-6).reverse();
-  const combined = [...top6, ...bot6];
-  topBottomChart.data.labels = combined.map(r => r.kelas);
-  topBottomChart.data.datasets[0].data = combined.map(r => r.idx);
-  topBottomChart.data.datasets[0].backgroundColor = combined.map((_,i) =>
-    i < 6 ? "rgba(5,150,105,0.82)" : "rgba(220,38,38,0.75)"
-  );
+  const sorted = [...classRows].sort((a, b) => b.idx - a.idx);
+  const top = sorted.slice(0, 6);
+  const bottom = sorted.length > 6 ? sorted.slice(-6).reverse() : [];
+  const combined = [...top, ...bottom];
+  topBottomChart.data.labels = combined.map(c => c.kelas);
+  topBottomChart.data.datasets[0].data = combined.map(c => c.idx);
+  topBottomChart.data.datasets[0].backgroundColor = combined.map((c, i) => i < top.length ? "#10B981" : "#dc2626");
   topBottomChart.update();
 }
 
-/* ================================================================
-   HABITS DEEP DIVE RENDER
-   ================================================================ */
-function renderHabitsDeepDive(habitAvg) {
-  const c = document.getElementById("habitsContainer");
-  if (!c) return;
-  c.innerHTML = "";
+function renderBulletChart(avg) {
+  const wrap = document.getElementById("bulletChartWrap");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  avg.forEach((val, i) => {
+    const pct = Math.min(100, Math.max(0, ((val - 1) / 3) * 100));
+    const targetPct = ((3.00 - 1) / 3) * 100;
+    const goldPct   = ((3.50 - 1) / 3) * 100;
+    const isPass = val >= 3.00;
+    const item = document.createElement("div");
+    item.className = "bullet-item";
+    item.innerHTML = `
+      <div class="bullet-row">
+        <div class="bullet-name">${HABIT_NAMES[i]}</div>
+        <div class="bullet-val ${isPass ? 'bullet-val-pass' : 'bullet-val-fail'}">
+          ${val.toFixed(2)} / 4.00
+          <span style="font-size:0.7rem;font-weight:400;color:var(--text-3);margin-left:4px;">
+            (${val >= 3.00 ? '+' : ''}${(val - 3.00).toFixed(2)})
+          </span>
+        </div>
+      </div>
+      <div class="bullet-track">
+        <div class="bullet-zone bullet-zone-poor"></div>
+        <div class="bullet-zone bullet-zone-fair"></div>
+        <div class="bullet-zone bullet-zone-good"></div>
+        <div class="bullet-gold-line" style="left:${goldPct}%;" title="Standar Emas (3.50)"></div>
+        <div class="bullet-target-line" style="left:${targetPct}%;" title="Target Mutu (3.00)"></div>
+        <div class="bullet-bar ${isPass ? 'bullet-bar-pass' : 'bullet-bar-fail'}" style="width:${pct}%;"></div>
+      </div>
+    `;
+    wrap.appendChild(item);
+  });
+}
+
+function renderHabitsDeepDive(habitAvg, filtered) {
+  const container = document.getElementById("habitsContainer");
+  if (!container) return;
+  container.innerHTML = "";
   HABIT_DETAILS.forEach((hd, idx) => {
-    const sc  = habitAvg[idx];
-    const pct = (((sc-1)/3)*100).toFixed(1);
-    const statusPill = sc>=3.20 ? '<span class="pill pill-green">Sangat Baik</span>' : (sc>=2.80 ? '<span class="pill pill-yellow">Stabil</span>' : '<span class="pill pill-red">Prioritas</span>');
+    const score = habitAvg[idx] || 0;
+    const pct = Math.min(100, Math.max(0, ((score - 1) / 3) * 100));
+    const grade = score >= 3.20 ? "Sangat Baik" : (score >= 2.80 ? "Baik" : (score >= 2.50 ? "Cukup" : "Kurang"));
+    const pillClass = score >= 3.20 ? "pill-green" : (score >= 2.80 ? "pill-blue" : (score >= 2.50 ? "pill-yellow" : "pill-red"));
+
+    let above3Count = 0;
+    filtered.forEach(r => { if (r.scores[idx] >= 3.0) above3Count++; });
+    const above3Pct = filtered.length ? ((above3Count / filtered.length) * 100).toFixed(1) : 0;
+
     const card = document.createElement("div");
     card.className = "habit-card" + (idx === Number(document.getElementById("filterHabit").value) ? " habit-card-focused" : "");
     card.innerHTML = `
       <div class="habit-card-head">
         <div>
-          <div class="habit-num">Dimensi #${idx+1}</div>
-          <div class="habit-name">${hd.name}</div>
+          <div class="habit-num">DIMENSI 0${idx + 1}</div>
+          <div class="habit-title">${hd.name}</div>
           <div class="habit-tagline">${hd.sub}</div>
         </div>
         <div style="text-align:right;">
-          <div class="habit-score">${sc.toFixed(2)}</div>
-          ${statusPill}
+          <div class="habit-score-big">${score.toFixed(2)}</div>
+          <span class="pill ${pillClass}">${grade}</span>
         </div>
       </div>
-      <div class="habit-progress-wrap">
-        <div class="habit-progress-row"><span>Tingkat Ketercapaian</span><strong>${pct}%</strong></div>
-        <div class="habit-bar"><div class="habit-bar-fill" style="width:${pct}%;background:${sc>=3.20?'var(--green-600)':(sc>=2.80?'var(--blue-500)':'var(--red-600)')};"></div></div>
+      <div class="habit-bar-track">
+        <div class="habit-bar-fill" style="width:${pct}%;background:${score >= 3.0 ? 'var(--blue-600)' : 'var(--amber-dark)'};"></div>
       </div>
-      <div class="habit-detail-box"><strong>Indikator:</strong> ${hd.indikator}</div>
-      <div class="habit-action-box"><strong>Strategi SMAMIO:</strong> ${hd.strategi}</div>
+      <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-3);margin-bottom:12px;">
+        <span>Target: 3.00 (${score >= 3.0 ? '+' : ''}${(score - 3.0).toFixed(2)})</span>
+        <span>${above3Pct}% Siswa Mandiri</span>
+      </div>
+      <div class="habit-detail-box">
+        <div style="font-size:0.72rem;color:var(--text-3);line-height:1.45;margin-bottom:6px;"><strong>Indikator Evaluasi:</strong> ${hd.indikator}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);line-height:1.45;margin-bottom:6px;"><strong>Dampak Pembiasaan:</strong> ${hd.dampak}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);line-height:1.45;"><strong>Strategi Tindak Lanjut:</strong> ${hd.strategi}</div>
+      </div>
     `;
-    c.appendChild(card);
+    container.appendChild(card);
   });
 }
 
+
 /* ================================================================
-   SMAMIO STATS & HEATMAP
+   AUDIT METODOLOGI & KUALITAS DATA
    ================================================================ */
+function renderMethodologyAudit(filtered) {
+  const rawEl = document.getElementById("metaRawRows");
+  const validEl = document.getElementById("metaValidRows");
+  const droppedEl = document.getElementById("metaDroppedRows");
+  const rateEl = document.getElementById("metaResponseRate");
+  const emptyEl = document.getElementById("metaEmptyRows");
+  const dupEl = document.getElementById("metaDuplicateRows");
+  const invEl = document.getElementById("metaInvalidRows");
+  const dateRangeEl = document.getElementById("metaDateRange");
+
+  if (!rawEl) return;
+
+  if (activeRows.length === 0) {
+    rawEl.textContent = "0";
+    validEl.textContent = "0";
+    droppedEl.textContent = "0";
+    rateEl.textContent = "0,0%";
+    if (emptyEl) emptyEl.textContent = "0";
+    if (dupEl) dupEl.textContent = "0";
+    if (invEl) invEl.textContent = "0";
+    if (dateRangeEl) dateRangeEl.textContent = "Belum ada data";
+    return;
+  }
+
+  const rawCount = cleanReport.raw > 0 ? cleanReport.raw : activeRows.length;
+  const validCount = activeRows.length;
+  const droppedCount = cleanReport.dropped || 0;
+  const respPct = ((validCount / SCHOOL_CONFIG.registeredStudents.total) * 100).toFixed(1);
+
+  rawEl.textContent = rawCount.toLocaleString("id-ID");
+  validEl.textContent = validCount.toLocaleString("id-ID");
+  droppedEl.textContent = droppedCount.toLocaleString("id-ID");
+  rateEl.textContent = `${respPct}%`;
+
+  if (emptyEl) emptyEl.textContent = (cleanReport.empty || 0).toLocaleString("id-ID");
+  if (dupEl) dupEl.textContent = (cleanReport.duplicate || 0).toLocaleString("id-ID");
+  if (invEl) invEl.textContent = (cleanReport.invalid || 0).toLocaleString("id-ID");
+
+  if (dateRangeEl) {
+    if (availableDates.length > 0) {
+      dateRangeEl.textContent = `${availableDates[0]} s.d. ${availableDates[availableDates.length - 1]} (${availableDates.length} sesi tanggal)`;
+    } else {
+      dateRangeEl.textContent = "Tidak tersedia";
+    }
+  }
+}
+
 function renderSmamioStats(filtered, classRows) {
   const avg = t => {
-    const rows = filtered.filter(r=>r.tingkat===t);
+    const rows = filtered.filter(r => r.tingkat === t);
     if (!rows.length) return "—";
-    return (rows.reduce((a,r)=>a+(r.scores.reduce((x,y)=>x+y,0)/7),0)/rows.length).toFixed(2);
+    return (rows.reduce((a, r) => a + (r.scores.reduce((x, y) => x + y, 0) / 7), 0) / rows.length).toFixed(2);
   };
-  document.getElementById("statCountX").textContent = `${filtered.filter(r=>r.tingkat==="X").length} Entri`;
+
+  const countX   = filtered.filter(r => r.tingkat === "X").length;
+  const countXI  = filtered.filter(r => r.tingkat === "XI").length;
+  const countXII = filtered.filter(r => r.tingkat === "XII").length;
+
+  const pctX   = ((countX / SCHOOL_CONFIG.registeredStudents.X) * 100).toFixed(1);
+  const pctXI  = ((countXI / SCHOOL_CONFIG.registeredStudents.XI) * 100).toFixed(1);
+  const pctXII = ((countXII / SCHOOL_CONFIG.registeredStudents.XII) * 100).toFixed(1);
+
+  document.getElementById("statCountX").textContent = `${countX} / ${SCHOOL_CONFIG.registeredStudents.X} Siswa (${pctX}%)`;
   document.getElementById("statScoreX").textContent = `Rata-Rata: ${avg("X")} / 4.00`;
-  document.getElementById("statCountXI").textContent = `${filtered.filter(r=>r.tingkat==="XI").length} Entri`;
+
+  document.getElementById("statCountXI").textContent = `${countXI} / ${SCHOOL_CONFIG.registeredStudents.XI} Siswa (${pctXI}%)`;
   document.getElementById("statScoreXI").textContent = `Rata-Rata: ${avg("XI")} / 4.00`;
-  document.getElementById("statCountXII").textContent = `${filtered.filter(r=>r.tingkat==="XII").length} Entri`;
+
+  document.getElementById("statCountXII").textContent = `${countXII} / ${SCHOOL_CONFIG.registeredStudents.XII} Siswa (${pctXII}%)`;
   document.getElementById("statScoreXII").textContent = `Rata-Rata: ${avg("XII")} / 4.00`;
-  const sorted = [...classRows].sort((a,b)=>b.idx-a.idx);
+
+  const sorted = [...classRows].sort((a, b) => b.idx - a.idx);
   document.getElementById("statTopClass").textContent = sorted[0]?.kelas || "—";
-  document.getElementById("statTopScore").textContent = sorted[0] ? `Indeks ${sorted[0].idx}` : "—";
+  document.getElementById("statTopScore").textContent = sorted[0] ? `Indeks ${sorted[0].idx.toFixed(1)}` : "—";
+
+  const totalRegistered = SCHOOL_CONFIG.registeredStudents.total;
+  const totalResp = filtered.length;
+  const totalRate = ((totalResp / totalRegistered) * 100).toFixed(1);
+  const rombelUniq = new Set(filtered.map(r => r.kelas)).size;
+
+  const respEl = document.getElementById("statResponseRate");
+  if (respEl) respEl.textContent = `${totalRate}%`;
+
+  const totalEl = document.getElementById("statTotalStudents");
+  if (totalEl) totalEl.textContent = `${totalResp.toLocaleString("id-ID")} / ${totalRegistered.toLocaleString("id-ID")}`;
+
+  const rombelEl = document.getElementById("statRombelCount");
+  if (rombelEl) rombelEl.textContent = `${rombelUniq} / ${SCHOOL_CONFIG.totalRombel}`;
+
   const tbody = document.getElementById("heatmapBody");
   if (!tbody) return;
   tbody.innerHTML = "";
+  if (!sorted.length) {
+    tbody.innerHTML = '<tr><td colspan="11" class="table-empty-cell">Belum ada data heatmap. Hubungkan Google Sheets atau muat data contoh.</td></tr>';
+    return;
+  }
   sorted.forEach(r => {
-    const hc = v => v>=3.20?"heat-cell heat-high":(v>=2.80?"heat-cell heat-med":"heat-cell heat-low");
+    const hc = v => v >= 3.20 ? "heat-cell heat-high" : (v >= 2.80 ? "heat-cell heat-med" : "heat-cell heat-low");
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td><strong>${r.kelas}</strong></td>
       <td><span class="pill pill-gray">${r.tingkat}</span></td>
       <td>${r.n}</td>
       <td><strong>${r.idx.toFixed(1)}</strong></td>
-      ${r.scores.map(s=>`<td class="${hc(s)}">${s}</td>`).join('')}
+      ${r.scores.map(s => `<td class="${hc(s)}">${s}</td>`).join('')}
     `;
     tbody.appendChild(tr);
   });
 }
 
 /* ================================================================
-   WHAT-IF SIMULATOR
+   WHAT-IF POLICY SIMULATOR
    ================================================================ */
-let simBase = 0, simWorstIdx = 0;
-function updateSimulatorBaseline(curIdx, wIdx, wScore) {
-  simBase = curIdx; simWorstIdx = wIdx;
-  document.getElementById("simTargetLabel").textContent = `Fokus: ${HABIT_NAMES[wIdx]} (Skor: ${wScore.toFixed(2)})`;
+let simBase = 0, simWorstIdx = 0, simHabitAvg = [];
+function updateSimulatorBaseline(curIdx, wIdx, wScore, habitAvg) {
+  simBase = curIdx;
+  simWorstIdx = wIdx;
+  simHabitAvg = habitAvg ? [...habitAvg] : [];
+  document.getElementById("simTargetLabel").textContent = `Fokus Intervensi: ${HABIT_NAMES[wIdx]} (Skor Terendah Saat Ini: ${wScore.toFixed(2)})`;
   document.getElementById("simCurrentIndex").textContent = curIdx.toFixed(1);
   recomputeSimulation();
 }
+
 function recomputeSimulation() {
   const delta = parseFloat(document.getElementById("simSlider").value);
   document.getElementById("simDeltaLabel").textContent = `+${delta.toFixed(2)} Poin`;
-  const proj = simBase + (delta*(100/21));
+  // Peningkatan 1 pilar dari 7 dimensi: Delta Rerata = delta / 7. Indeks = (Delta / 7 / 3) * 100 = delta * (100 / 21)
+  const proj = simBase + (delta * (100 / 21));
   document.getElementById("simProjectedIndex").textContent = proj.toFixed(1);
+
+  if (radarChart && simHabitAvg && simHabitAvg.length === 7 && radarChart.data.datasets.length >= 4) {
+    if (delta > 0) {
+      const projData = [...simHabitAvg];
+      projData[simWorstIdx] = +(Math.min(4.0, projData[simWorstIdx] + delta)).toFixed(2);
+      radarChart.data.datasets[3].data = projData;
+      radarChart.data.datasets[3].hidden = false;
+    } else {
+      radarChart.data.datasets[3].hidden = true;
+    }
+    radarChart.update();
+  }
 }
 document.getElementById("simSlider").addEventListener("input", recomputeSimulation);
 
 /* ================================================================
-   TABLE
+   TABEL PERINGKAT ROMBEL (Sorting, Search & Dimensi Fokus)
    ================================================================ */
-function renderTable(classRows) {
+function renderTable(classRows, habitFocus = "ALL") {
   const tbody = document.getElementById("classTableBody");
-  const q = document.getElementById("tableSearchInput").value.trim().toLowerCase();
+  if (!tbody) return;
+  const q = (document.getElementById("tableSearchInput").value || "").trim().toLowerCase();
   let rows = classRows.filter(r => !q || r.kelas.toLowerCase().includes(q) || r.tingkat.toLowerCase().includes(q));
-  rows.sort((a,b) => {
-    let vA, vB;
-    if ([0,4].includes(currentSortColumn)) { vA=a.idx; vB=b.idx; }
-    else if (currentSortColumn===1) { vA=a.kelas; vB=b.kelas; }
-    else if (currentSortColumn===2) { vA=a.tingkat; vB=b.tingkat; }
-    else if (currentSortColumn===3) { vA=a.n; vB=b.n; }
-    else if (currentSortColumn===5) { vA=a.mean; vB=b.mean; }
-    else { const hi=currentSortColumn-6; vA=a.scores[hi]; vB=b.scores[hi]; }
-    if (typeof vA==="string") return sortAscending?vA.localeCompare(vB):vB.localeCompare(vA);
-    return sortAscending?vA-vB:vB-vA;
+
+  const fIdx = (habitFocus !== "ALL" && !isNaN(parseInt(habitFocus, 10))) ? parseInt(habitFocus, 10) : -1;
+
+  // Highlight header tabel
+  const thList = document.querySelectorAll("#panel-analytics table thead th");
+  thList.forEach((th, idx) => {
+    if (fIdx !== -1 && idx === 6 + fIdx) {
+      th.classList.add("col-focused");
+    } else {
+      th.classList.remove("col-focused");
+    }
   });
+
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="13" class="table-empty-cell">Belum ada data rombel yang cocok.</td></tr>';
+    return;
+  }
+
+  rows.sort((a, b) => {
+    let vA, vB;
+    if (currentSortColumn === 1) { vA = a.kelas; vB = b.kelas; }
+    else if (currentSortColumn === 2) { vA = a.tingkat; vB = b.tingkat; }
+    else if (currentSortColumn === 3) { vA = a.n; vB = b.n; }
+    else if (currentSortColumn === 4) { vA = a.idx; vB = b.idx; }
+    else if (currentSortColumn >= 5) { const hi = currentSortColumn - 5; vA = a.scores[hi]; vB = b.scores[hi]; }
+    if (typeof vA === "string") return sortAscending ? vA.localeCompare(vB) : vB.localeCompare(vA);
+    return sortAscending ? vA - vB : vB - vA;
+  });
+
   tbody.innerHTML = "";
   rows.forEach((r, i) => {
-    const vc = s => s>=3.20?"val-high":(s>=2.80?"val-med":"val-low");
-    const statusPill = r.mean>=3.15?'<span class="pill pill-green">Teladan</span>':(r.mean>=2.80?'<span class="pill pill-yellow">Stabil</span>':'<span class="pill pill-red">Perhatian</span>');
-    const rankHtml = i===0?`<span class="rank-num gold">1</span>`:(i<3?`<span class="rank-num silver">${i+1}</span>`:`<span style="font-size:0.75rem;color:var(--text-3);">#${i+1}</span>`);
+    const vc = s => s >= 3.20 ? "val-high" : (s >= 2.80 ? "val-med" : "val-low");
+    const statusPill = r.mean >= 3.15 ? '<span class="pill pill-green">Teladan</span>' : (r.mean >= 2.80 ? '<span class="pill pill-yellow">Stabil</span>' : '<span class="pill pill-red">Perhatian</span>');
+    const rankHtml = i === 0 ? `<span class="rank-num gold">1</span>` : (i < 3 ? `<span class="rank-num silver">${i + 1}</span>` : `<span style="font-size:0.75rem;color:var(--text-3);">#${i + 1}</span>`);
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${rankHtml}</td>
@@ -3059,57 +4750,67 @@ function renderTable(classRows) {
       <td><span class="pill pill-gray">${r.tingkat}</span></td>
       <td>${r.n}</td>
       <td>
-        <span class="mini-bar"><span class="mini-bar-fill" style="width:${Math.min(100,r.idx)}%;"></span></span>
+        <span class="mini-bar"><span class="mini-bar-fill" style="width:${Math.min(100, r.idx)}%;"></span></span>
         <strong>${r.idx.toFixed(1)}</strong>
       </td>
       <td>${statusPill}</td>
-      ${r.scores.map(s=>`<td class="${vc(s)}">${s}</td>`).join('')}
+      ${r.scores.map((s, hIdx) => `<td class="${vc(s)}${hIdx === fIdx ? ' col-focused' : ''}">${s}</td>`).join('')}
     `;
     tbody.appendChild(tr);
   });
 }
 
 function sortTable(col) {
-  if (currentSortColumn===col) sortAscending=!sortAscending;
-  else { currentSortColumn=col; sortAscending=false; }
+  if (currentSortColumn === col) sortAscending = !sortAscending;
+  else { currentSortColumn = col; sortAscending = false; }
   updateDashboard();
 }
 document.getElementById("tableSearchInput").addEventListener("input", updateDashboard);
 
 /* ================================================================
-   AI ACTION CHIPS
+   ACTION CHIPS & FILTER INTERVENSI
    ================================================================ */
 document.getElementById("chipFilterCritical").addEventListener("click", () => {
-  currentSortColumn=4; sortAscending=true; updateDashboard();
-  showMessage("Menyorot rombel dengan rata-rata skor di bawah 2.80.", false);
+  currentSortColumn = 4;
+  sortAscending = true;
+  updateDashboard();
+  showMessage("Menyorot rombel dengan capaian indeks terendah untuk prioritas intervensi.", false);
 });
 document.getElementById("chipFilterTop").addEventListener("click", () => {
-  currentSortColumn=4; sortAscending=false; updateDashboard();
+  currentSortColumn = 4;
+  sortAscending = false;
+  updateDashboard();
 });
 document.getElementById("chipResetAiFilter").addEventListener("click", () => {
-  document.getElementById("filterTingkat").value="ALL"; populateKelasDropdown();
-  document.getElementById("filterKelas").value="ALL";
-  document.getElementById("filterDate").value="ALL";
-  document.getElementById("filterHabit").value="0";
-  document.getElementById("tableSearchInput").value="";
-  currentSortColumn=4; sortAscending=false; updateDashboard();
+  document.getElementById("filterTingkat").value = "ALL";
+  populateKelasDropdown();
+  document.getElementById("filterKelas").value = "ALL";
+  document.getElementById("filterDate").value = "ALL";
+  document.getElementById("filterHabit").value = "ALL";
+  document.getElementById("tableSearchInput").value = "";
+  currentSortColumn = 4;
+  sortAscending = false;
+  updateDashboard();
 });
 
 /* ================================================================
-   EXPORT CSV
+   EKSPOR CSV ANALITIK
    ================================================================ */
 document.getElementById("btnExportCsv").addEventListener("click", () => {
-  const rowsToExport = activeRows.filter(r => {
-    const t=document.getElementById("filterTingkat").value, k=document.getElementById("filterKelas").value, d=document.getElementById("filterDate").value;
-    return (t==="ALL"||r.tingkat===t) && (k==="ALL"||r.kelas===k) && (d==="ALL"||r.date===d);
-  });
-  if (!rowsToExport.length) { showMessage("Tidak ada data sesuai filter untuk diekspor."); return; }
+  if (!activeRows.length) {
+    showMessage("Tidak ada data untuk diekspor. Silakan hubungkan Google Sheets terlebih dahulu.");
+    return;
+  }
   let csv = "data:text/csv;charset=utf-8,Tingkat,Kelas,Tanggal," + HABIT_NAMES.join(",") + "\n";
-  rowsToExport.forEach(r => { csv += [r.tingkat,r.kelas,r.date,...r.scores].join(",") + "\n"; });
+  activeRows.forEach(r => {
+    csv += [r.tingkat, r.kelas, r.date, ...r.scores].join(",") + "\n";
+  });
   const link = document.createElement("a");
   link.setAttribute("href", encodeURI(csv));
-  link.setAttribute("download", `Analisis_7KAIH_SMAMIO_Gresik_${new Date().toISOString().slice(0,10)}.csv`);
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  link.setAttribute("download", `Analisis_7KAIH_SMAMIO_Gresik_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 });
 
 /* ================================================================
@@ -3117,37 +4818,94 @@ document.getElementById("btnExportCsv").addEventListener("click", () => {
    ================================================================ */
 document.getElementById("btnSync").addEventListener("click", syncFromGoogleSheets);
 document.getElementById("autoRefreshCheck").addEventListener("change", function(e) {
-  if (e.target.checked) { syncFromGoogleSheets(); refreshInterval=setInterval(syncFromGoogleSheets,30000); }
-  else clearInterval(refreshInterval);
+  if (e.target.checked) {
+    syncFromGoogleSheets();
+    refreshInterval = setInterval(syncFromGoogleSheets, 30000);
+  } else {
+    clearInterval(refreshInterval);
+  }
 });
-document.getElementById("filterTingkat").addEventListener("change", () => { populateKelasDropdown(); updateDashboard(); });
+
+document.getElementById("filterTingkat").addEventListener("change", () => {
+  populateKelasDropdown();
+  updateDashboard();
+});
 document.getElementById("filterKelas").addEventListener("change", updateDashboard);
 document.getElementById("filterDate").addEventListener("change", updateDashboard);
 document.getElementById("filterHabit").addEventListener("change", updateDashboard);
+document.getElementById("filterComparePeriod").addEventListener("change", updateDashboard);
+
 document.getElementById("btnReset").addEventListener("click", () => {
-  document.getElementById("filterTingkat").value="ALL"; populateKelasDropdown();
-  document.getElementById("filterKelas").value="ALL";
-  document.getElementById("filterDate").value="ALL";
-  document.getElementById("filterHabit").value="0";
-  document.getElementById("tableSearchInput").value="";
+  document.getElementById("filterTingkat").value = "ALL";
+  populateKelasDropdown();
+  document.getElementById("filterKelas").value = "ALL";
+  document.getElementById("filterDate").value = "ALL";
+  document.getElementById("filterHabit").value = "ALL";
+  document.getElementById("filterComparePeriod").value = "NONE";
+  document.getElementById("tableSearchInput").value = "";
   updateDashboard();
 });
 
 /* ================================================================
-   BOOT
+   BOOT & INISIALISASI
    ================================================================ */
 initTabs();
 initTheme();
 initCharts();
-// Recalculate hidden Chart.js canvases when the user opens advanced analytics.
+
+// Modal Metodologi & Kualitas Data
+const methodologyModal = document.getElementById("methodologyModal");
+const openMethodologyModal = () => { if (methodologyModal) methodologyModal.style.display = "flex"; };
+const closeMethodologyModal = () => { if (methodologyModal) methodologyModal.style.display = "none"; };
+
+document.getElementById("btnOpenMethodology")?.addEventListener("click", openMethodologyModal);
+document.getElementById("btnCloseMethodologyModal")?.addEventListener("click", closeMethodologyModal);
+document.getElementById("btnModalGoToTab")?.addEventListener("click", () => {
+  closeMethodologyModal();
+  document.querySelector('.nav-item[data-tab="methodology"]')?.click();
+});
+methodologyModal?.addEventListener("click", (e) => {
+  if (e.target === methodologyModal) closeMethodologyModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && methodologyModal && methodologyModal.style.display !== "none") {
+    closeMethodologyModal();
+  }
+});
+
+// Toggle Panduan Sheets
+document.getElementById("btnToggleGuide")?.addEventListener("click", () => {
+  const p = document.getElementById("sheetsGuidePanel");
+  if (p) p.style.display = p.style.display === "none" ? "block" : "none";
+});
+document.getElementById("btnCloseGuide")?.addEventListener("click", () => {
+  const p = document.getElementById("sheetsGuidePanel");
+  if (p) p.style.display = "none";
+});
+
+// Tombol Muat Data Contoh (120 Baris)
+document.getElementById("btnLoadSample")?.addEventListener("click", loadSampleData120);
+
+// Penanganan Canvas Tersembunyi pada Accordion
 document.querySelectorAll('details.analytics-more').forEach(section => {
   section.addEventListener('toggle', () => {
-    if (section.open) requestAnimationFrame(() => Object.values(Chart.instances).forEach(chart => chart.resize()));
+    if (section.open) {
+      requestAnimationFrame(() => Object.values(Chart.instances).forEach(chart => chart.resize()));
+    }
   });
 });
+
+// Startup: Jika ada link tersimpan, coba sinkronisasi. Jika tidak, buka dalam STATE KOSONG BERSIH.
 const savedUrl = localStorage.getItem("kaih_sheet_url");
-if (savedUrl) { document.getElementById("sheetCsvUrl").value=savedUrl; syncFromGoogleSheets(); }
-else loadDefaultData();
+if (savedUrl) {
+  document.getElementById("sheetCsvUrl").value = savedUrl;
+  syncFromGoogleSheets();
+} else {
+  // Tidak memuat data mock otomatis agar tidak membingungkan pengguna
+  activeRows = [];
+  updateDashboard();
+}
+
 </script>
 </body>
 </html>
