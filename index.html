@@ -74,6 +74,13 @@
 
       /* Header */
       --header-h:  58px;
+
+      /* Simulation Banner */
+      --banner-h:  0px;
+    }
+
+    body.has-sim-banner {
+      --banner-h: 40px;
     }
 
     [data-theme="dark"] {
@@ -136,6 +143,8 @@
     .shell {
       display: flex;
       min-height: 100vh;
+      margin-top: var(--banner-h, 0px);
+      transition: margin-top 0.15s ease;
     }
 
     /* ============================================================
@@ -149,10 +158,12 @@
       display: flex;
       flex-direction: column;
       position: fixed;
-      top: 0;
+      top: var(--banner-h, 0px);
       left: 0;
-      height: 100vh;
+      height: calc(100vh - var(--banner-h, 0px));
+      height: calc(100dvh - var(--banner-h, 0px));
       z-index: 50;
+      transition: top 0.15s ease, height 0.15s ease;
     }
 
     .sidebar-top {
@@ -360,8 +371,9 @@
       justify-content: space-between;
       gap: 16px;
       position: sticky;
-      top: 0;
+      top: var(--banner-h, 0px);
       z-index: 40;
+      transition: top 0.15s ease;
     }
 
     .topbar-left {
@@ -1282,11 +1294,15 @@
     @media (max-width: 768px) {
       .sidebar {
         position: fixed !important;
-        top: 0; bottom: 0; left: 0;
+        top: var(--banner-h, 0px) !important;
+        bottom: 0 !important;
+        left: 0;
+        height: calc(100vh - var(--banner-h, 0px)) !important;
+        height: calc(100dvh - var(--banner-h, 0px)) !important;
         z-index: 100 !important;
         width: 260px !important;
         transform: translateX(-100%) !important;
-        transition: transform .25s ease-in-out !important;
+        transition: transform .25s ease-in-out, top 0.15s ease, height 0.15s ease !important;
         box-shadow: 0 0 25px rgba(0,0,0,0.25) !important;
       }
       .sidebar.mobile-open {
@@ -1693,7 +1709,7 @@
     .manifesto-hero p, .manifesto-box p { overflow-wrap:anywhere; }
     @media (max-width:768px) {
       .main { width:100%; }
-      .topbar { position:sticky; top:0; min-height:58px; height:auto; padding:10px 12px; flex-wrap:wrap; align-items:center; }
+      .topbar { position:sticky; top:var(--banner-h, 0px); min-height:58px; height:auto; padding:10px 12px; flex-wrap:wrap; align-items:center; transition: top 0.15s ease; }
       .topbar-left { flex:1 1 190px; }
       .topbar-left > div { min-width:0; }
       .page-title { font-size:.9rem; }
@@ -1794,13 +1810,18 @@
       background: var(--yellow-400);
       color: #1e293b;
       font-weight: 700;
-      font-size: 0.8rem;
-      padding: 10px 18px;
+      font-size: 0.78rem;
+      padding: 8px 18px;
+      min-height: 40px;
+      box-sizing: border-box;
       border-bottom: 2px solid var(--amber-dark);
       letter-spacing: 0.03em;
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 100;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 120;
       box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
     .sample-banner svg {
@@ -1819,6 +1840,17 @@
       font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 0.05em;
+    }
+    .sample-banner-mobile { display: none; }
+    @media (max-width: 768px) {
+      .sample-banner-desktop { display: none; }
+      .sample-banner-mobile { display: inline; }
+      .sample-badge-tag { display: none; }
+      .sample-banner {
+        padding: 6px 12px;
+        font-size: 0.72rem;
+        min-height: 36px;
+      }
     }
 
     .sheets-guide-panel {
@@ -2008,7 +2040,8 @@
 <body>
 <div class="sample-banner" id="simulatedDataBanner">
   <svg viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-  <span>MODE DATA SIMULASI: Terpasang 120 Baris Data Uji Coba Acak (Bukan Data Riil Siswa SMAMIO)</span>
+  <span class="sample-banner-desktop">MODE DATA SIMULASI: Terpasang 120 Baris Data Uji Coba Acak (Bukan Data Riil Siswa SMAMIO)</span>
+  <span class="sample-banner-mobile">MODE DATA SIMULASI (120 Baris Data Acak)</span>
   <span class="sample-badge-tag">DATA SIMULASI</span>
 </div>
 <div class="shell">
@@ -3290,7 +3323,34 @@ const ACTION_IDEAS = [
 let activeRows = [];
 let availableDates = [];
 let isSimulatedData = false;
-let cleanReport = { raw: 0, valid: 0, empty: 0, duplicate: 0, invalid: 0, dropped: 0 };
+let cleanReport = { raw: 0, valid: 0, empty: 0, duplicate: 0, invalid: 0, dropped: 0, identicalAnswersCount: 0, hasDifferentiator: false };
+
+function setSimulationBannerVisible(visible) {
+  const banner = document.getElementById("simulatedDataBanner");
+  if (!banner) return;
+  if (visible) {
+    banner.style.display = "flex";
+    document.body.classList.add("has-sim-banner");
+    const h = banner.offsetHeight || (window.innerWidth <= 768 ? 36 : 40);
+    document.documentElement.style.setProperty("--banner-h", `${h}px`);
+  } else {
+    banner.style.display = "none";
+    document.body.classList.remove("has-sim-banner");
+    document.documentElement.style.setProperty("--banner-h", "0px");
+  }
+}
+
+if (typeof ResizeObserver !== "undefined") {
+  const bEl = document.getElementById("simulatedDataBanner");
+  if (bEl) {
+    new ResizeObserver(() => {
+      if (isSimulatedData && bEl.style.display !== "none") {
+        const h = bEl.offsetHeight || (window.innerWidth <= 768 ? 36 : 40);
+        document.documentElement.style.setProperty("--banner-h", `${h}px`);
+      }
+    }).observe(bEl);
+  }
+}
 
 let radarChart, balanceChart, trendChart, gradeCompareChart, stackedChart, gapChart;
 let bubbleChart, donutChart, polarChart, multiTrendChart, topBottomChart;
@@ -3665,14 +3725,14 @@ function parseSheetMatrix(matrix) {
 
   cleanReport.valid = newRows.length;
   cleanReport.dropped = cleanReport.empty + cleanReport.duplicate + cleanReport.invalid;
+  cleanReport.raw = cleanReport.valid + cleanReport.dropped;
 
   if (newRows.length === 0) {
     throw new Error(`Seluruh ${cleanReport.raw} baris data tidak memenuhi syarat validasi (kosong atau di luar skala 1–4). Data aktif sebelumnya dipertahankan.`);
   }
 
   isSimulatedData = false;
-  const banner = document.getElementById("simulatedDataBanner");
-  if (banner) banner.style.display = "none";
+  setSimulationBannerVisible(false);
 
   activeRows = newRows;
   updateDatasetMeta("Dataset Asli (Terverifikasi)");
@@ -3827,8 +3887,17 @@ function loadSampleData120() {
   }
 
   activeRows = newRows;
-  const banner = document.getElementById("simulatedDataBanner");
-  if (banner) banner.style.display = "flex";
+  cleanReport = {
+    raw: 120,
+    valid: 120,
+    empty: 0,
+    duplicate: 0,
+    invalid: 0,
+    dropped: 0,
+    identicalAnswersCount: 0,
+    hasDifferentiator: false
+  };
+  setSimulationBannerVisible(true);
 
   updateDatasetMeta("DATA SIMULASI");
   updateDateDropdown();
@@ -5062,9 +5131,11 @@ function renderMethodologyAudit(filtered) {
     return;
   }
 
-  const rawCount = cleanReport.raw > 0 ? cleanReport.raw : activeRows.length;
+  // JAMINAN KONSISTENSI DATA AUDIT:
+  // Total Baris Dimuat = Baris Valid + Baris Dibuang dari dataset aktif yang sama
   const validCount = activeRows.length;
   const droppedCount = cleanReport.dropped || 0;
+  const rawCount = cleanReport.raw > 0 ? cleanReport.raw : (validCount + droppedCount);
   const respPct = ((validCount / SCHOOL_CONFIG.registeredStudents.total) * 100).toFixed(1);
 
   rawEl.textContent = rawCount.toLocaleString("id-ID");
@@ -5376,6 +5447,17 @@ document.querySelectorAll('details.analytics-more').forEach(section => {
   });
 });
 
+// Responsif: Sesuaikan tinggi banner jika ukuran viewport berubah
+window.addEventListener("resize", () => {
+  if (isSimulatedData) {
+    const banner = document.getElementById("simulatedDataBanner");
+    if (banner && banner.style.display !== "none") {
+      const h = banner.offsetHeight || 40;
+      document.documentElement.style.setProperty("--banner-h", `${h}px`);
+    }
+  }
+});
+
 // Startup: Jika ada link tersimpan, coba sinkronisasi. Jika tidak, buka dalam STATE KOSONG BERSIH.
 const savedUrl = localStorage.getItem("kaih_sheet_url");
 if (savedUrl) {
@@ -5384,6 +5466,8 @@ if (savedUrl) {
 } else {
   // Tidak memuat data mock otomatis agar tidak membingungkan pengguna
   activeRows = [];
+  cleanReport = { raw: 0, valid: 0, empty: 0, duplicate: 0, invalid: 0, dropped: 0, identicalAnswersCount: 0, hasDifferentiator: false };
+  setSimulationBannerVisible(false);
   updateDashboard();
 }
 
